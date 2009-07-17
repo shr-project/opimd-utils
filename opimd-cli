@@ -1,0 +1,132 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import dbus
+from sys import argv
+
+# define some nice dbus helper, which I really like, cause make code easier to read :)
+def getDbusObject (bus, busname , objectpath , interface):
+        dbusObject = bus.get_object(busname, objectpath)
+        return dbus.Interface(dbusObject, dbus_interface=interface)
+
+def check_args(data):
+  if len(data)>0 and len(data)%2==0:
+    pass
+  else:
+    raise IndexError
+
+def default_backend(domain):
+  sources = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Sources", "org.freesmartphone.PIM.Sources")
+  return sources.GetDefaultBackend(domain)
+
+def prepare_dict(data):
+  dict = {}
+  args = data
+  while len(args)>0:
+    if args[0] == '_limit':
+      dict[args[0]]=int(args[1])
+    else:
+      dict[args[0]]=args[1]
+    args = args[2:]
+  return dict
+
+def query(data):
+  if len(data)==0:
+    dict = {}
+  else:
+    check_args(data)
+    dict = prepare_dict(data)
+
+  print "Querying data matching to " + str(dict) + "..."
+  x = interface.Query(dict)
+
+  print "Query: " + x
+  query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM."+domain+"Query")
+  results = query.GetResultCount()
+  print "Numer of results: " + str(results)
+  for i in range(0,results):
+    print "Result nr "+str(i+1)+":"
+    results = query.GetResult()
+    for field in results:
+      print "  "+field+": "+str(results[field])
+  query.Dispose() # delete query result from memory
+
+def add(data):
+  check_args(data)
+  dict = prepare_dict(data)
+  print "Adding item " + str(dict) + " using " + default_backend(domain+'s') + " backend..."
+  interface.Add(dict)  
+  query(data)
+
+def edit(id, data):
+  check_args(data)
+  dict = prepare_dict(data)
+  print "Editing item " + str(id) + " using data: " + str(dict) + "..."
+  item_interface = getDbusObject ( bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/"+domain+"s/"+id, "org.freesmartphone.PIM."+domain)
+  item_interface.Update(dict)
+  query(data)
+
+def delete(id):
+  print "Deleting item " + str(id) + "..."
+  item_interface = getDbusObject ( bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/"+domain+"s/"+id, "org.freesmartphone.PIM."+domain)
+  item_interface.Delete()
+
+def init():
+  print "Initing all backends..."
+  sources = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Sources", "org.freesmartphone.PIM.Sources")
+  sources.InitAllEntries()
+
+print "------- opimd test app -------"
+print " by Sebastian dos Krzyszkowiak"
+print "           seba.dos1@gmail.com"
+print "------------------------------"
+
+if len(argv)==1 or argv[1]=='--help' or argv[1]=='-h':
+  print "Usage: "+argv[0]+" domain job [args]"
+  print ""
+  print "domain: can be c (or contacts) or m (or messages). Defines what domain " + argv[0] + " will use."
+  print "job: can be query, add, edit, delete or init."
+  print "args: depending of job:"
+  print "      query:  every pair of arguments is combined to fields (name, value)"
+  print "              for instance: "+argv[0]+" contacts query Name dos"
+  print "      add:    every pair of arguments is combined to fields (name, value)"
+  print "              for instance: "+argv[0]+" contacts add Name dos"
+  print "      edit:   first argument from args is ID of edited item, next are pairs of arguments combined to fields (name, value)"
+  print "              for instance: "+argv[0]+" contact edit 0 Name dos1"
+  print "      delete: argument is ID of deleted item"
+  print "              for instance: "+argv[0]+" contact delete 0"
+  exit(0)
+
+bus = dbus.SystemBus()
+
+try:
+  if argv[1].lower()=='contacts' or argv[1].lower()=='c':
+    domain = 'Contact'
+  elif argv[1].lower()=='messages' or argv[1].lower()=='m':
+    domain = 'Message'
+  elif argv[1].lower()=='calls' or argv[1].lower()=='ca':
+    domain = 'Call'
+  else:
+    raise IndexError
+
+  print "Using domain: " + domain + "s"
+
+  interface = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/"+domain+"s", "org.freesmartphone.PIM."+domain+"s")
+
+  if argv[2].lower()=='query':
+    query(argv[3:])
+  elif argv[2].lower()=='add':
+    add(argv[3:])
+  elif argv[2].lower()=='edit':
+    edit(argv[3], argv[4:])
+  elif argv[2].lower()=='delete':
+    delete(argv[3])
+  elif argv[2].lower()=='init':
+    init()
+  else:
+    raise IndexError
+
+  print "Done."
+except IndexError:
+  print "Incorect arguments. Read --help. Aborting."
+  exit(1)

@@ -1,0 +1,435 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import dbus, e_dbus
+from sys import argv
+from os import system
+import time
+from functools import partial
+from opimd_utils import opimd_reply
+import elementary
+
+MESSAGES_ICON              = "/usr/share/icons/shr/86x86/apps/openmoko-messages.png"
+PHONELOG_ICON              = "/usr/share/pixmaps/phonelog.png"
+
+
+cache = {}
+
+def resolve_phone(number):
+  if number in cache:
+    return cache[number]
+  else:
+    x = contacts.Query({'Phone':number.strip('tel:')})
+    query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.ContactQuery")
+    if query.GetResultCount():
+      name = query.GetResult()['Name']
+    else:
+      name = number.strip('tel:')
+    cache[number] = name
+    return name
+
+def destroy(win, event, *args, **kargs):
+  global message_list
+  global signal_list
+  global function_list
+  global cache
+  print "kabum"
+  for bubble in message_list:
+    bubble.delete()
+    del bubble
+
+  for signal in signal_list:
+    signal.remove()
+    del signal
+
+  for function in function_list:
+    function()
+
+  message_list = []
+  signal_list = []
+  function_list
+  cache = {}
+  win.hide()
+#  elementary.exit()
+
+# define some nice dbus helper, which I really like, cause make code easier to read :)
+def getDbusObject (bus, busname , objectpath , interface):
+        dbusObject = bus.get_object(busname, objectpath)
+        return dbus.Interface(dbusObject, dbus_interface=interface)
+
+bus = dbus.SystemBus(mainloop = e_dbus.DBusEcoreMainLoop())
+
+initialized = False
+while (not initialized):  
+  try:
+    messages = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Messages", "org.freesmartphone.PIM.Messages")
+    contacts = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Contacts", "org.freesmartphone.PIM.Contacts")
+    calls = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Calls", "org.freesmartphone.PIM.Calls")
+    initialized = True
+  except:
+    print "Init failed"
+    time.sleep(10)
+
+elementary.init()
+
+elementary.c_elementary.finger_size_set(90)
+
+def dbus_ok():
+  pass
+
+def dbus_err(x):
+  print "dbus error! Msg: " + str(x)
+
+def handle_csm(msg, text, data):
+  try:
+    content = data['Content']
+#    text.text_set(elementary.Entry.utf8_to_markup(content))
+    if not data['MessageRead']:
+      msg.Update({'MessageRead':1})
+  except KeyError:
+    pass
+
+def display_message_status(icon, out, text, data):
+
+  something = 0
+
+  try:
+    content = data['Content']
+    text.text_set(elementary.Entry.utf8_to_markup(content))
+    something = 1
+  except KeyError:
+    pass 
+
+  try:
+    processing = data['Processing']
+    something = 1
+  except:
+    processing = 0
+
+  try:
+    sent = data['MessageSent']
+    something = 1
+  except:
+    sent = 0
+
+  try:
+    read = data['MessageRead']
+    something = 1
+  except:
+    read = 0
+
+  try:
+    delivered = data['SMS-delivered']
+    sent = 1
+    something = 1
+  except:
+    delivered = -1
+
+  if not something:
+    return 0
+
+  print "Out: " + str(out)
+  print "Processing: " + str(processing)
+  print "Sent: " + str(sent)
+  print "Read: " + str(read)
+  print "Delivered: " + str(delivered)
+
+  if out:
+    if processing:
+      if sent:
+        text='unknown'
+      else:
+        text='sending'
+    else:
+      if sent:
+        if delivered==1:
+          text='delivered'
+        elif delivered==0:
+          text='notdelivered'
+        else:
+          text='sent'
+      else:
+        text='unsent'
+  else:
+    if read:
+      text='read'
+    else:
+      text='unread'
+  icon.file_set("/usr/share/pixmaps/opimd-utils/"+text+".png")
+
+def show_msg(msg, box, bubble, text, obj, *args, **kwargs):
+  obj.delete()
+  bubble.content_set(box)
+  box.show()
+  msg.Update({'MessageRead':1}, reply_handler=dbus_ok, error_handler=dbus_err)
+  signal = msg.connect_to_signal("MessageUpdated", partial(handle_csm, msg, text))
+  signal_list.append(signal)
+
+def close_win(obj, event, *args, **kwargs):
+  destroy(win, event, args, kwargs)
+
+def delete_msg(msg, win, obj, event, *args, **kwargs):
+  msg.Delete()
+  destroy(win, event, args, kwargs)
+
+def open_inbox(obj, event, *args, **kwargs):
+  system("opimd-messages &")
+  destroy(win, event, args, kwargs)
+
+def open_phonelog(obj, event, *args, **kwargs):
+  system("phonelog &")
+  destroy(win, event, args, kwargs) 
+
+def resolve_time(t):
+  try:
+    t = float(t)
+  except:
+    return ''
+  if time.time()-t < 24*60*60:
+    return time.strftime('%H:%M',time.localtime(t))
+  elif time.time()-t < 24*60*60*2:
+    return 'Yesterday'
+  else:
+    return time.strftime('%d %b',time.localtime(t))
+
+win = elementary.Window("opimd-notifier", 1)
+win.title_set("Notifier")
+
+bg = elementary.Background(win)
+win.resize_object_add(bg)
+bg.show()
+
+mainbox = elementary.Box(win)
+mainbox.show()
+
+scroll = elementary.Scroller(win)
+win.resize_object_add(mainbox)
+scroll.show()
+bg.size_hint_min_set(100, 350)
+scroll.bounce_set(0, 1)
+scroll.size_hint_weight_set(1.0, 1.0)
+scroll.size_hint_align_set(-1.0, -1.0)
+mainbox.pack_start(scroll)
+
+box = elementary.Box(win)
+box.show()
+
+box.size_hint_weight_set(1.0, 0.0)
+box.size_hint_align_set(-1.0, -1.0)
+
+scroll.content_set(box)
+
+boxb = elementary.Box(win)
+boxb.show()
+mainbox.pack_end(boxb)
+boxb.size_hint_weight_set(-1.0, 0.0)
+boxb.size_hint_align_set(-1.0, -1.0)
+boxb.horizontal_set(1)
+
+hoversel = elementary.Hoversel(win)
+hoversel.hover_parent_set(win)
+hoversel.label_set("Go to...")
+hoversel.show()
+
+#inbox = elementary.Button(win)
+#inbox.show()
+#inbox.clicked = open_inbox
+hoversel.size_hint_weight_set(1.0, 0.0)
+hoversel.size_hint_align_set(-1.0, 0.0)
+#inbox.label_set("Go to inbox")
+#inbox_icon = elementary.Icon(hoversel)
+#inbox_icon.file_set(MESSAGES_ICON)
+#inbox_icon.scale_set(1, 1)
+#inbox.icon_set(inbox_icon)
+
+hoversel.scale_set(1.0)
+
+hoversel.item_add('Phone log', PHONELOG_ICON,
+1, open_phonelog)
+hoversel.item_add('Messages inbox', MESSAGES_ICON, 
+1, open_inbox)
+
+
+boxb.pack_start(hoversel)
+
+#delete = elementary.Button(win)
+#delete.show()
+#delete.size_hint_align_set(-1.0, 0.0)
+#delete.clicked = partial(delete_msg, query, win)
+#delete.label_set("Delete")
+#boxb.pack_end(delete)
+
+close = elementary.Button(win)
+close.show()
+close.size_hint_align_set(-1.0, 0.0)
+close.clicked = close_win
+close.label_set("Close")
+boxb.pack_end(close)
+
+win.destroy = destroy
+
+message_list = []
+signal_list = []
+function_list = []
+
+def missed_call(x, just_unread = False):
+  print "Query: " + x
+  query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.Call")
+  result = query.GetContent()
+
+  function_list.append(partial(query.Update,{'New':0},reply_handler=dbus_ok, error_handler=dbus_err))
+
+  bubble = elementary.Bubble(win)
+  text = elementary.AnchorBlock(win)
+  text.show()
+  text.size_hint_weight_set(1.0, 0.0)
+  text.size_hint_align_set(-1.0, -1.0)
+
+  icon = elementary.Icon(win)
+  icon.show()   
+  bubble.icon_set(icon)
+
+  icon.file_set("/usr/share/pixmaps/opimd-utils/phonecall.png")
+
+  timestamp = time.strftime('%H:%M:%S, %d %b %Y',time.localtime(float(result['Timestamp'])))
+  text.text_set('Missed call at ' + timestamp)
+  if result.has_key('Peer'):
+    caller = resolve_phone(result['Peer'])
+  else:
+    caller = ''
+  bubble.label_set(caller)
+  bubble.info_set(resolve_time(result['Timestamp']))
+
+  bubble.content_set(text)
+  bubble.show()
+  bubble.size_hint_weight_set(1.0, 0.0)
+  bubble.size_hint_align_set(-1.0, -1.0)
+
+  message_list.append(bubble)
+
+  box.pack_start(bubble)
+
+  print "Finished" # finito, fertig, koniec etc.
+  win.show()
+
+def incoming_message(x, just_unread = False):
+  print "Query: " + x
+  query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.Message")
+  result = query.GetContent()
+
+  bubble = elementary.Bubble(win)
+  text = elementary.AnchorBlock(win)
+
+  text.text_set(elementary.Entry.utf8_to_markup(result['Content']))
+  text.show()
+  text.size_hint_weight_set(1.0, 0.0)
+  text.size_hint_align_set(-1.0, -1.0)
+
+  icon = elementary.Icon(win)
+  icon.show()
+  bubble.icon_set(icon)
+
+  if result.has_key('Timestamp'):
+    timestamp = resolve_time(result['Timestamp'])
+  else:
+    timestamp = ''
+
+  if result['Direction']=='in':
+    out = 0
+    number = result['Sender']
+    name = resolve_phone(number)
+    bubble.label_set(name)
+    bubble.info_set(timestamp)
+
+    try:
+      smsclass=result['SMS-message-class']
+    except KeyError:
+      smsclass=1
+
+    if smsclass!=0:
+      replybtn = elementary.Button(win)
+      replybtn.label_set("Reply")
+      replybtn.show()
+      replybtn.size_hint_weight_set(0.0, 1.0)
+      replybtn.size_hint_align_set(1.0, -1.0)
+
+      textbox = elementary.Box(win)
+      textbox.horizontal_set(1)
+      textbox.pack_start(text)
+      textbox.hide()
+      textbox.pack_end(replybtn)
+
+      read = elementary.Button(win)
+      if just_unread:
+        read.label_set("Unread message!")
+      else:
+        read.label_set("New message arrived!")
+      read.clicked = partial(show_msg, query, textbox, bubble, text, read)
+
+      read.show()
+      replybtn.clicked = partial(opimd_reply.reply, [number, name], '', bus, win, incoming_message, win.show)
+      bubble.content_set(read)
+    else:
+      text.show()
+      query.Update({'MessageRead':1}, reply_handler=dbus_ok, error_handler=dbus_err)
+      bubble.content_set(text)
+  else:
+    out = 1
+    bubble.corner_set("top_right")
+    number = result['Recipient']
+    name = resolve_phone(number)
+    bubble.info_set(name)
+#    bubble.label_set(timestamp)
+    text.show()
+    bubble.content_set(text)
+
+  display_message_status(icon, out, text, result)
+
+#  messageproxy = getDbusObject(bus, "org.freesmartphone.opimd", result['Path'], "org.freesmartphone.PIM.Message")
+  signal = query.connect_to_signal("MessageUpdated", partial(display_message_status, icon, out, text))
+
+#  photo = elementary.Photo(win)
+#  photo.size_set(1)
+#  bubble.icon_set(photo)
+#  photo.show()
+
+  bubble.show()
+  bubble.size_hint_weight_set(1.0, 0.0)
+  bubble.size_hint_align_set(-1.0, -1.0)
+
+  message_list.append(bubble)
+  signal_list.append(signal)
+
+  box.pack_start(bubble)
+
+  print "Finished" # finito, fertig, koniec etc.
+  win.show()
+
+messages.connect_to_signal("IncomingMessage", incoming_message)
+calls.connect_to_signal("MissedCall", missed_call)
+
+x = messages.Query({'Direction':'in','MessageRead':0})
+query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.MessageQuery")
+results_num = query.GetResultCount()
+for i in range(0, results_num):
+  path = query.GetMessagePath()
+  print path
+  incoming_message(path, True)
+
+#incoming_message("/org/freesmartphone/PIM/Messages/339")
+#incoming_message("/org/freesmartphone/PIM/Messages/340")
+
+x = calls.Query({'Direction':'in','New':1,'Answered':0})
+query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.CallQuery")
+results_num = query.GetResultCount()
+for i in range(0, results_num):
+  path = query.GetCallPath()
+  print path
+  missed_call(path, True)
+
+#missed_call("/org/freesmartphone/PIM/Calls/0")
+
+print "Ready"
+
+elementary.run()
+elementary.shutdown()

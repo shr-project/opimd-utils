@@ -1,0 +1,323 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import dbus, e_dbus
+from sys import argv
+import time
+from functools import partial
+import elementary
+from opimd_utils import opimd_reply
+
+message_list = []
+cache = {}
+
+def resolve_phone(number):
+  if number in cache:
+    return cache[number]
+  else:
+    x = contacts.Query({'Phone':number.strip('tel:')})
+    query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.ContactQuery")
+    if query.GetResultCount():
+      name = query.GetResult()['Name']
+    else:
+      name = number.strip('tel:')
+    cache[number] = name
+    return name
+
+def resolve_time(t):
+  try:
+    t = float(t)
+  except:
+    return '' 
+  if time.time()-t < 24*60*60:
+    return time.strftime('%H:%M',time.localtime(t))
+  elif time.time()-t < 24*60*60*2:
+    return 'Yesterday'
+  else:
+    return time.strftime('%d %b',time.localtime(t))
+
+def delete_msg(path, bubble, button, event, *args, **kwargs):
+  message = getDbusObject (bus, "org.freesmartphone.opimd", path, "org.freesmartphone.PIM.Message")
+  message.Delete()
+  bubble.delete()
+  del bubble
+
+def destroy(obj, event, *args, **kargs):
+  print "kabum"
+  elementary.exit()
+
+# define some nice dbus helper, which I really like, cause make code easier to read :)
+def getDbusObject (bus, busname , objectpath , interface):
+        dbusObject = bus.get_object(busname, objectpath)
+        return dbus.Interface(dbusObject, dbus_interface=interface)
+
+bus = dbus.SystemBus(mainloop = e_dbus.DBusEcoreMainLoop())
+
+sources = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Sources", "org.freesmartphone.PIM.Sources")
+init=False
+try:
+  if argv[1]=='init':
+    print "Init entries..."
+    sources.InitAllEntries()
+except IndexError:
+  pass
+
+def display_message_status(icon, out, data):
+  something = 0
+
+  try:
+    processing = data['Processing']
+    something = 1
+  except:
+    processing = 0
+
+  try:
+    sent = data['MessageSent']
+    something = 1
+  except:
+    sent = 0
+
+  try:
+    read = data['MessageRead']
+    something = 1
+  except:
+    read = 0
+
+  try:
+    delivered = data['SMS-delivered']
+    sent = 1
+    something = 1
+  except:
+    delivered = -1
+
+  if not something:
+    return 0
+
+  print "Out: " + str(out)   
+  print "Processing: " + str(processing)
+  print "Sent: " + str(sent)
+  print "Read: " + str(read)
+  print "Delivered: " + str(delivered)
+  if out:
+    if processing:
+      if sent:
+        text='unknown'
+      else:
+        text='sending'
+    else:
+      if sent:
+        if delivered==1:
+          text='delivered'
+        elif delivered==0:
+          text='notdelivered'
+        else:
+          text='sent'
+      else:
+        text='unsent'
+  else:
+    if read:
+      text='read'
+    else:
+      text='unread'
+  icon.file_set("/usr/share/pixmaps/opimd-utils/"+text+".png")
+#  label.label_set(text)  
+
+def render_message(message, incoming = False):
+  bubble = elementary.Bubble(win)
+
+  textbox = elementary.Box(win)
+  text = elementary.AnchorBlock(win)
+  textbox.pack_start(text)
+
+  text.text_set(elementary.Entry.utf8_to_markup(message['Content']))
+  text.show()
+
+  if message.has_key('Timestamp'):
+    timestamp = resolve_time(message['Timestamp'])
+  else:
+    timestamp = ''
+
+  icon = elementary.Icon(win)
+  icon.show()
+  bubble.icon_set(icon)
+
+  if message['Direction']=='in':
+    out = 0
+    number = message['Sender']
+    name = resolve_phone(number)
+    bubble.label_set(name)
+    bubble.info_set(timestamp)
+  else:
+    out = 1
+    bubble.corner_set("top_right")
+    number = message['Recipient']
+    name = resolve_phone(number)
+    bubble.info_set(name)
+#    bubble.label_set(timestamp)
+
+  display_message_status(icon, out, message)
+
+  messageproxy = getDbusObject(bus, "org.freesmartphone.opimd", message['Path'], "org.freesmartphone.PIM.Message")
+  signal = messageproxy.connect_to_signal("MessageUpdated", partial(display_message_status, icon, out))
+
+
+#  photo = elementary.Photo(win)
+#  photo.size_set(3)
+#  bubble.icon_set(photo)
+#  photo.show()
+
+  bubble.content_set(textbox)
+
+  bubble.show()
+  bubble.size_hint_weight_set(-1.0, 0.0)
+  bubble.size_hint_align_set(-1.0, -1.0)
+
+  btnframe = elementary.Frame(win)
+  btnframe.style_set("outdent_bottom")
+  btnframe.size_hint_weight_set(1.0, 0.0)
+  btnframe.size_hint_align_set(-1.0, -1.0)
+  btnframe.show()
+
+  deletebutton = elementary.Button(win)
+  deletebutton.label_set("Delete")
+  deletebutton.clicked = partial(delete_msg, message['Path'], bubble)
+  deletebutton.show()
+  deletebutton.size_hint_weight_set(1.0, 0.0)
+  deletebutton.size_hint_align_set(1.0, -1.0)
+
+  hbox = elementary.Box(win)
+  hbox.horizontal_set(1)
+  hbox.show()
+
+  if message['Direction']=='in':
+    replybutton = elementary.Button(win)
+    replybutton.label_set("Reply")
+    replybutton.clicked = partial(opimd_reply.reply, [number, name], '', bus, win, None, None)
+    replybutton.show()
+    replybutton.size_hint_weight_set(0.0, 0.0)
+    replybutton.size_hint_align_set(0.0, -1.0)
+    hbox.pack_start(replybutton)
+
+  hbox.pack_end(deletebutton)
+
+  btnframe.content_set(hbox)
+
+  textbox.size_hint_weight_set(-1.0, 0.0)
+  textbox.size_hint_align_set(-1.0, -1.0)
+  text.size_hint_weight_set(-1.0, 0.0)
+  text.size_hint_align_set(-1.0, -1.0)
+
+  textbox.pack_end(btnframe)
+  textbox.show()
+
+  message_list.append((bubble,signal))
+  if incoming:
+    box.pack_start(bubble)
+  else:
+    box.pack_end(bubble)
+
+  win.show()
+
+def add_new_message(q):
+  message = getDbusObject (bus, "org.freesmartphone.opimd", q, "org.freesmartphone.PIM.Message")
+  result = message.GetContent()
+  render_message(result, True)
+
+messages = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Messages", "org.freesmartphone.PIM.Messages")
+contacts = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Contacts", "org.freesmartphone.PIM.Contacts")
+
+print "Querying..."
+x = messages.Query({})
+
+print "Query: " + x
+query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.MessageQuery")
+total_results = query.GetResultCount()
+print "Number of results: " + str(total_results) 
+
+elementary.init()
+win = elementary.Window('pim-test', elementary.ELM_WIN_BASIC)
+win.title_set('Messages - opimd')
+
+bg = elementary.Background(win)
+win.resize_object_add(bg)
+bg.show()
+
+scroll = elementary.Scroller(win)
+win.resize_object_add(scroll)
+scroll.show()
+scroll.bounce_set(0, 0)
+
+box = elementary.Box(win)
+box.show()
+
+box.size_hint_weight_set(1.0, 0.0)
+box.size_hint_align_set(-1.0, -1.0)
+
+scroll.content_set(box)
+
+#total_results = 10
+#results = query.GetMultipleResults(total_results)
+
+def end(x):
+  print str(x)
+
+def go_next(obj, event, *args, **kwargs):
+  global message_list
+  for message in message_list:
+    try:
+      bubble = message[0]
+      signal = message[1]
+      bubble.delete()
+      signal.remove()
+      del signal
+      del bubble
+    except:
+      pass
+  message_list = []
+  try:
+    obj.delete()
+  except:
+    print "FIXME: why it sometimes fails?"
+  proceed()  
+
+def proceed():
+  global counter
+  if counter<5:
+    query.GetResult(reply_handler=next_result, error_handler=end)
+  else:
+    print "Counter reached"
+    next = elementary.Button(win)
+    next.label_set("Next page")
+    next.scale_set(2.0)
+    next.show()
+    next.clicked = go_next
+    box.pack_end(next)
+    counter = 0
+
+def next_result(res):
+  global counter
+  counter = counter + 1
+#  render_message(res)
+  query.Skip(-2, reply_handler=proceed, error_handler=end)
+  render_message(res)
+
+#for i in results:
+  #print "Result nr "+str(i+1)+":"
+  #result = query.GetResult()
+
+#  render_message(results[i])
+
+counter = 0
+query.Skip(total_results-1)
+proceed()
+
+print "Finished" # finito, fertig, koniec etc.
+
+win.destroy = destroy
+#win.show()
+
+messages.connect_to_signal("NewMessage", add_new_message)
+
+elementary.run()
+query.Dispose()
+elementary.shutdown()
