@@ -84,7 +84,7 @@ print "------------------------------"
 if len(argv)==1 or argv[1]=='--help' or argv[1]=='-h':
   print "Usage: "+argv[0]+" domain job [args]"
   print ""
-  print "domain: can be c (or contacts) or m (or messages). Defines what domain " + argv[0] + " will use."
+  print "domain: can be c (or contacts), m (or messages) and ca (or calls). Defines what domain " + argv[0] + " will use."
   print "job: can be query, add, edit, delete or init."
   print "args: depending of job:"
   print "      query:  every pair of arguments is combined to fields (name, value)"
