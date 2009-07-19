@@ -26,7 +26,13 @@ def prepare_dict(data):
     if args[0] == '_limit':
       dict[args[0]]=int(args[1])
     else:
-      dict[args[0]]=args[1]
+      if dict.has_key(args[0]):
+          if type(dict[args[0]])==list:
+              dict[args[0]].append(args[1])
+          else:
+              dict[args[0]]=[dict[args[0]], args[1]]
+      else:
+          dict[args[0]]=args[1]
     args = args[2:]
   return dict
 
@@ -48,14 +54,18 @@ def query(data):
     print "Result nr "+str(i+1)+":"
     results = query.GetResult()
     for field in results:
-      print "  "+field+": "+str(results[field])
+      if type(results[field]) == dbus.Array:
+          for value in results[field]:
+              print "  "+field+": "+str(value)
+      else:
+          print "  "+field+": "+str(results[field])
   query.Dispose() # delete query result from memory
 
 def add(data):
   check_args(data)
   dict = prepare_dict(data)
   print "Adding item " + str(dict) + " using " + default_backend(domain+'s') + " backend..."
-  interface.Add(dict)  
+  interface.Add(dict)
   query(data)
 
 def edit(id, data):
