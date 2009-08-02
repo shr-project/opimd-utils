@@ -1,0 +1,200 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import dbus, e_dbus
+from sys import argv
+from functools import partial
+from opimd_utils import opimd_reply
+import elementary
+
+# define some nice dbus helper, which I really like, cause make code easier to read :)
+def getDbusObject (bus, busname , objectpath , interface):
+        dbusObject = bus.get_object(busname, objectpath)
+        return dbus.Interface(dbusObject, dbus_interface=interface)
+
+bus = dbus.SystemBus(mainloop = e_dbus.DBusEcoreMainLoop())
+
+contacts = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Contacts", "org.freesmartphone.PIM.Contacts")
+
+elementary.init()
+
+#elementary.c_elementary.finger_size_set(45)
+
+#elementary.c_elementary.scale_set(2.0)
+
+def dbus_error(x):
+  print "dbus error: " + str(x)
+
+def destroy(win, event, *args, **kargs):
+  print "kabum"
+  elementary.exit()
+
+win = elementary.Window("opimd-contacts", 0)
+win.title_set("opimd Contacts")
+
+bg = elementary.Background(win)
+win.resize_object_add(bg)
+bg.show()
+
+mainbox = elementary.Box(win)
+mainbox.show()
+win.resize_object_add(mainbox)
+
+win.destroy = destroy
+
+def sanity_name(name):
+  #if name[len(name)-1:]=='\n':
+  #  name=name[:len(name)-1]
+  result = '^'
+  for char in name:
+    if char!='\n':
+      result += '['+char.lower()+char.upper()+']'
+  print result
+  return result
+
+def query_contacts_query_handler(callback, x):
+  query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.ContactQuery")
+
+  #num = query.GetResultCount()
+
+  query.GetMultipleResults(20, reply_handler=callback, error_handler=dbus_error)
+
+
+def query_contacts(callback, name = None):
+  if name:
+    name = sanity_name(name)
+    dict = {'Name':name, '_limit':3}
+  else:
+    dict = {'_sortby':'Name'}
+  contacts.Query(dict, reply_handler=partial(query_contacts_query_handler, callback), error_handler=dbus_error)
+
+#  for contact in contactlist:
+#    yield contact
+
+list = elementary.List(win)
+list.size_hint_align_set(-1.0, -1.0)
+list.size_hint_weight_set(1.0, 1.0)
+mainbox.pack_start(list)
+list.show()
+
+def display_contacts(list, name = None):
+  loading = elementary.InnerWindow(win)
+  win.resize_object_add(loading)
+  loading.show()
+  loading.style_set('minimal')
+  label = elementary.Label(loading)
+  label.scale_set(2.0)
+  loading.content_set(label)
+  label.label_set('Searching...')
+  label.show()
+  loading.show()
+  query_contacts(partial(display_contacts_callback, loading), name)
+
+def display_contacts_callback(loading, contact_list):
+  list.clear()
+  for contact in contact_list:
+    print contact['Path']
+    photo = elementary.Photo(list)
+    photo.scale_set(1.0) 
+    name = contact.get('Name')
+    if not name:
+      name = contact.get('Phone')
+      if not name:
+        name = contact.get('E-mail')
+        if not name:
+          name = '<???>'
+    list.item_append(name, photo, None, None)
+  list.go()
+  if loading:
+    loading.delete()
+
+def search_changed(frame, obj, *args, **kwargs):
+  text = obj.markup_to_utf8(obj.entry_get())
+  if text[len(text)-2:]=="\n\n":
+    obj.delete()
+    close_search(frame)
+  else:
+    display_contacts(list, text)
+
+def close_search(frame, *args, **kwargs):
+  print "deleting"
+  print frame
+  frame.delete()
+  del frame
+  display_contacts(list)
+  make_downbox()
+
+def nothing(*args, **kwargs):
+  print "nothing called"
+
+def search(downbox, obj, *args, **kwargs):
+  frame = elementary.Frame(win)
+  frame.label_set('Type name to search...')
+  frame.show()
+  frame.size_hint_weight_set(1.0, 0.0)
+  frame.size_hint_align_set(-1.0, -1.0)
+
+  entryscr = elementary.Scroller(frame)
+  entryscr.content_min_limit(0,1)
+  entryscr.bounce_set(0, 0)
+  entryscr.policy_set(elementary.ELM_SCROLLER_POLICY_OFF, elementary.ELM_SCROLLER_POLICY_OFF)
+  entryscr.size_hint_weight_set(1.0, 0.0)
+  entryscr.size_hint_align_set(-1.0, -1.0)
+  entry = elementary.Entry(frame)
+  entry.show()
+  entry.size_hint_weight_set(1.0, 0.0)
+  entry.size_hint_align_set(-1.0, -1.0)
+#  entry.single_line_set(True)
+#        entry.scale_set(3.0)
+  entryscr.content_set(entry)
+  entryscr.show()
+
+  entry.focus()
+
+#  entry._callback_add('key,enter', partial(close_search, frame))
+
+  entry._callback_add('changed', partial(search_changed, frame))
+
+  downbox.delete()
+
+  frame.content_set(entryscr)
+
+  mainbox.pack_start(frame)
+  obj.clicked = nothing
+  
+def make_downbox():
+  global downbox
+  downbox = elementary.Box(win)
+  downbox.show()
+  downbox.size_hint_align_set(-1.0, 0.0)
+  downbox.size_hint_weight_set(1.0, 0.0)
+  downbox.horizontal_set(True)
+  mainbox.pack_end(downbox)
+
+  searchbtn = elementary.Button(win)
+  searchbtn.label_set('Search')
+  downbox.pack_start(searchbtn)
+  searchbtn.scale_set(2.0)
+  searchbtn.size_hint_align_set(1.0, 0.0)
+  searchbtn.size_hint_align_set(-1.0, 0.0)
+  searchbtn.clicked = partial(search, downbox)
+  searchbtn.show()
+
+  exitbtn = elementary.Button(win)
+  exitbtn.label_set('Close')
+  downbox.pack_end(exitbtn)
+  exitbtn.scale_set(2.0)
+  exitbtn.show()
+  exitbtn.size_hint_align_set(-1.0, 0.0)
+  exitbtn.clicked = destroy
+
+make_downbox()
+
+win.show()
+
+display_contacts(list)
+
+elementary.run()
+elementary.shutdown()
+
+print "bye"
