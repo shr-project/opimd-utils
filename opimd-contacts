@@ -5,6 +5,7 @@ import dbus, e_dbus
 from sys import argv
 from functools import partial
 from opimd_utils import opimd_reply
+from re import escape
 import elementary
 
 # define some nice dbus helper, which I really like, cause make code easier to read :)
@@ -38,9 +39,13 @@ bg = elementary.Background(win)
 win.resize_object_add(bg)
 bg.show()
 
+pager = elementary.Pager(win)
+win.resize_object_add(pager)
+pager.show()
+
 mainbox = elementary.Box(win)
 mainbox.show()
-win.resize_object_add(mainbox)
+pager.content_push(mainbox)
 
 win.destroy = destroy
 
@@ -52,9 +57,9 @@ def sanity_name(name):
       lower = char.lower()
       upper = char.upper()
       if lower!=upper:
-        result += '['+char.upper()+char.lower()+']'
+        result += '['+escape(char.upper()+char.lower())+']'
       else:
-        result += char
+        result += escape(char)
 #  print result
   return result
 
@@ -102,7 +107,7 @@ def display_contacts_callback(loading, contact_list):
   for contact in contact_list:
 #    print contact['Path']
     photo = elementary.Photo(list)
-    photo.scale_set(1.0) 
+    photo.scale_set(0.9) 
     name = contact.get('Name')
     if not name:
       name = contact.get('Phone')
@@ -110,7 +115,7 @@ def display_contacts_callback(loading, contact_list):
         name = contact.get('E-mail')
         if not name:
           name = '<???>'
-    list.item_append(name, photo, None, None)
+    list.item_append(name, photo, None, partial(display_contact, contact['Path'], contact))
   list.go()
   if loading:
     loading.delete()
@@ -139,13 +144,13 @@ def search(downbox, obj, *args, **kwargs):
   frame.size_hint_weight_set(1.0, 0.0)
   frame.size_hint_align_set(-1.0, -1.0)
 
-  entryscr = elementary.Scroller(frame)
+  entryscr = elementary.Scroller(win)
   entryscr.content_min_limit(0,1)
   entryscr.bounce_set(0, 0)
   entryscr.policy_set(elementary.ELM_SCROLLER_POLICY_OFF, elementary.ELM_SCROLLER_POLICY_OFF)
   entryscr.size_hint_weight_set(1.0, 0.0)
   entryscr.size_hint_align_set(-1.0, -1.0)
-  entry = elementary.Entry(frame)
+  entry = elementary.Entry(win)
   entry.show()
   entry.size_hint_weight_set(1.0, 0.0)
   entry.size_hint_align_set(-1.0, -1.0)
@@ -163,7 +168,42 @@ def search(downbox, obj, *args, **kwargs):
 
   mainbox.pack_start(frame)
   obj.clicked = nothing
-  
+
+def pager_pop(pager, *args, **kwargs):
+  pager.content_pop()
+
+def display_contact(path, data = None, *args, **kwargs):
+  print "displaying " + path
+  box = elementary.Box(pager)
+  box.show()
+  pager.content_push(box)
+
+  backbtn = elementary.Button(box)
+  backbtn.label_set('Back')
+  backbtn.show()
+  backbtn.clicked = partial(pager_pop, pager)
+  box.pack_start(backbtn)
+
+  scr = elementary.Scroller(box)
+#  scr.content_min_limit(0,1)
+  scr.bounce_set(0, 0)
+  scr.policy_set(elementary.ELM_SCROLLER_POLICY_OFF, elementary.ELM_SCROLLER_POLICY_AUTO)
+  scr.size_hint_weight_set(1.0, 1.0)
+  scr.size_hint_align_set(-1.0, -1.0)
+
+  scrbox = elementary.Box(scr)
+
+  header = elementary.Box(scrbox)
+
+
+#  entry.size_hint_weight_set(1.0, 1.0)
+#  entry.size_hint_align_set(-1.0, -1.0)
+
+  scr.content_set(scrbox)
+  scr.show()
+
+  box.pack_start(scr)
+
 def make_downbox():
   global downbox
   downbox = elementary.Box(win)
