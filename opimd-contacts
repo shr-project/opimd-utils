@@ -18,9 +18,9 @@ contacts = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/
 
 elementary.init()
 
-#elementary.c_elementary.finger_size_set(45)
+elementary.c_elementary.finger_size_set(80)
 
-#elementary.c_elementary.scale_set(2.0)
+#elementary.c_elementary.scale_set(1.0)
 
 def dbus_error(x):
   print "dbus error: " + str(x)
@@ -46,9 +46,14 @@ def sanity_name(name):
   #if name[len(name)-1:]=='\n':
   #  name=name[:len(name)-1]
   result = '^'
+  name = name.decode('utf-8')
   for char in name:
+    print char
     if char!='\n':
-      result += '['+char.lower()+char.upper()+']'
+      try:
+        result += '['+char.lower()+char.upper()+']'
+      except UnicodeDecodeError:
+        result += char
   print result
   return result
 
@@ -166,16 +171,16 @@ def make_downbox():
   global downbox
   downbox = elementary.Box(win)
   downbox.show()
-  downbox.size_hint_align_set(-1.0, 0.0)
   downbox.size_hint_weight_set(1.0, 0.0)
+  downbox.size_hint_align_set(-1.0, 0.0)
   downbox.horizontal_set(True)
   mainbox.pack_end(downbox)
 
   searchbtn = elementary.Button(win)
   searchbtn.label_set('Search')
   downbox.pack_start(searchbtn)
-  searchbtn.scale_set(2.0)
-  searchbtn.size_hint_align_set(1.0, 0.0)
+#  searchbtn.scale_set(2.0)
+  searchbtn.size_hint_weight_set(1.0, 0.0)
   searchbtn.size_hint_align_set(-1.0, 0.0)
   searchbtn.clicked = partial(search, downbox)
   searchbtn.show()
@@ -183,7 +188,7 @@ def make_downbox():
   exitbtn = elementary.Button(win)
   exitbtn.label_set('Close')
   downbox.pack_end(exitbtn)
-  exitbtn.scale_set(2.0)
+#  exitbtn.scale_set(2.0)
   exitbtn.show()
   exitbtn.size_hint_align_set(-1.0, 0.0)
   exitbtn.clicked = destroy
