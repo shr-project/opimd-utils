@@ -21,6 +21,9 @@ elementary.init()
 elementary.c_elementary.finger_size_set(80)
 #elementary.c_elementary.scale_set(1.0)
 
+def dbus_ok(*args, **kwargs):
+  pass
+
 def dbus_error(x):
   print "dbus error: " + str(x)
 
@@ -55,21 +58,25 @@ def sanity_name(name):
 #  print result
   return result
 
-def query_contacts_query_handler(callback, x):
+def query_contacts_query_handler(callback, x, *args, **kwargs):
   query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.ContactQuery")
 
   #num = query.GetResultCount()
 
   query.GetMultipleResults(20, reply_handler=callback, error_handler=dbus_error)
 
+  if not kwargs.get('dontdispose'):
+    query.Dispose(reply_handler=dbus_ok, error_handler=dbus_error)
 
 def query_contacts(callback, name = None):
   if name:
     name = sanity_name(name)
     dict = {'Name':name, '_limit':3}
+    dispose = False
   else:
     dict = {'_sortby':'Name'}
-  contacts.Query(dict, reply_handler=partial(query_contacts_query_handler, callback), error_handler=dbus_error)
+    dispose = True
+  contacts.Query(dict, reply_handler=partial(query_contacts_query_handler, callback, dontdispose=dispose), error_handler=dbus_error)
 
 list = elementary.List(win)
 list.size_hint_align_set(-1.0, -1.0)
