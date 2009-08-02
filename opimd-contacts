@@ -173,19 +173,46 @@ def pager_pop(pager, *args, **kwargs):
   pager.content_pop()
 
 def display_contact(path, data = None, *args, **kwargs):
-  print "displaying " + path
+#  print "displaying " + path
   box = elementary.Box(pager)
   box.show()
   pager.content_push(box)
 
-  backbtn = elementary.Button(box)
+  bottombox = elementary.Box(box)
+  bottombox.size_hint_weight_set(1.0, 0.0)
+  bottombox.size_hint_align_set(-1.0, 0.0)
+  bottombox.horizontal_set(True)
+  bottombox.show()
+  box.pack_end(bottombox)
+
+  callbtn = elementary.Button(bottombox)
+  callbtn.label_set('Call')
+  callbtn.show()
+  callbtn.clicked = partial(pager_pop, pager)
+  bottombox.pack_end(callbtn)
+
+  smsbtn = elementary.Button(bottombox)
+  smsbtn.label_set('SMS')
+  smsbtn.show()
+  smsbtn.clicked = partial(pager_pop, pager)
+  bottombox.pack_end(smsbtn)
+
+  editbtn = elementary.Button(bottombox)
+  editbtn.label_set('Edit')
+  editbtn.show()
+  editbtn.clicked = partial(pager_pop, pager)
+  bottombox.pack_end(editbtn)
+
+
+  backbtn = elementary.Button(bottombox)
+  backbtn.size_hint_weight_set(1.0, 0.0)
+  backbtn.size_hint_align_set(-1.0, 0.0)
   backbtn.label_set('Back')
   backbtn.show()
   backbtn.clicked = partial(pager_pop, pager)
-  box.pack_start(backbtn)
+  bottombox.pack_end(backbtn)
 
   scr = elementary.Scroller(box)
-#  scr.content_min_limit(0,1)
   scr.bounce_set(0, 0)
   scr.policy_set(elementary.ELM_SCROLLER_POLICY_OFF, elementary.ELM_SCROLLER_POLICY_AUTO)
   scr.size_hint_weight_set(1.0, 1.0)
@@ -194,10 +221,44 @@ def display_contact(path, data = None, *args, **kwargs):
   scrbox = elementary.Box(scr)
 
   header = elementary.Box(scrbox)
+  header.horizontal_set(True)
+  header.show()
+  scrbox.pack_start(header)
 
+  photo = elementary.Photo(header)
+  header.pack_start(photo)
+  photo.show()
 
-#  entry.size_hint_weight_set(1.0, 1.0)
-#  entry.size_hint_align_set(-1.0, -1.0)
+  infofr = elementary.Frame(header)
+  infofr.show()
+  infofr.style_set('pad_small')
+  header.pack_end(infofr)
+
+  info = elementary.Box(infofr)
+  info.show()
+  infofr.content_set(info)
+
+  label = elementary.Label(info)
+  label.label_set('<b>'+elementary.Entry.utf8_to_markup(data['Name'])+'</b>')
+  label.show()
+  label.size_hint_align_set(-1.0, 0.0)
+  info.pack_start(label)
+
+  def add_field_to_header(field):
+    if data.get(field[0]):
+      values = data[field[0]]
+      if type(values)==dbus.String:
+        values = [values]
+      for value in values:
+        value = value.replace(field[1],'')
+        label = elementary.Label(info)
+        label.label_set(elementary.Entry.utf8_to_markup(value))
+        label.show()
+        label.size_hint_align_set(-1.0, 0.0)
+        info.pack_end(label)
+
+  for field in (('Phone','tel:'),('E-mail','mail:')):
+    add_field_to_header(field)
 
   scr.content_set(scrbox)
   scr.show()
@@ -220,6 +281,12 @@ def make_downbox():
   searchbtn.size_hint_align_set(-1.0, 0.0)
   searchbtn.clicked = partial(search, downbox)
   searchbtn.show()
+
+  newbtn = elementary.Button(win)
+  newbtn.label_set('New')
+  downbox.pack_start(newbtn)
+  newbtn.size_hint_align_set(-1.0, 0.0)
+  newbtn.show()
 
   exitbtn = elementary.Button(win)
   exitbtn.label_set('Close')
