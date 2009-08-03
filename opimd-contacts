@@ -188,12 +188,35 @@ def inwin_close(dia, *args, **kwargs):
   dia.delete()
   return False
 
+def ussd_ok(dia, *args, **kwargs):
+  dia.delete()
+  print args
+  print kwargs
+
+def ussd_error(dia, label, x, *args, **kwargs):
+  label.label_set('Error while sending USSD request!')
+  timer_add(3, partial(inwin_close, dia))
+  print str(x)
+
 def call(to, *args, **kwargs):
   print "calling to "+to
   if to[:4]=='tel:':
     to = to[4:]
-    gsm = getDbusObject (bus, "org.freesmartphone.ogsmd", "/org/freesmartphone/GSM/Device", "org.freesmartphone.GSM.Call")
-    gsm.Initiate(to, 'voice')
+    if to[len(to)-1]=='#' or len(to)<=2:
+      dia = elementary.InnerWindow(win)
+      win.resize_object_add(dia)
+      dia.activate()
+      dia.show()
+      dia.style_set('minimal')
+      label = elementary.Label(win)
+      label.label_set('Sending USSD request...')
+      label.show()
+      dia.content_set(label)
+      network = getDbusObject (bus, "org.freesmartphone.ogsmd", "/org/freesmartphone/GSM/Device", "org.freesmartphone.GSM.Network")
+      network.SendUssdRequest(to, reply_handler=partial(ussd_ok, dia), error_handler=partial(ussd_error, dia, label))
+    else:
+      call = getDbusObject (bus, "org.freesmartphone.ogsmd", "/org/freesmartphone/GSM/Device", "org.freesmartphone.GSM.Call")
+      call.Initiate(to, 'voice', reply_handler=dbus_ok, error_handler=dbus_error)
 
 def mail(to, *args, **kwargs):
   print "mailing to "+to
