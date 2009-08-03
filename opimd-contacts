@@ -6,6 +6,7 @@ from sys import argv
 from functools import partial
 from opimd_utils import opimd_reply
 from re import escape
+from ecore import timer_add
 import elementary
 
 # define some nice dbus helper, which I really like, cause make code easier to read :)
@@ -115,7 +116,15 @@ def display_contacts_callback(loading, contact_list):
         name = contact.get('E-mail')
         if not name:
           name = '<???>'
-    list.item_append(name, photo, None, partial(display_contact, contact['Path'], contact))
+    if isinstance(name, dbus.Array):
+      name = name[0]
+    callbtn = None
+    if check_contact(contact, 'Phone'):
+      callbtn = elementary.Button(list)
+      callbtn.label_set('Call')
+      callbtn.show()
+      callbtn.clicked = partial(select_field, contact, 'Phone', call)
+    list.item_append(name, photo, callbtn, partial(display_contact, contact['Path'], contact))
   list.go()
   if loading:
     loading.delete()
@@ -172,41 +181,150 @@ def search(downbox, obj, *args, **kwargs):
 def pager_pop(pager, *args, **kwargs):
   pager.content_pop()
 
+def inwin_close(dia, *args, **kwargs):
+  if kwargs.get('callback'):
+    kwargs['callback']()
+  dia.hide()
+  dia.delete()
+  return False
+
+def call(to, *args, **kwargs):
+  print "calling to "+to
+  if to[:4]=='tel:':
+    to = to[4:]
+    gsm = getDbusObject (bus, "org.freesmartphone.ogsmd", "/org/freesmartphone/GSM/Device", "org.freesmartphone.GSM.Call")
+    gsm.Initiate(to, 'voice')
+
+def mail(to, *args, **kwargs):
+  print "mailing to "+to
+  dia = elementary.InnerWindow(win)
+  win.resize_object_add(dia)
+  dia.show()
+  dia.style_set('minimal')
+  label = elementary.Label(win)
+  label.label_set('Not yet implemented')
+  label.show()
+  dia.content_set(label)
+  dia.activate()
+  timer_add(3, partial(inwin_close, dia))
+
+def sms_status(dia, icon, label, status):
+  if status=='storing':
+    dia.show()
+    dia.activate()
+  elif status=='error':
+    dia.hide()
+  elif status=='sent':
+    label.label_set('Message sent!')
+    timer_add(3, partial(inwin_close, dia))
+  elif status=='cancelled':
+    dia.delete()
+
+def sms(to, *args, **kwargs):
+  print "smsing to " + kwargs['contact']['Name'] + ' ' + to
+  dia = elementary.InnerWindow(win)
+  win.resize_object_add(dia)
+  dia.style_set('minimal')
+  label = elementary.Label(dia)
+  label.label_set('Sending...')
+  label.show()
+  dia.content_set(label)
+  opimd_reply.reply([to, kwargs['contact']['Name']], '', bus, win, None, None, partial(sms_status, dia, None, label))
+
+def select_field(contact, fieldname, callback, *args, **kwargs):
+  result=[]
+  for field in contact:
+    if field.lower().endswith(fieldname.lower()):
+      if isinstance(contact[field], dbus.String):
+        values = [contact[field]]
+      else:
+        values = contact[field]
+      for value in values:
+        result.append((field,value))
+
+  if len(result)==1:
+    callback(result[0][1], contact=contact)
+  else:
+    dia = elementary.InnerWindow(win)
+    win.resize_object_add(dia)
+    dia.activate()
+    dia.show()
+
+    box = elementary.Box(win)
+    box.show()
+
+    dia.content_set(box)
+
+    list = elementary.List(win)
+    list.show()
+    box.pack_start(list)
+    list.size_hint_weight_set(1.0, 1.0)
+    list.size_hint_align_set(-1.0, -1.0)
+    for res in result:
+      list.item_append(res[0]+': '+res[1], None, None, partial(inwin_close, dia, callback=partial(callback, res[1], contact=contact)))
+    list.go()
+
+    btn = elementary.Button(win)
+    btn.label_set('Close')
+    btn.size_hint_weight_set(-1.0, 0.0)
+    btn.size_hint_align_set(-1.0, 0.0)
+    btn.show()
+    btn.clicked = partial(inwin_close, dia)
+
+    box.pack_end(btn)
+
+def check_contact(contact, fieldname):
+  for field in contact:
+    if field.lower().endswith(fieldname.lower()):
+      return True
+  return False
+
 def display_contact(path, data = None, *args, **kwargs):
 #  print "displaying " + path
-  box = elementary.Box(pager)
+  box = elementary.Box(win)
   box.show()
   pager.content_push(box)
 
-  bottombox = elementary.Box(box)
+  bottombox = elementary.Box(win)
   bottombox.size_hint_weight_set(1.0, 0.0)
   bottombox.size_hint_align_set(-1.0, 0.0)
   bottombox.horizontal_set(True)
   bottombox.show()
   box.pack_end(bottombox)
 
-  callbtn = elementary.Button(bottombox)
-  callbtn.label_set('Call')
-  callbtn.show()
-  callbtn.clicked = partial(pager_pop, pager)
-  bottombox.pack_end(callbtn)
+  isphone = check_contact(data, 'Phone')
+  ismail = check_contact(data, 'E-mail')
 
-  smsbtn = elementary.Button(bottombox)
-  smsbtn.label_set('SMS')
-  smsbtn.show()
-  smsbtn.clicked = partial(pager_pop, pager)
-  bottombox.pack_end(smsbtn)
+  if isphone or ismail:
+    hover = elementary.Hoversel(win)
+    hover.hover_parent_set(pager)
+    hover.label_set('Actions')
+    bottombox.pack_end(hover)
+    hover.size_hint_weight_set(1.0, 0.0)
+    hover.size_hint_align_set(-1.0, 0.0)
+    hover.scale_set(1.0)
+    hover.show()
+
+  if isphone:
+    hover.item_add('Call',"arrow_down",
+                elementary.ELM_ICON_STANDARD,partial(select_field,data, 'Phone', call))
+    hover.item_add('SMS',"arrow_down",
+                elementary.ELM_ICON_STANDARD,partial(select_field,data, 'Phone', sms))
+
+  if ismail:
+    hover.item_add('E-mail',"arrow_down",
+                elementary.ELM_ICON_STANDARD,partial(select_field,data, 'E-mail', mail))
 
   editbtn = elementary.Button(bottombox)
   editbtn.label_set('Edit')
   editbtn.show()
-  editbtn.clicked = partial(pager_pop, pager)
+  if not (isphone or ismail):
+    editbtn.size_hint_weight_set(1.0, 0.0)
+    editbtn.size_hint_align_set(-1.0, 0.0)
   bottombox.pack_end(editbtn)
 
 
   backbtn = elementary.Button(bottombox)
-  backbtn.size_hint_weight_set(1.0, 0.0)
-  backbtn.size_hint_align_set(-1.0, 0.0)
   backbtn.label_set('Back')
   backbtn.show()
   backbtn.clicked = partial(pager_pop, pager)
@@ -218,12 +336,20 @@ def display_contact(path, data = None, *args, **kwargs):
   scr.size_hint_weight_set(1.0, 1.0)
   scr.size_hint_align_set(-1.0, -1.0)
 
+  headerframe = elementary.Frame(scr)
+  headerframe.style_set('pad_small')
+  headerframe.show()
+  headerframe.size_hint_weight_set(1.0, 1.0)
+  headerframe.size_hint_align_set(-1.0, -1.0)
+
   scrbox = elementary.Box(scr)
+  scrbox.show()
 
   header = elementary.Box(scrbox)
   header.horizontal_set(True)
   header.show()
-  scrbox.pack_start(header)
+  headerframe.content_set(header)
+  scrbox.pack_start(headerframe)
 
   photo = elementary.Photo(header)
   header.pack_start(photo)
@@ -244,21 +370,94 @@ def display_contact(path, data = None, *args, **kwargs):
   label.size_hint_align_set(-1.0, 0.0)
   info.pack_start(label)
 
-  def add_field_to_header(field):
-    if data.get(field[0]):
-      values = data[field[0]]
+  header_fields = {'Phone':'tel:','E-mail':'mail:'}
+  icons = {'tel:':'phonecall','mail:':'sent'}
+
+  for field in header_fields:
+    if data.get(field):
+      values = data[field]
       if type(values)==dbus.String:
         values = [values]
       for value in values:
-        value = value.replace(field[1],'')
+        ibox = elementary.Box(info)
+        ibox.horizontal_set(True)
+        ibox.size_hint_align_set(-1.0, 0.0)
+        ibox.size_hint_weight_set(-1.0, 0.0)
+        ibox.show()
+        if value[:len(header_fields[field])]==header_fields[field]:
+          value = value[len(header_fields[field]):]
+          if header_fields[field] in icons:
+            icon = elementary.Icon(ibox)
+            icon.file_set("/usr/share/pixmaps/opimd-utils/"+icons[header_fields[field]]+".png")
+            icon.size_hint_min_set(32,32)
+            icon.size_hint_align_set(-1.0, 0.0)
+            icon.show()
+            ibox.pack_start(icon)
         label = elementary.Label(info)
-        label.label_set(elementary.Entry.utf8_to_markup(value))
+        label.label_set(' '+elementary.Entry.utf8_to_markup(value))
         label.show()
         label.size_hint_align_set(-1.0, 0.0)
-        info.pack_end(label)
+        label.size_hint_weight_set(1.0, 0.0)
+        ibox.pack_end(label)
+        info.pack_end(ibox)
 
-  for field in (('Phone','tel:'),('E-mail','mail:')):
-    add_field_to_header(field)
+  tablefr = elementary.Frame(win)
+  tablefr.show()
+  tablefr.size_hint_align_set(-1.0, 0.0)
+  tablefr.size_hint_weight_set(1.0, 0.0)
+  tablefr.style_set('pad_small')
+
+  table = elementary.Table(win)
+  table.show()
+  table.size_hint_align_set(-1.0, 0.0)
+  table.size_hint_weight_set(-1.0, 0.0)
+  tablefr.content_set(table)
+  scrbox.pack_end(tablefr)
+
+  i=0
+  for field in data:
+    if not field in header_fields and not field in ('Name','Path'):
+      values = data[field]
+      if type(values)==dbus.String:
+        values = [values]
+      for value in values:
+        lafield = elementary.Label(win)
+        lafield.show()
+        lavalue = elementary.Label(win)
+        lavalue.show()
+        lafield.label_set(field + ':')
+
+        lafield.size_hint_align_set(-1.0, 0.0)
+        valuebox = elementary.Box(win)
+        valuebox.horizontal_set(True)
+        valuebox.show()
+        valuebox.size_hint_align_set(1.0, 0.0)
+        valuebox.size_hint_weight_set(1.0, 0.0)
+
+
+        for prefix in icons:
+          if value[:len(prefix)]==prefix:
+            value = value[len(prefix):]
+            icon = elementary.Icon(win)
+            icon.file_set("/usr/share/pixmaps/opimd-utils/"+icons[prefix]+".png")
+            icon.size_hint_min_set(32, 32)
+            icon.show()
+            valuebox.pack_end(icon)
+            break
+
+        lavalue.label_set(value+' ')
+        lavalue.size_hint_align_set(1.0, 0.0)
+
+        valuebox2 = elementary.Box(win)
+        valuebox2.size_hint_weight_set(1.0, 0.0)
+        valuebox2.size_hint_align_set(-1.0, 0.0)
+        valuebox2.show()
+        valuebox2.pack_end(valuebox)
+
+        valuebox.pack_start(lavalue)
+        table.pack(lafield, 0, i, 1, 1)
+        table.pack(valuebox2, 1, i, 1, 1)
+      i += 1
 
   scr.content_set(scrbox)
   scr.show()
@@ -284,7 +483,7 @@ def make_downbox():
 
   newbtn = elementary.Button(win)
   newbtn.label_set('New')
-  downbox.pack_start(newbtn)
+  downbox.pack_end(newbtn)
   newbtn.size_hint_align_set(-1.0, 0.0)
   newbtn.show()
 
