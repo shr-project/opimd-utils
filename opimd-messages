@@ -192,7 +192,7 @@ def render_message(message, incoming = False):
   if message['Direction']=='in':
     replybutton = elementary.Button(win)
     replybutton.label_set("Reply")
-    replybutton.clicked = partial(opimd_reply.reply, [number, name], '', bus, win, None, None)
+    replybutton.clicked = partial(opimd_reply.reply, [number, name], '', bus, win, None, None, None)
     replybutton.show()
     replybutton.size_hint_weight_set(0.0, 0.0)
     replybutton.size_hint_align_set(0.0, -1.0)

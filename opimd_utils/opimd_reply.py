@@ -32,30 +32,37 @@ def dbus_ok():
 def dbus_err(x):
   print "notice: dbus error: "+str(x)
 
-def dbus_sms_ok(x, bus, a, b):
+def dbus_sms_ok(x, bus, func_status, a, b):
   message = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.Message")
   data = {'MessageSent':1, 'Processing':0}
   ops = loadOpts()
   if ops['report']:
     data['SMS-message-reference']=a
   message.Update(data, reply_handler=dbus_ok, error_handler=dbus_err)
+  if callable(func_status):
+    func_status('sent')
 #  print a
 #  print b
 
-def dbus_opimd_ok(to, msg, props, bus, win, func_ok, func_err, x):
+def dbus_opimd_ok(to, msg, props, bus, win, func_ok, func_err, func_status, x):
   if callable(func_ok):
     func_ok(x)
+  if callable(func_status):
+    func_status('stored')
+    func_status('sending')
   try:
     ogsmd = getDbusObject (bus, "org.freesmartphone.ogsmd", "/org/freesmartphone/GSM/Device", "org.freesmartphone.GSM.SMS")
-    ogsmd.SendMessage(to[0].replace('tel:','') ,msg, props, reply_handler=partial(dbus_sms_ok, x, bus), error_handler=partial(dbus_gsm_err, to, msg, props, x, bus, win, func_ok, func_err) )
+    ogsmd.SendMessage(to[0].replace('tel:','') ,msg, props, reply_handler=partial(dbus_sms_ok, x, bus, func_status), error_handler=partial(dbus_gsm_err, to, msg, props, x, bus, win, func_ok, func_err, func_status) )
   except dbus.exceptions.DBusException, e:
-    dbus_gsm_err(to, msg, props, x, bus, win, func_ok, func_err, e)
+    dbus_gsm_err(to, msg, props, x, bus, win, func_ok, func_err, func_status, e)
 
-def retry_msg(to, text, bus, win, inwin, func_ok, func_err, *args, **kwargs ):
-  inwindelete(inwin)
-  reply(to, text, bus, win, func_ok, func_err)
+def retry_msg(to, text, bus, win, inwin, func_ok, func_err, func_status, *args, **kwargs ):
+  inwindelete(inwin, None)
+  if callable(func_status):
+    func_status('retrying')
+  reply(to, text, bus, win, func_ok, func_err, func_status)
 
-def dbus_gsm_err(to, text, props, x, bus, win, func_ok, func_err, dx):
+def dbus_gsm_err(to, text, props, x, bus, win, func_ok, func_err, func_status, dx):
   message = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.Message")
   data = {'Processing':0}
   message.Update(data, reply_handler=dbus_ok, error_handler=dbus_err)
@@ -89,27 +96,31 @@ def dbus_gsm_err(to, text, props, x, bus, win, func_ok, func_err, dx):
   retry = elementary.Button(inwin)
   retry.label_set("Retry")
   retry.show()
-  retry.clicked = partial(retry_msg, to, text, bus, win, inwin, func_ok, func_err)
+  retry.clicked = partial(retry_msg, to, text, bus, win, inwin, func_ok, func_err, func_status)
   hbox.pack_end(retry)
 
   hide = elementary.Button(inwin)
   hide.label_set("Close")
   hide.show()
-  hide.clicked = partial(inwindelete, inwin)
+  hide.clicked = partial(inwindelete, inwin, func_status)
   hbox.pack_end(hide)  
 
   box.pack_end(hbox)
 
   if callable(func_err):
     func_err()
+  if callable(func_status):
+    func_status('error')
 
   inwin.activate()
 
-def dbus_opimd_err(to, msg, props, bus, win, func_ok, func_err, x):
+def dbus_opimd_err(to, msg, props, bus, win, func_ok, func_err, func_status, x):
   # TODO: call the same code, as dbus_gsm_err
+  if callable(func_status):
+    func_status('error')
   print "dbus error! "+str(x)
 
-def send_msg(to, entry, bus, inwin, win, func_ok, func_err, *args, **kwargs):
+def send_msg(to, entry, bus, inwin, win, func_ok, func_err, func_status, *args, **kwargs):
   msg = entry.markup_to_utf8(entry.entry_get())
   ops = loadOpts()
   props = {}
@@ -125,12 +136,17 @@ def send_msg(to, entry, bus, inwin, win, func_ok, func_err, *args, **kwargs):
   for field in props:
     message['SMS-'+field]=props[field]
 
+  if callable(func_status):
+    func_status('storing')
+
   messages = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Messages", "org.freesmartphone.PIM.Messages")
-  messages.Add(message, reply_handler=partial(dbus_opimd_ok, to, msg, props, bus, win, func_ok, func_err), error_handler=partial(dbus_opimd_err, to, msg, props, bus, win, func_ok, func_err))
+  messages.Add(message, reply_handler=partial(dbus_opimd_ok, to, msg, props, bus, win, func_ok, func_err, func_status), error_handler=partial(dbus_opimd_err, to, msg, props, bus, win, func_ok, func_err, func_status))
 
   inwin.delete()
 
-def inwindelete(win, *args, **kwargs):
+def inwindelete(win, func_status, *args, **kwargs):
+  if callable(func_status):
+    func_status('cancelled')
   win.delete()
 
 def saveOpts(optsval):
@@ -262,7 +278,7 @@ def show_opts(pager, *args, **kwargs):
 def update_chars(label, obj, *args, **kwargs):
   label.label_set("(%d)" % len(obj.markup_to_utf8(obj.entry_get())))
 
-def reply(to, text, bus, win, func_ok, func_err, *args, **kwargs):
+def reply(to, text, bus, win, func_ok, func_err, func_status, *args, **kwargs):
   inwin = elementary.InnerWindow(win)
   win.resize_object_add(inwin)
   inwin.show()
@@ -323,13 +339,13 @@ def reply(to, text, bus, win, func_ok, func_err, *args, **kwargs):
   hide = elementary.Button(inwin)
   hide.label_set("Close")
   hide.show()
-  hide.clicked = partial(inwindelete, inwin)
+  hide.clicked = partial(inwindelete, inwin, func_status)
   hbox.pack_end(hide)
 
   send = elementary.Button(inwin)
   send.label_set("Send")
   send.show()
-  send.clicked = partial(send_msg, to, entry, bus, inwin, win, func_ok, func_err)
+  send.clicked = partial(send_msg, to, entry, bus, inwin, win, func_ok, func_err, func_status)
 
   hbox.pack_start(send)
 

@@ -367,7 +367,7 @@ def incoming_message(x, just_unread = False):
       read.clicked = partial(show_msg, query, textbox, bubble, text, read)
 
       read.show()
-      replybtn.clicked = partial(opimd_reply.reply, [number, name], '', bus, win, incoming_message, win.show)
+      replybtn.clicked = partial(opimd_reply.reply, [number, name], '', bus, win, incoming_message, win.show, None)
       bubble.content_set(read)
     else:
       text.show()
