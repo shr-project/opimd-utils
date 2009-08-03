@@ -482,7 +482,7 @@ def display_contact(path, data = None, *args, **kwargs):
         valuebox.pack_start(lavalue)
         table.pack(lafield, 0, i, 1, 1)
         table.pack(valuebox2, 1, i, 1, 1)
-      i += 1
+        i += 1
 
   wrapper = elementary.Frame(win)
   wrapper.style_set('outdent_top')
