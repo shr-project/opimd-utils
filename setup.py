@@ -11,16 +11,16 @@ import commands
 
 
 dist = setup( name='opimd-utils',
-    version='0.0.1',
+    version='0.0.2',
     author='dos',
     author_email='seba.dos1@gmail.com',
     description='Test scripts for freesmartphone.org opimd interface',
     url='http://freesmartphone.org/',
-    download_url='svn://openmoko.opendevice.org/trunk/opimd/',
+    download_url='http://git.shr-project.org/git/?p=opimd-utils.git',
     license='GNU GPL',
     packages=['opimd_utils'],
     scripts=['opimd-cli', 'opimd-notifier', 'opimd-messages', 'opimd-resolve', 'opimd-config', 'opimd-contacts'],
-    data_files=[('applications', ['data/opimd-messages.desktop']),
+    data_files=[('applications', ['data/opimd-messages.desktop', 'data/opimd-contacts.desktop']),
     ('pixmaps/opimd-utils', glob("data/icons/*.png")),
     ('../../etc/X11/Xsession.d', ['data/89opimd-notifier'])
   ]
