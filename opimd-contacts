@@ -307,6 +307,35 @@ def check_contact(contact, fieldname):
       return True
   return False
 
+def save_contact(path, data, *args, **kwargs):
+  pager.content_pop()
+  if path:
+    display_contact(path)
+
+def edit_contact(path, *args, **kwargs):
+  if path:
+    if not kwargs.get('data'):
+      contact = getDbusObject (bus, "org.freesmartphone.opimd", path, "org.freesmartphone.PIM.Contact")
+      data = contact.GetContent()
+    else:
+      data = kwargs['data']
+    pager.content_pop()
+
+  box = elementary.Box(win)
+  pager.content_push(box)
+
+  dia = elementary.InnerWindow(win)
+  win.resize_object_add(dia)
+  dia.show()
+  dia.style_set('minimal')
+  label = elementary.Label(win)
+  label.label_set('Not yet implemented')
+  label.show()
+  dia.content_set(label)
+  dia.activate()
+  timer_add(3, partial(inwin_close, dia, callback=partial(save_contact, path, None)))
+
+
 def display_contact(path, *args, **kwargs):
 #  print "displaying " + path
   if not kwargs.get('data'):
@@ -352,6 +381,7 @@ def display_contact(path, *args, **kwargs):
   editbtn = elementary.Button(bottombox)
   editbtn.label_set('Edit')
   editbtn.show()
+  editbtn.clicked = partial(edit_contact, path, data=data)
   if not (isphone or ismail):
     editbtn.size_hint_weight_set(1.0, 0.0)
     editbtn.size_hint_align_set(-1.0, 0.0)
@@ -523,6 +553,7 @@ def make_downbox():
 
   newbtn = elementary.Button(win)
   newbtn.label_set('New')
+  newbtn.clicked = partial(edit_contact, None)
   downbox.pack_end(newbtn)
   newbtn.size_hint_align_set(-1.0, 0.0)
   newbtn.show()
