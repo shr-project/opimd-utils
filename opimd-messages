@@ -297,9 +297,9 @@ def proceed():
 def next_result(res):
   global counter
   counter = counter + 1
-#  render_message(res)
-  query.Skip(-2, reply_handler=proceed, error_handler=end)
+#  query.Skip(-2, reply_handler=proceed, error_handler=end)
   render_message(res)
+  proceed()
 
 #for i in results:
   #print "Result nr "+str(i+1)+":"
@@ -308,7 +308,7 @@ def next_result(res):
 #  render_message(results[i])
 
 counter = 0
-query.Skip(total_results-1)
+#query.Skip(total_results-1)
 proceed()
 
 print "Finished" # finito, fertig, koniec etc.
