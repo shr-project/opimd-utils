@@ -34,7 +34,7 @@ def destroy(win, event, *args, **kargs):
   elementary.exit()
 
 win = elementary.Window("opimd-contacts", 0)
-win.title_set("opimd Contacts")
+win.title_set("Contacts")
 
 bg = elementary.Background(win)
 win.resize_object_add(bg)

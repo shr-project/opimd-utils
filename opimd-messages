@@ -235,8 +235,8 @@ total_results = query.GetResultCount()
 print "Number of results: " + str(total_results) 
 
 elementary.init()
-win = elementary.Window('pim-test', elementary.ELM_WIN_BASIC)
-win.title_set('Messages - opimd')
+win = elementary.Window('opimd-messages', elementary.ELM_WIN_BASIC)
+win.title_set('Messages')
 
 bg = elementary.Background(win)
 win.resize_object_add(bg)
