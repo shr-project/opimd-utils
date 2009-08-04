@@ -123,7 +123,7 @@ def display_contacts_callback(loading, contact_list):
       callbtn = elementary.Button(list)
       callbtn.label_set('Call')
       callbtn.show()
-      callbtn.clicked = partial(select_field, contact, 'Phone', call)
+      callbtn.clicked = partial(select_field, contact, 'Phone', 'tel:', call)
     list.item_append(name, photo, callbtn, partial(display_contact, contact['Path'], contact))
   list.go()
   if loading:
@@ -252,7 +252,7 @@ def sms(to, *args, **kwargs):
   dia.content_set(label)
   opimd_reply.reply([to, kwargs['contact']['Name']], '', bus, win, None, None, partial(sms_status, dia, None, label))
 
-def select_field(contact, fieldname, callback, *args, **kwargs):
+def select_field(contact, fieldname, prefix, callback, *args, **kwargs):
   result=[]
   for field in contact:
     if field.lower().endswith(fieldname.lower()):
@@ -281,8 +281,15 @@ def select_field(contact, fieldname, callback, *args, **kwargs):
     box.pack_start(list)
     list.size_hint_weight_set(1.0, 1.0)
     list.size_hint_align_set(-1.0, -1.0)
+
     for res in result:
-      list.item_append(res[0]+': '+res[1], None, None, partial(inwin_close, dia, callback=partial(callback, res[1], contact=contact)))
+      if res[1][:len(prefix)]==prefix:
+        display = res[1][len(prefix):]
+      else:
+        display = res[1]
+
+      list.item_append(res[0]+': '+display, None, None, partial(inwin_close, dia, callback=partial(callback, res[1], contact=contact)))
+
     list.go()
 
     btn = elementary.Button(win)
@@ -332,13 +339,13 @@ def display_contact(path, data = None, *args, **kwargs):
 
   if isphone:
     hover.item_add('Call',"arrow_down",
-                elementary.ELM_ICON_STANDARD,partial(select_field,data, 'Phone', call))
+                elementary.ELM_ICON_STANDARD,partial(select_field,data, 'Phone', 'tel:', call))
     hover.item_add('SMS',"arrow_down",
-                elementary.ELM_ICON_STANDARD,partial(select_field,data, 'Phone', sms))
+                elementary.ELM_ICON_STANDARD,partial(select_field,data, 'Phone', 'tel:', sms))
 
   if ismail:
     hover.item_add('E-mail',"arrow_down",
-                elementary.ELM_ICON_STANDARD,partial(select_field,data, 'E-mail', mail))
+                elementary.ELM_ICON_STANDARD,partial(select_field,data, 'E-mail', 'mail:', mail))
 
   editbtn = elementary.Button(bottombox)
   editbtn.label_set('Edit')
