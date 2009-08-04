@@ -445,14 +445,17 @@ def display_contact(path, data = None, *args, **kwargs):
       values = data[field]
       if type(values)==dbus.String:
         values = [values]
+      lafield = elementary.Label(win)
+      lafield.show()
+      lafield.label_set(field + ':')
+      lafield.size_hint_align_set(-1.0, 0.0)
+
+      table.pack(lafield, 0, i, 1, 1)
+
       for value in values:
-        lafield = elementary.Label(win)
-        lafield.show()
         lavalue = elementary.Label(win)
         lavalue.show()
-        lafield.label_set(field + ':')
 
-        lafield.size_hint_align_set(-1.0, 0.0)
         valuebox = elementary.Box(win)
         valuebox.horizontal_set(True)
         valuebox.show()
@@ -473,15 +476,8 @@ def display_contact(path, data = None, *args, **kwargs):
         lavalue.label_set(value+' ')
         lavalue.size_hint_align_set(1.0, 0.0)
 
-        valuebox2 = elementary.Box(win)
-        valuebox2.size_hint_weight_set(1.0, 0.0)
-        valuebox2.size_hint_align_set(-1.0, 0.0)
-        valuebox2.show()
-        valuebox2.pack_end(valuebox)
-
         valuebox.pack_start(lavalue)
-        table.pack(lafield, 0, i, 1, 1)
-        table.pack(valuebox2, 1, i, 1, 1)
+        table.pack(valuebox, 1, i, 1, 1)
         i += 1
 
   wrapper = elementary.Frame(win)
