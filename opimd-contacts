@@ -30,7 +30,7 @@ def dbus_error(x):
   print "dbus error: " + str(x)
 
 def destroy(win, event, *args, **kargs):
-  print "kabum"
+#  print "kabum"
   elementary.exit()
 
 win = elementary.Window("opimd-contacts", 0)
@@ -190,8 +190,6 @@ def inwin_close(dia, *args, **kwargs):
 
 def ussd_ok(dia, *args, **kwargs):
   dia.delete()
-  print args
-  print kwargs
 
 def ussd_error(dia, label, x, *args, **kwargs):
   label.label_set('Error while sending USSD request!')
@@ -199,7 +197,7 @@ def ussd_error(dia, label, x, *args, **kwargs):
   print str(x)
 
 def call(to, *args, **kwargs):
-  print "calling to "+to
+  #print "calling to "+to
   if to[:4]=='tel:':
     to = to[4:]
     if to[len(to)-1]=='#' or len(to)<=2:
@@ -219,7 +217,7 @@ def call(to, *args, **kwargs):
       call.Initiate(to, 'voice', reply_handler=dbus_ok, error_handler=dbus_error)
 
 def mail(to, *args, **kwargs):
-  print "mailing to "+to
+  #print "mailing to "+to
   dia = elementary.InnerWindow(win)
   win.resize_object_add(dia)
   dia.show()
@@ -244,7 +242,7 @@ def sms_status(dia, icon, label, status):
     dia.delete()
 
 def sms(to, *args, **kwargs):
-  print "smsing to " + kwargs['contact']['Name'] + ' ' + to
+  #print "smsing to " + kwargs['contact']['Name'] + ' ' + to
   dia = elementary.InnerWindow(win)
   win.resize_object_add(dia)
   dia.style_set('minimal')
@@ -304,6 +302,10 @@ def check_contact(contact, fieldname):
 
 def display_contact(path, data = None, *args, **kwargs):
 #  print "displaying " + path
+  if not data:
+    contact = getDbusObject (bus, "org.freesmartphone.opimd", path, "org.freesmartphone.PIM.Contact")
+    data = contact.GetContent()
+
   box = elementary.Box(win)
   box.show()
   pager.content_push(box)
@@ -531,4 +533,4 @@ display_contacts(list)
 elementary.run()
 elementary.shutdown()
 
-print "bye"
+#print "bye"
