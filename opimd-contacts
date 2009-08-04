@@ -256,7 +256,7 @@ def select_field(contact, fieldname, prefix, callback, *args, **kwargs):
   result=[]
   for field in contact:
     if field.lower().endswith(fieldname.lower()):
-      if isinstance(contact[field], dbus.String):
+      if not isinstance(contact[field], dbus.Array):
         values = [contact[field]]
       else:
         values = contact[field]
@@ -400,7 +400,7 @@ def display_contact(path, data = None, *args, **kwargs):
 
   if data.get('Name'):
     label = elementary.Label(info)
-    label.label_set('<b>'+elementary.Entry.utf8_to_markup(data['Name'])+'</b>')
+    label.label_set('<b>'+elementary.Entry.utf8_to_markup(str(data['Name']))+'</b>')
     label.show()
     label.size_hint_align_set(-1.0, 0.0)
     info.pack_start(label)
@@ -411,7 +411,7 @@ def display_contact(path, data = None, *args, **kwargs):
   for field in header_fields:
     if data.get(field):
       values = data[field]
-      if type(values)==dbus.String:
+      if type(values)!=dbus.Array:
         values = [values]
       for value in values:
         ibox = elementary.Box(info)
@@ -429,7 +429,7 @@ def display_contact(path, data = None, *args, **kwargs):
             icon.show()
             ibox.pack_start(icon)
         label = elementary.Label(info)
-        label.label_set(' '+elementary.Entry.utf8_to_markup(value))
+        label.label_set(' '+elementary.Entry.utf8_to_markup(str(value)))
         label.show()
         label.size_hint_align_set(-1.0, 0.0)
         label.size_hint_weight_set(1.0, 0.0)
@@ -453,7 +453,7 @@ def display_contact(path, data = None, *args, **kwargs):
   for field in data:
     if not field in header_fields and not field in ('Name','Path'):
       values = data[field]
-      if type(values)==dbus.String:
+      if type(values)!=dbus.Array:
         values = [values]
       lafield = elementary.Label(win)
       lafield.show()
@@ -483,7 +483,7 @@ def display_contact(path, data = None, *args, **kwargs):
             valuebox.pack_end(icon)
             break
 
-        lavalue.label_set(elementary.Entry.utf8_to_markup(value)+' ')
+        lavalue.label_set(elementary.Entry.utf8_to_markup(str(value))+' ')
         lavalue.size_hint_align_set(1.0, 0.0)
 
         valuebox.pack_start(lavalue)
