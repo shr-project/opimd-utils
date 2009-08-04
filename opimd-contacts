@@ -398,11 +398,12 @@ def display_contact(path, data = None, *args, **kwargs):
   info.show()
   infofr.content_set(info)
 
-  label = elementary.Label(info)
-  label.label_set('<b>'+elementary.Entry.utf8_to_markup(data['Name'])+'</b>')
-  label.show()
-  label.size_hint_align_set(-1.0, 0.0)
-  info.pack_start(label)
+  if data.get('Name'):
+    label = elementary.Label(info)
+    label.label_set('<b>'+elementary.Entry.utf8_to_markup(data['Name'])+'</b>')
+    label.show()
+    label.size_hint_align_set(-1.0, 0.0)
+    info.pack_start(label)
 
   header_fields = {'Phone':'tel:','E-mail':'mail:'}
   icons = {'tel:':'phonecall','mail:':'sent'}
