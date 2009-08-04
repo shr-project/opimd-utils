@@ -457,7 +457,7 @@ def display_contact(path, data = None, *args, **kwargs):
         values = [values]
       lafield = elementary.Label(win)
       lafield.show()
-      lafield.label_set(field + ':')
+      lafield.label_set(elementary.Entry.utf8_to_markup(field) + ':')
       lafield.size_hint_align_set(-1.0, 0.0)
 
       table.pack(lafield, 0, i, 1, 1)
@@ -483,7 +483,7 @@ def display_contact(path, data = None, *args, **kwargs):
             valuebox.pack_end(icon)
             break
 
-        lavalue.label_set(value+' ')
+        lavalue.label_set(elementary.Entry.utf8_to_markup(value)+' ')
         lavalue.size_hint_align_set(1.0, 0.0)
 
         valuebox.pack_start(lavalue)
