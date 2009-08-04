@@ -52,13 +52,13 @@ def query(data):
   print "Numer of results: " + str(results)
   for i in range(0,results):
     print "Result nr "+str(i+1)+":"
-    results = query.GetResult()
-    for field in results:
-      if type(results[field]) == dbus.Array:
-          for value in results[field]:
+    result = query.GetResult()
+    for field in result:
+      if type(result[field]) == dbus.Array:
+          for value in result[field]:
               print "  "+field+": "+str(value)
       else:
-          print "  "+field+": "+str(results[field])
+          print "  "+field+": "+str(result[field])
   query.Dispose() # delete query result from memory
 
 def add(data):
