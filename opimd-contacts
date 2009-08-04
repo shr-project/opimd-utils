@@ -124,7 +124,7 @@ def display_contacts_callback(loading, contact_list):
       callbtn.label_set('Call')
       callbtn.show()
       callbtn.clicked = partial(select_field, contact, 'Phone', 'tel:', call)
-    list.item_append(name, photo, callbtn, partial(display_contact, contact['Path'], contact))
+    list.item_append(name, photo, callbtn, partial(display_contact, contact['Path'], data=contact))
   list.go()
   if loading:
     loading.delete()
@@ -307,11 +307,13 @@ def check_contact(contact, fieldname):
       return True
   return False
 
-def display_contact(path, data = None, *args, **kwargs):
+def display_contact(path, *args, **kwargs):
 #  print "displaying " + path
-  if not data:
+  if not kwargs.get('data'):
     contact = getDbusObject (bus, "org.freesmartphone.opimd", path, "org.freesmartphone.PIM.Contact")
     data = contact.GetContent()
+  else:
+    data = kwargs['data']
 
   box = elementary.Box(win)
   box.show()
