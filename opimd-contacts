@@ -18,6 +18,8 @@ bus = dbus.SystemBus(mainloop = e_dbus.DBusEcoreMainLoop())
 
 contacts = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Contacts", "org.freesmartphone.PIM.Contacts")
 
+query = None
+
 elementary.init()
 
 elementary.c_elementary.finger_size_set(80)
@@ -79,7 +81,7 @@ def query_contacts_query_handler(callback, x=None, *args, **kwargs):
   if not kwargs.get('dontdispose'):
     query.Dispose(reply_handler=dbus_ok, error_handler=dbus_err)
 
-def query_contacts(callback, name = None, query = None):
+def query_contacts(callback, name = None, que = None):
   if name:
     name = sanity_name(name)
     dict = {'Name':name, '_limit':3}
@@ -87,10 +89,14 @@ def query_contacts(callback, name = None, query = None):
   else:
     dict = {'_sortby':'Name'}
     dispose = True
-  if not query:
+  if not que:
     contacts.Query(dict, reply_handler=partial(query_contacts_query_handler, callback, dontdispose=dispose), error_handler=dbus_error)
+    global query
+    if query:
+      query.Dispose(reply_handler=dbus_ok, error_handler=dbus_error)
+      query = None
   else:
-    query_contacts_query_handler(callback, dontdispose=True, query=query, next=True)
+    query_contacts_query_handler(callback, dontdispose=True, query=que, next=True)
 
 list = elementary.List(win)
 list.size_hint_align_set(-1.0, -1.0)
@@ -137,10 +143,14 @@ def display_contacts_callback(loading, contact_list, *args, **kwargs):
   list.go()
   if loading:
     loading.delete()
-  if kwargs.get('query') and len(contact_list)>0:
-    query_contacts(partial(display_contacts_callback, None), None, kwargs['query'])
-  elif kwargs.get('query') and kwargs.get('next'):
-    kwargs['query'].Dispose(reply_handler=dbus_ok, error_handler=dbus_error)
+  if kwargs.get('query'):
+    if kwargs.get('next'):
+      global query
+      query = kwargs.get('query')
+    if len(contact_list)>0:
+      query_contacts(partial(display_contacts_callback, None), None, kwargs['query'])
+#  elif kwargs.get('query') and kwargs.get('next'):
+#    kwargs['query'].Dispose(reply_handler=dbus_ok, error_handler=dbus_error)
 
 def search_changed(frame, obj, *args, **kwargs):
   text = obj.markup_to_utf8(obj.entry_get())
@@ -586,5 +596,8 @@ display_contacts(list)
 
 elementary.run()
 elementary.shutdown()
+
+if query:
+  query.Dispose()
 
 #print "bye"
