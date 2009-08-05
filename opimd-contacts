@@ -72,6 +72,7 @@ def query_contacts_query_handler(callback, x=None, *args, **kwargs):
     dbus_err = dbus_ok
   else:
     query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.ContactQuery")
+    query.connect_to_signal('ContactAdded', partial(list_contact, go=True))
     dbus_err = dbus_error
 
   #num = query.GetResultCount()
@@ -117,29 +118,40 @@ def display_contacts(list, name = None):
   loading.show()
   query_contacts(partial(display_contacts_callback, loading), name)
 
+def list_contact(path, *args, **kwargs):
+  if not kwargs.get('data'):
+    contactif = getDbusObject (bus, "org.freesmartphone.opimd", path, "org.freesmartphone.PIM.Contact")
+    contact = contactif.GetContent()
+  else:
+    contact = kwargs['data']
+#  print contact['Path']
+  photo = elementary.Photo(list)
+  photo.scale_set(0.9)
+  name = contact.get('Name')
+  if not name:
+    name = contact.get('Phone')
+    if not name:
+      name = contact.get('E-mail')
+      if not name:
+        name = '<???>'
+  if isinstance(name, dbus.Array):
+    name = name[0]
+  callbtn = None
+  if check_contact(contact, 'Phone'):
+    callbtn = elementary.Button(list)
+    callbtn.label_set('Call')
+    callbtn.show()
+    callbtn.clicked = partial(select_field, contact, 'Phone', 'tel:', call)
+  list.item_append(name, photo, callbtn, partial(display_contact, contact['Path'], data=contact))
+  if kwargs.get('go'):
+    list.go()  
+
 def display_contacts_callback(loading, contact_list, *args, **kwargs):
   if not kwargs.get('next'):
     list.clear()
   for contact in contact_list:
 #    print contact['Path']
-    photo = elementary.Photo(list)
-    photo.scale_set(0.9) 
-    name = contact.get('Name')
-    if not name:
-      name = contact.get('Phone')
-      if not name:
-        name = contact.get('E-mail')
-        if not name:
-          name = '<???>'
-    if isinstance(name, dbus.Array):
-      name = name[0]
-    callbtn = None
-    if check_contact(contact, 'Phone'):
-      callbtn = elementary.Button(list)
-      callbtn.label_set('Call')
-      callbtn.show()
-      callbtn.clicked = partial(select_field, contact, 'Phone', 'tel:', call)
-    list.item_append(name, photo, callbtn, partial(display_contact, contact['Path'], data=contact))
+    list_contact(contact['Path'], data=contact)
   list.go()
   if loading:
     loading.delete()

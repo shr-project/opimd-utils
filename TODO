@@ -1,5 +1,4 @@
 opimd-contacts:
- * support ContactAdded signal
  * editing contacts
  * adding new contacts
  * contact history
