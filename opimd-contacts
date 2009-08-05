@@ -64,17 +64,22 @@ def sanity_name(name):
 #  print result
   return result
 
-def query_contacts_query_handler(callback, x, *args, **kwargs):
-  query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.ContactQuery")
+def query_contacts_query_handler(callback, x=None, *args, **kwargs):
+  if kwargs.get('query'):
+    query = kwargs['query']
+    dbus_err = dbus_ok
+  else:
+    query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.ContactQuery")
+    dbus_err = dbus_error
 
   #num = query.GetResultCount()
 
-  query.GetMultipleResults(20, reply_handler=callback, error_handler=dbus_error)
+  query.GetMultipleResults(6, reply_handler=partial(callback, query=query, next=kwargs.get('next'), dontdispose=kwargs.get('dontdispose')), error_handler=dbus_err)
 
   if not kwargs.get('dontdispose'):
-    query.Dispose(reply_handler=dbus_ok, error_handler=dbus_error)
+    query.Dispose(reply_handler=dbus_ok, error_handler=dbus_err)
 
-def query_contacts(callback, name = None):
+def query_contacts(callback, name = None, query = None):
   if name:
     name = sanity_name(name)
     dict = {'Name':name, '_limit':3}
@@ -82,7 +87,10 @@ def query_contacts(callback, name = None):
   else:
     dict = {'_sortby':'Name'}
     dispose = True
-  contacts.Query(dict, reply_handler=partial(query_contacts_query_handler, callback, dontdispose=dispose), error_handler=dbus_error)
+  if not query:
+    contacts.Query(dict, reply_handler=partial(query_contacts_query_handler, callback, dontdispose=dispose), error_handler=dbus_error)
+  else:
+    query_contacts_query_handler(callback, dontdispose=True, query=query, next=True)
 
 list = elementary.List(win)
 list.size_hint_align_set(-1.0, -1.0)
@@ -103,8 +111,9 @@ def display_contacts(list, name = None):
   loading.show()
   query_contacts(partial(display_contacts_callback, loading), name)
 
-def display_contacts_callback(loading, contact_list):
-  list.clear()
+def display_contacts_callback(loading, contact_list, *args, **kwargs):
+  if not kwargs.get('next'):
+    list.clear()
   for contact in contact_list:
 #    print contact['Path']
     photo = elementary.Photo(list)
@@ -128,6 +137,10 @@ def display_contacts_callback(loading, contact_list):
   list.go()
   if loading:
     loading.delete()
+  if kwargs.get('query') and len(contact_list)>0:
+    query_contacts(partial(display_contacts_callback, None), None, kwargs['query'])
+  elif kwargs.get('query') and kwargs.get('next'):
+    kwargs['query'].Dispose(reply_handler=dbus_ok, error_handler=dbus_error)
 
 def search_changed(frame, obj, *args, **kwargs):
   text = obj.markup_to_utf8(obj.entry_get())
