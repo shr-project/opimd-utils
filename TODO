@@ -1,0 +1,14 @@
+opimd-contacts:
+ * support ContactAdded signal
+ * editing contacts
+ * adding new contacts
+ * contact history
+opimd-notifier:
+ * change Reply to Actions
+ * add Actions into missed call
+opimd_reply:
+ * add contact selector
+ * support sending CSM
+ * support unicode
+opimd-messages:
+ * rewrite!
