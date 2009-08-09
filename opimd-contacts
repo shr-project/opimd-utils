@@ -347,6 +347,63 @@ def save_contact(path, data, *args, **kwargs):
   if path:
     display_contact(path)
 
+class Photo(elementary.Box):
+  pass
+
+class Field(elementary.Frame):
+  field_name = None
+  entry = None
+  deleted = None
+
+  def __init__(self, win, field, value = None, allowdel = True):
+    elementary.Frame.__init__(self, win)
+    box = elementary.Box(win)
+    box.horizontal_set(True)
+    box.show()
+    self.style_set('outdent_top')
+    self.content_set(box)
+    label = elementary.Label(win)
+    label.label_set(field+':')
+#    label.scale_set(1.5)
+    label.show()
+    box.pack_start(label)
+    label.size_hint_weight_set(0.5, 0.0)
+    label.size_hint_align_set(-1.0, 0.0)
+
+    entryscr = elementary.Scroller(win)
+    entryscr.content_min_limit(0,1)
+    entryscr.bounce_set(0, 0)
+    entryscr.policy_set(elementary.ELM_SCROLLER_POLICY_OFF, elementary.ELM_SCROLLER_POLICY_OFF)
+    entryscr.size_hint_weight_set(1.0, 0.0)
+    entryscr.size_hint_align_set(-1.0, 0.0)
+    entry = elementary.Entry(win)
+    entry.show()
+    entry.size_hint_weight_set(1.0, 0.0)
+    entry.size_hint_align_set(-1.0, -1.0)
+    entry.single_line_set(True)
+#    entry.scale_set(1.5)
+#    entry.password_set(True)
+    if value:
+      entry.entry_set(entry.utf8_to_markup(value))
+    entryscr.content_set(entry)
+    entryscr.show()
+    box.pack_end(entryscr)
+
+    if allowdel and 1==2:
+       delb = elementary.Button(win)
+       delb.label_set('X')
+       box.pack_end(delb)
+       delb.clicked = self.delete
+       delb.show()
+
+    self.field_name = field
+    self.entry = entry
+    self.deleted = False
+
+  def delete(self, *args, **kwargs):
+    self.deleted = True
+    elementary.Frame.delete(self)
+
 def edit_contact(path, *args, **kwargs):
   if path:
     if not kwargs.get('data'):
@@ -355,9 +412,41 @@ def edit_contact(path, *args, **kwargs):
     else:
       data = kwargs['data']
     pager.content_pop()
+  else:
+    data = {}
 
   box = elementary.Box(win)
+  box.show()
   pager.content_push(box)
+
+  scr = elementary.Scroller(win)
+  scr.bounce_set(0, 0)
+  scr.size_hint_weight_set(1.0, 1.0)
+  scr.size_hint_align_set(-1.0, -1.0)
+  scbox = elementary.Box(win)
+  scbox.show()
+  scbox.size_hint_weight_set(1.0, -1.0)
+  scbox.size_hint_align_set(-1.0, -1.0)
+  scr.content_set(scbox)
+  box.pack_start(scr)
+  scr.show()
+
+  field = Field(win, 'Name', data.get('Name'), False)
+  field.size_hint_align_set(-1.0, 0.0)
+  scbox.pack_start(field)
+  field.show()
+
+  for fie in data:
+    if not fie in ['Name','Photo', 'Path']:
+      values = data[fie]
+      if not isinstance(data[fie], dbus.Array):
+        values = [values]
+      for value in values:
+        field = Field(win, fie, value)
+        field.size_hint_align_set(-1.0, 0.0)
+        scbox.pack_end(field)
+        field.show()
+
 
   dia = elementary.InnerWindow(win)
   win.resize_object_add(dia)
