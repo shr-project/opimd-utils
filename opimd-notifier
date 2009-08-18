@@ -72,8 +72,6 @@ while (not initialized):
 
 elementary.init()
 
-elementary.c_elementary.finger_size_set(90)
-
 def dbus_ok():
   pass
 
