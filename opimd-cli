@@ -94,7 +94,7 @@ print "------------------------------"
 if len(argv)==1 or argv[1]=='--help' or argv[1]=='-h':
   print "Usage: "+argv[0]+" domain job [args]"
   print ""
-  print "domain: can be c (or contacts), m (or messages) and ca (or calls). Defines what domain " + argv[0] + " will use."
+  print "domain: can be c (or contacts), m (or messages), ca (or calls), d (or dates) and n (or notes). Defines what domain " + argv[0] + " will use."
   print "job: can be query, add, edit, delete or init."
   print "args: depending of job:"
   print "      query:  every pair of arguments is combined to fields (name, value)"
@@ -116,6 +116,10 @@ try:
     domain = 'Message'
   elif argv[1].lower()=='calls' or argv[1].lower()=='ca':
     domain = 'Call'
+  elif argv[1].lower()=='dates' or argv[1].lower()=='d':
+    domain = 'Date'
+  elif argv[1].lower()=='notes' or argv[1].lower()=='n':
+    domain = 'Note'
   else:
     raise IndexError
 
