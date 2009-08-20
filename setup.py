@@ -21,8 +21,9 @@ dist = setup( name='opimd-utils',
     packages=['opimd_utils'],
     scripts=['opimd-cli', 'opimd-notifier', 'opimd-messages', 'opimd-resolve', 'opimd-config', 'opimd-contacts'],
     data_files=[('applications', ['data/opimd-messages.desktop', 'data/opimd-contacts.desktop']),
-    ('pixmaps/opimd-utils', glob("data/icons/*.png")),
-    ('../../etc/X11/Xsession.d', ['data/89opimd-notifier'])
+		('pixmaps', ['data/opimd-notes.png']),
+		('pixmaps/opimd-utils', glob("data/icons/*.png")),
+		('../../etc/X11/Xsession.d', ['data/89opimd-notifier'])
   ]
 )
 
