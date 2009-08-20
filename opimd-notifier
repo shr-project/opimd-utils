@@ -318,7 +318,13 @@ def incoming_message(x, just_unread = False):
   bubble = elementary.Bubble(win)
   text = elementary.AnchorBlock(win)
 
-  text.text_set(elementary.Entry.utf8_to_markup(result['Content']))
+  content = result.get('Content')
+  if not content:
+    content = ''
+  content = elementary.Entry.utf8_to_markup(content)
+  if not content:
+    content = ''
+  text.text_set(content)
   text.show()
   text.size_hint_weight_set(1.0, 0.0)
   text.size_hint_align_set(-1.0, -1.0)
