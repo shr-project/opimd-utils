@@ -129,7 +129,13 @@ def render_message(message, incoming = False):
   text = elementary.AnchorBlock(win)
   textbox.pack_start(text)
 
-  text.text_set(elementary.Entry.utf8_to_markup(message['Content']))
+  content = message.get('Content')
+  if not content:
+    content = ''
+  content = elementary.Entry.utf8_to_markup(content)
+  if not content:
+    content = ''
+  text.text_set(content)
   text.show()
 
   if message.has_key('Timestamp'):
