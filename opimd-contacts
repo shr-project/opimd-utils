@@ -22,9 +22,6 @@ query = None
 
 elementary.init()
 
-elementary.c_elementary.finger_size_set(80)
-#elementary.c_elementary.scale_set(1.0)
-
 def dbus_ok(*args, **kwargs):
   pass
 
