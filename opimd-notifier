@@ -9,7 +9,7 @@ from functools import partial
 from opimd_utils import opimd_reply
 import elementary
 
-MESSAGES_ICON              = "/usr/share/icons/shr/86x86/apps/openmoko-messages.png"
+MESSAGES_ICON              = "/usr/share/icons/shr/86x86/apps/shr-messages.png"
 PHONELOG_ICON              = "/usr/share/pixmaps/phonelog.png"
 
 
