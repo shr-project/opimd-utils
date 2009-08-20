@@ -3,7 +3,7 @@ import dbus
 from sys import argv
 
 def resolve_phone(number):
-  x = contacts.Query({'Phone':number.strip('tel:')})
+  x = contacts.Query({'Phone':'tel:'+number})
   query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.ContactQuery")
   if query.GetResultCount():
     return query.GetResult()['Name']
@@ -22,4 +22,6 @@ contacts = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/
 for number in argv[1:]:
   print number+': '+resolve_phone(number)
 
-
+if len(argv)==1:
+  print "usage: "+argv[0]+ ' number'
+  print 'e.g. '+argv[0]+' 663123456'
