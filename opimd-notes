@@ -1,0 +1,156 @@
+#!/usr/bin/env python
+import elementary
+import e_dbus, dbus
+from re import escape
+from functools import partial
+
+# define some nice dbus helper, which I really like, cause make code easier to read :)
+def getDbusObject (bus, busname , objectpath , interface):
+        dbusObject = bus.get_object(busname, objectpath)
+        return dbus.Interface(dbusObject, dbus_interface=interface)
+
+bus = dbus.SystemBus(mainloop = e_dbus.DBusEcoreMainLoop())
+
+elementary.init()
+
+notes = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Notes", "org.freesmartphone.PIM.Notes")
+
+def dbus_ok(*args, **kwargs):
+  pass
+
+def dbus_error(x): 
+  print "dbus error: " + str(x)
+
+def destroy(win, event, *args, **kargs):
+#  print "kabum"
+  elementary.exit()
+
+def nothing(*args, **kwargs):
+  print "nothing called" 
+
+def renderNote(*args, **kargs):
+  data = kargs.get('data')
+  path = kargs.get('path')
+  if not data and not path:
+    data = {'Title':'Test','Content':'Oto test'}
+#  elif:
+#    get data
+  bubble = elementary.Bubble(win)
+  title = data.get('Title')
+  if not title:
+    title = ''
+  bubble.label_set(title)
+  content = data.get('Content')
+  if not content:
+    content = ''
+  content = elementary.Entry.utf8_to_markup(content)
+  if not content:
+    content = ''
+  text = elementary.AnchorBlock(win)
+  text.text_set(content)
+  text.show()
+  bubble.content_set(text)
+  bubble.size_hint_weight_set(1.0, 0.0)
+  bubble.size_hint_align_set(-1.0, 0.0)
+  bubble.show()
+  if kargs.get('start'):
+    scrbox.pack_start(bubble)
+  else:
+    scrbox.pack_end(bubble)
+
+def pager_pop(pager, *args, **kwargs):
+  pager.content_pop()
+
+def inwin_close(dia, *args, **kwargs):
+  if kwargs.get('callback'):
+    kwargs['callback']()
+  dia.hide()
+  dia.delete()
+  return False
+
+def note(*args, **kargs):
+  pass
+
+def selectTag(*args, **kargs):
+  pass
+
+def search(*args, **kargs):
+  pass
+
+win = elementary.Window("opimd-notes", 0)
+win.title_set("Notes")
+
+bg = elementary.Background(win)
+win.resize_object_add(bg)
+bg.show()
+
+pager = elementary.Pager(win)
+win.resize_object_add(pager)
+pager.show()
+
+mainbox = elementary.Box(win)
+mainbox.show()
+pager.content_push(mainbox)
+
+win.destroy = destroy
+
+scr = elementary.Scroller(win)
+scr.size_hint_align_set(-1.0, -1.0)
+scr.size_hint_weight_set(1.0, 1.0)
+scr.bounce_set(0, 1)
+mainbox.pack_start(scr)
+scr.show()
+
+scrbox = elementary.Box(win)
+scrbox.size_hint_weight_set(1.0, 0.0)
+scrbox.size_hint_align_set(-1.0, 0.0)
+scr.content_set(scrbox)
+scrbox.show()
+
+x = notes.Query({})
+#print "Query: " + x
+query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.NoteQuery")
+results = query.GetMultipleResults(query.GetResultCount())
+for result in results:
+  renderNote(data = result)
+
+def make_downbox():
+  global downbox
+  downbox = elementary.Box(win)
+  downbox.show()
+  downbox.size_hint_weight_set(1.0, 0.0)
+  downbox.size_hint_align_set(-1.0, 0.0)
+  downbox.horizontal_set(True)
+  mainbox.pack_end(downbox)
+
+  newbtn = elementary.Button(win)
+  newbtn.label_set('New')
+  downbox.pack_start(newbtn)
+  newbtn.size_hint_weight_set(1.0, 0.0)
+  newbtn.size_hint_align_set(-1.0, 0.0)
+  newbtn.clicked = note
+  newbtn.show()
+
+  tagsbtn = elementary.Button(win)
+  tagsbtn.label_set('Tags')
+  tagsbtn.clicked = selectTag
+  downbox.pack_end(tagsbtn)
+  tagsbtn.size_hint_weight_set(1.0, 0.0)
+  tagsbtn.size_hint_align_set(-1.0, 0.0)
+  tagsbtn.show()
+
+  searchbtn = elementary.Button(win)
+  searchbtn.label_set('Search')
+  downbox.pack_end(searchbtn)
+  searchbtn.show()
+  searchbtn.size_hint_weight_set(1.0, 0.0)
+  searchbtn.size_hint_align_set(-1.0, 0.0)
+  searchbtn.clicked = search
+
+make_downbox()
+
+win.show()
+
+elementary.run()
+elementary.shutdown()
+
