@@ -3,7 +3,7 @@ import dbus
 from sys import argv
 
 def resolve_phone(number):
-  x = contacts.Query({'Phone':'tel:'+number+'$'})
+  x = contacts.Query({'Phone':'tel:'+number})
   query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.ContactQuery")
   if query.GetResultCount():
     return query.GetResult()['Name']

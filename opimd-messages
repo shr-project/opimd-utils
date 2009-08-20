@@ -15,7 +15,7 @@ def resolve_phone(number):
   if number in cache:
     return cache[number]
   else:
-    x = contacts.Query({'Phone':number.strip('tel:').replace('+','\\+')})
+    x = contacts.Query({'Phone':number})
     query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.ContactQuery")
     if query.GetResultCount():
       name = query.GetResult()['Name']
