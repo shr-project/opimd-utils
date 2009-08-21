@@ -13,13 +13,21 @@ bus = dbus.SystemBus(mainloop = e_dbus.DBusEcoreMainLoop())
 
 elementary.init()
 
+displayedNotes = []
+
 notes = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Notes", "org.freesmartphone.PIM.Notes")
 
 def dbus_ok(*args, **kwargs):
   pass
 
-def dbus_error(x): 
+def dbus_err(x): 
   print "dbus error: " + str(x)
+
+def clearNotes(*args, **kargs):
+  global displayedNotes
+  for bubble in displayedNotes:
+    bubble.delete()
+  displayedNotes = []
 
 def destroy(win, event, *args, **kargs):
 #  print "kabum"
@@ -28,13 +36,29 @@ def destroy(win, event, *args, **kargs):
 def nothing(*args, **kwargs):
   print "nothing called" 
 
+def anchorClicked (tags, obj, event, sth):
+  obj.hover_end()
+
+def makeAnchorsFromTags(tags, *args, **kwargs):
+  #tags = ['brak', 'la', 'li', 'lo', 'le', 'lu', 'ugabuga', 'asia', 'ma', 'kota', 'a', 'kot', 'ma', 'asie', 'jestem', 'sobie', 'dos', 'la', 'la', 'la', 'la', 'la']
+  if tags==None:
+    return ''
+  if not isinstance(tags, list) and not isinstance(tags, dbus.Array):
+    tags = [tags]
+  text = ''
+  i = 0
+  for tag in tags:
+    text = text+'<a href='+str(i)+'>'+tag+'</a>, '
+    i += 1
+  text = text[:len(text)-2]
+  return text
+
 def renderNote(*args, **kargs):
   data = kargs.get('data')
   path = kargs.get('path')
-  if not data and not path:
-    data = {'Title':'Test','Content':'Oto test'}
-#  elif:
-#    get data
+  if not data:
+    note = getDbusObject (bus, "org.freesmartphone.opimd", path, "org.freesmartphone.PIM.Note")
+    data = note.GetContent()
   bubble = elementary.Bubble(win)
   title = data.get('Title')
   if not title:
@@ -47,9 +71,47 @@ def renderNote(*args, **kargs):
   if not content:
     content = ''
   text = elementary.AnchorBlock(win)
+  text.size_hint_weight_set(1.0, 0.0)
+  text.size_hint_align_set(-1.0, -1.0)
   text.text_set(content)
   text.show()
-  bubble.content_set(text)
+  box = elementary.Box(win)
+  box.show()
+  box.pack_start(text)
+  frame = elementary.Frame(win)
+  frame.style_set("outdent_bottom")
+  frame.size_hint_weight_set(1.0, 0.0)
+  frame.size_hint_align_set(-1.0, 0.0)
+  framebox = elementary.Box(win)
+  framebox.horizontal_set(True)
+  framebox.show()
+  frame.content_set(framebox)
+  frame.show()
+
+  atags = elementary.AnchorBlock(win)
+  atags._callback_add('anchor,clicked', partial(anchorClicked, data.get('Tag')))
+  tags=makeAnchorsFromTags(data.get('Tag'))
+  atags.text_set('<b>Tags:</b> '+tags)
+  atags.size_hint_weight_set(1.0, 0.0)
+  atags.size_hint_align_set(-1.0, -1.0)
+  if tags:
+    atags.show()
+  framebox.pack_start(atags)
+
+  editbtn = elementary.Button(win)
+  editbtn.label_set('Edit')
+  editbtn.clicked = partial(composeNote, data = data, path = data['Path'])
+  editbtn.show()
+  framebox.pack_end(editbtn)
+
+  delbtn = elementary.Button(win)
+  delbtn.label_set('Delete')
+  delbtn.clicked = partial(noteDelete, data['Path'])
+  delbtn.show()
+  framebox.pack_end(delbtn)
+
+  box.pack_end(frame)
+  bubble.content_set(box)
   bubble.size_hint_weight_set(1.0, 0.0)
   bubble.size_hint_align_set(-1.0, 0.0)
   bubble.show()
@@ -57,6 +119,7 @@ def renderNote(*args, **kargs):
     scrbox.pack_start(bubble)
   else:
     scrbox.pack_end(bubble)
+  displayedNotes.append(bubble)
 
 def pager_pop(pager, *args, **kwargs):
   pager.content_pop()
@@ -68,8 +131,132 @@ def inwin_close(dia, *args, **kwargs):
   dia.delete()
   return False
 
-def note(*args, **kargs):
-  pass
+def focusToContent(content, *args, **kargs):
+  print "enter"
+  content.focus()
+
+def noteDelete (path, *args, **kargs):
+  note = getDbusObject (bus, "org.freesmartphone.opimd", path, "org.freesmartphone.PIM.Note")
+  note.Delete()
+  clearNotes()
+  displayNotes()
+
+def noteNext (pager, dia, contente, titlee, *args, **kargs):
+  title = titlee.markup_to_utf8(titlee.entry_get())
+  content = contente.markup_to_utf8(contente.entry_get())
+  dict = {}
+  if title:
+    dict['Title'] = title[:len(title)-1]
+  if content:
+    dict['Content'] = content[:len(content)-1]
+  # dict['Timestamp'] =
+  # dict['Timezone'] =
+  #TODO: tags
+  if not kargs.get('path'):
+    notes.Add(dict)
+  else:
+    note = getDbusObject (bus, "org.freesmartphone.opimd", kargs['path'], "org.freesmartphone.PIM.Note")
+    note.Update(dict)
+  clearNotes()
+  displayNotes()
+  inwin_close(dia)
+
+def composeNote(*args, **kargs):
+  data = kargs.get('data')
+  path = kargs.get('path')
+  if not data and path:
+    note = getDbusObject (bus, "org.freesmartphone.opimd", path, "org.freesmartphone.PIM.Note")
+    data = note.GetContent()
+  if data and not path:
+    path = data['Path']
+
+  dia = elementary.InnerWindow(win)
+  pager = elementary.Pager(win)
+  pager.show()
+  box = elementary.Box(win)
+  box.size_hint_weight_set(1.0, 1.0)
+  box.size_hint_align_set(-1.0, -1.0)
+  box.show()
+  pager.content_push(box)
+  dia.content_set(pager)
+
+  titlescr = elementary.Scroller(win)
+  titlescr.content_min_limit(0,1)
+  titlescr.bounce_set(0, 0)
+  titlescr.policy_set(elementary.ELM_SCROLLER_POLICY_OFF, elementary.ELM_SCROLLER_POLICY_OFF)
+  titlescr.size_hint_weight_set(1.0, -1.0)
+  titlescr.size_hint_align_set(-1.0, -1.0)
+  title = elementary.Entry(win)
+  title.show()
+  title.size_hint_weight_set(1.0, 0.0)
+  title.size_hint_align_set(-1.0, -1.0)
+  title.single_line_set(True)
+  if data:
+    if data.get('Title'):
+      title.entry_set(title.utf8_to_markup(data['Title']))
+  else:
+    title.focus()
+  title.scale_set(1.2)
+  titlescr.content_set(title)
+  titlescr.show()
+
+  contentframe = elementary.Frame(win)
+  contentframe.style_set('pad_small')
+  contentframe.size_hint_weight_set(1.0, 1.0)
+  contentframe.size_hint_align_set(-1.0, -1.0)
+  contentframe.show()
+
+  contentscr = elementary.Scroller(win)
+  contentscr.bounce_set(0, 0)
+  contentscr.size_hint_weight_set(1.0, 1.0)
+  contentscr.size_hint_align_set(-1.0, -1.0)
+  contentscr.show()
+  content = elementary.Entry(win)
+  content.show()
+  if data:
+    if data.get('Content'):
+      content.entry_set(content.utf8_to_markup(data['Content']))
+    content.focus()
+  content.size_hint_weight_set(1.0, 1.0)
+  content.size_hint_align_set(-1.0, -1.0)
+  contentscr.content_set(content)
+
+  title._callback_add('key,enter', partial(focusToContent, content))
+
+  box.pack_start(titlescr)
+  contentframe.content_set(contentscr)
+  box.pack_end(contentframe)
+
+  downbox = elementary.Box(win)
+  downbox.horizontal_set(True)
+  downbox.size_hint_weight_set(1.0, 0.0)
+  downbox.size_hint_align_set(-1.0, 0.0)
+  downbox.show()
+  box.pack_end(downbox)
+
+  next = elementary.Button(win)
+  if not data:
+    next.label_set('Add')
+  else:
+    next.label_set('Edit')
+  next.size_hint_weight_set(1.0, 0.0)
+  next.size_hint_align_set(-1.0, 0.0)
+  next.clicked = partial(noteNext, pager, dia, content, title, data = data, path = path)
+  next.show()
+
+  back = elementary.Button(win)
+  back.label_set('Back')
+  back.size_hint_weight_set(1.0, 0.0)
+  back.size_hint_align_set(-1.0, 0.0)
+  back.clicked = partial(inwin_close, dia)
+  back.show()
+
+  downbox.pack_start(next)
+  downbox.pack_end(back)
+  
+  win.resize_object_add(dia)
+  dia.show()
+  dia.activate()
 
 def selectTag(*args, **kargs):
   pass
@@ -107,12 +294,18 @@ scrbox.size_hint_align_set(-1.0, 0.0)
 scr.content_set(scrbox)
 scrbox.show()
 
-x = notes.Query({})
-#print "Query: " + x
-query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.NoteQuery")
-results = query.GetMultipleResults(query.GetResultCount())
-for result in results:
-  renderNote(data = result)
+def displayNotes(*args, **kargs):
+  if not kargs.get('query'):
+    dict = {}
+  else:
+    dict = kargs['query']
+  x = notes.Query(dict)
+  #print "Query: " + x
+  query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.NoteQuery")
+  results = query.GetMultipleResults(query.GetResultCount())
+  for result in results:
+    renderNote(data = result)
+  query.Dispose(reply_handler = dbus_ok, error_handler = dbus_err)
 
 def make_downbox():
   global downbox
@@ -128,7 +321,7 @@ def make_downbox():
   downbox.pack_start(newbtn)
   newbtn.size_hint_weight_set(1.0, 0.0)
   newbtn.size_hint_align_set(-1.0, 0.0)
-  newbtn.clicked = note
+  newbtn.clicked = composeNote
   newbtn.show()
 
   tagsbtn = elementary.Button(win)
@@ -147,6 +340,7 @@ def make_downbox():
   searchbtn.size_hint_align_set(-1.0, 0.0)
   searchbtn.clicked = search
 
+displayNotes()
 make_downbox()
 
 win.show()
