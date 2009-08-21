@@ -154,7 +154,45 @@ def focusToContent(content, *args, **kargs):
   print "enter"
   content.focus()
 
+def sure(dia, callback, *args, **kwargs):
+  dia.delete()
+  callback()
+
+def notsure(dia, *args, **kwargs):
+  dia.delete()
+
+def are_you_sure(callback, *args, **kwargs):
+  dia = elementary.InnerWindow(win)
+  win.resize_object_add(dia)
+  dia.show()
+  dia.style_set('minimal')
+  box = elementary.Box(dia)
+  dia.content_set(box)
+  label = elementary.Label(dia)
+  label.label_set('Are you sure?')
+  label.show()
+  box.pack_start(label)
+  box.show()
+  box2 = elementary.Box(dia)
+  box2.horizontal_set(True)
+  box2.show()
+  btnyes = elementary.Button(dia)
+  btnyes.label_set('Yes')
+  btnyes.clicked = partial(sure, dia, callback)
+  btnyes.show()
+  box2.pack_start(btnyes)
+  btnno = elementary.Button(dia)
+  btnno.label_set('No')
+  btnno.clicked = partial(notsure, dia)
+  btnno.show()
+  box2.pack_end(btnno)
+  box.pack_end(box2)
+  dia.activate()
+
 def noteDelete (path, *args, **kargs):
+  are_you_sure(partial(noteDelete2, path))
+
+def noteDelete2(path, *args, **kargs):
   note = getDbusObject (bus, "org.freesmartphone.opimd", path, "org.freesmartphone.PIM.Note")
   note.Delete()
   clearNotes()
