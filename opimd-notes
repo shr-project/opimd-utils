@@ -303,14 +303,15 @@ def composeNote(*args, **kargs):
   next.icon_set(nexticon)
 
   if not data:
-    nexticon.file_set("/usr/share/pixmaps/opimd-utils/newnote.png")
-    next.label_set('Add')
+    nexticon.file_set("/usr/share/pixmaps/opimd-utils/next.png")
+    next.label_set('Next')
+    next.clicked = partial(editTags, pager, dia, content, title, data = data, path = path)
   else:
     nexticon.file_set("/usr/share/pixmaps/opimd-utils/editnote.png")
     next.label_set('Edit')
+    next.clicked = partial(noteNext, pager, dia, content, title, data = data, path = path)
   next.size_hint_weight_set(1.0, 0.0)
   next.size_hint_align_set(-1.0, 0.0)
-  next.clicked = partial(noteNext, pager, dia, content, title, data = data, path = path)
   next.show()
 
   back = elementary.Button(win)
@@ -333,7 +334,74 @@ def composeNote(*args, **kargs):
   dia.show()
   dia.activate()
 
-#def editTags(
+def editTags(pager, dia, titlee, contente, *args, **kargs):
+  data = kargs.get('data')
+  path = kargs.get('path')
+  if not data and path:
+    note = getDbusObject (bus, "org.freesmartphone.opimd", path, "org.freesmartphone.PIM.Note")
+    data = note.GetContent()
+  if data and not path:
+    path = data['Path']
+
+  box = elementary.Box(win)
+
+  frame = elementary.Frame(win)
+  frame.label_set('Select tags for note:')
+  frame.show()
+
+  list = elementary.List(win)
+  frame.content_set(list)
+  frame.size_hint_weight_set(1.0, 1.0)
+  frame.size_hint_align_set(-1.0, -1.0)
+  box.pack_start(frame)
+  list.size_hint_weight_set(1.0, 1.0)
+  list.size_hint_align_set(-1.0, -1.0)
+#  list.item_append("All", None, None, partial(viewTag, None, pager))
+#  for tag in tags:
+  list.item_append('Not implemented yet', None, None, None)
+  list.show()
+  list.go()
+  downbox = elementary.Box(win)
+  downbox.horizontal_set(True)
+  downbox.show()
+  box.pack_end(downbox)
+
+  next = elementary.Button(win)
+  nexticon = elementary.Icon(win)
+  nexticon.scale_set(1,1)
+  nexticon.smooth_set(0)
+  nexticon.show()
+  next.icon_set(nexticon)
+
+  if not data:
+    nexticon.file_set("/usr/share/pixmaps/opimd-utils/newnote.png")
+    next.label_set('Add')
+  else:
+    nexticon.file_set("/usr/share/pixmaps/opimd-utils/editnote.png")
+    next.label_set('Edit')
+  next.size_hint_weight_set(1.0, 0.0)
+  next.size_hint_align_set(-1.0, 0.0)
+  next.clicked = partial(noteNext, pager, dia, contente, titlee, data = data, path = path)
+  next.show()
+  
+  downbox.pack_start(next)
+
+  back = elementary.Button(win)
+  back.label_set('Back')
+  backicon = elementary.Icon(win)
+  backicon.file_set('/usr/share/pixmaps/opimd-utils/prev.png')
+  backicon.scale_set(1, 1)
+  backicon.smooth_set(1)
+  backicon.show()
+  back.icon_set(backicon)
+  back.size_hint_weight_set(1.0, 0.0)
+  back.size_hint_align_set(-1.0, 0.0)
+  back.show()
+  back.clicked = partial(pager_pop, pager)
+  downbox.pack_end(back)
+  downbox.size_hint_weight_set(1.0, 0.0)
+  downbox.size_hint_align_set(-1.0, 0.0)
+  pager.content_push(box)
 
 def viewTag(tag, pager, *args, **kargs):
   pager.content_pop()
