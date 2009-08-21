@@ -3,6 +3,7 @@ import elementary
 import e_dbus, dbus
 from re import escape
 from functools import partial
+from ecore import timer_add
 
 # define some nice dbus helper, which I really like, cause make code easier to read :)
 def getDbusObject (bus, busname , objectpath , interface):
@@ -37,10 +38,11 @@ def nothing(*args, **kwargs):
   print "nothing called" 
 
 def anchorClicked (tags, obj, event, sth):
-  obj.hover_end()
+   pass
+#  obj.hover_end()
 
 def makeAnchorsFromTags(tags, *args, **kwargs):
-  #tags = ['brak', 'la', 'li', 'lo', 'le', 'lu', 'ugabuga', 'asia', 'ma', 'kota', 'a', 'kot', 'ma', 'asie', 'jestem', 'sobie', 'dos', 'la', 'la', 'la', 'la', 'la']
+  #tags = ['brak', 'la', 'li', 'lo', 'le', 'lu', 'ugabuga', 'ala', 'ma', 'kota', 'a', 'kot', 'ma', 'ale', 'jestem', 'sobie', 'dos', 'la', 'la', 'la', 'la', 'la']
   if tags==None:
     return ''
   if not isinstance(tags, list) and not isinstance(tags, dbus.Array):
@@ -60,6 +62,11 @@ def renderNote(*args, **kargs):
     note = getDbusObject (bus, "org.freesmartphone.opimd", path, "org.freesmartphone.PIM.Note")
     data = note.GetContent()
   bubble = elementary.Bubble(win)
+  icon = elementary.Icon(win)
+  icon.file_set("/usr/share/pixmaps/opimd-utils/note.png")
+  icon.show()
+  bubble.icon_set(icon)
+
   title = data.get('Title')
   if not title:
     title = ''
@@ -99,13 +106,25 @@ def renderNote(*args, **kargs):
   framebox.pack_start(atags)
 
   editbtn = elementary.Button(win)
-  editbtn.label_set('Edit')
+#  editbtn.label_set('Edit')
+  editicon = elementary.Icon(editbtn)
+  editicon.scale_set(1,1)
+  editicon.smooth_set(1)
+  editicon.file_set("/usr/share/pixmaps/opimd-utils/editnote.png")
+  editicon.show()
+  editbtn.icon_set(editicon)
   editbtn.clicked = partial(composeNote, data = data, path = data['Path'])
   editbtn.show()
   framebox.pack_end(editbtn)
 
   delbtn = elementary.Button(win)
-  delbtn.label_set('Delete')
+  delicon = elementary.Icon(delbtn)
+  delicon.file_set("/usr/share/pixmaps/opimd-utils/delete.png")
+  delicon.scale_set(1,1)
+  delicon.smooth_set(1)
+  delicon.show()
+  delbtn.icon_set(delicon)
+#  delbtn.label_set('Delete')
   delbtn.clicked = partial(noteDelete, data['Path'])
   delbtn.show()
   framebox.pack_end(delbtn)
@@ -135,7 +154,45 @@ def focusToContent(content, *args, **kargs):
   print "enter"
   content.focus()
 
+def sure(dia, callback, *args, **kwargs):
+  dia.delete()
+  callback()
+
+def notsure(dia, *args, **kwargs):
+  dia.delete()
+
+def are_you_sure(callback, *args, **kwargs):
+  dia = elementary.InnerWindow(win)
+  win.resize_object_add(dia)
+  dia.show()
+  dia.style_set('minimal')
+  box = elementary.Box(dia)
+  dia.content_set(box)
+  label = elementary.Label(dia)
+  label.label_set('Are you sure?')
+  label.show()
+  box.pack_start(label)
+  box.show()
+  box2 = elementary.Box(dia)
+  box2.horizontal_set(True)
+  box2.show()
+  btnyes = elementary.Button(dia)
+  btnyes.label_set('Yes')
+  btnyes.clicked = partial(sure, dia, callback)
+  btnyes.show()
+  box2.pack_start(btnyes)
+  btnno = elementary.Button(dia)
+  btnno.label_set('No')
+  btnno.clicked = partial(notsure, dia)
+  btnno.show()
+  box2.pack_end(btnno)
+  box.pack_end(box2)
+  dia.activate()
+
 def noteDelete (path, *args, **kargs):
+  are_you_sure(partial(noteDelete2, path))
+
+def noteDelete2(path, *args, **kargs):
   note = getDbusObject (bus, "org.freesmartphone.opimd", path, "org.freesmartphone.PIM.Note")
   note.Delete()
   clearNotes()
@@ -235,9 +292,17 @@ def composeNote(*args, **kargs):
   box.pack_end(downbox)
 
   next = elementary.Button(win)
+  nexticon = elementary.Icon(win)
+  nexticon.scale_set(1,1)
+  nexticon.smooth_set(1)
+  nexticon.show()
+  next.icon_set(nexticon)
+
   if not data:
+    nexticon.file_set("/usr/share/pixmaps/opimd-utils/newnote.png")
     next.label_set('Add')
   else:
+    nexticon.file_set("/usr/share/pixmaps/opimd-utils/editnote.png")
     next.label_set('Edit')
   next.size_hint_weight_set(1.0, 0.0)
   next.size_hint_align_set(-1.0, 0.0)
@@ -246,6 +311,12 @@ def composeNote(*args, **kargs):
 
   back = elementary.Button(win)
   back.label_set('Back')
+  backicon = elementary.Icon(win)
+  backicon.scale_set(1,1)
+  backicon.smooth_set(1)
+  backicon.show()
+  back.icon_set(backicon)
+  backicon.file_set("/usr/share/pixmaps/opimd-utils/quit.png")
   back.size_hint_weight_set(1.0, 0.0)
   back.size_hint_align_set(-1.0, 0.0)
   back.clicked = partial(inwin_close, dia)
@@ -259,10 +330,28 @@ def composeNote(*args, **kargs):
   dia.activate()
 
 def selectTag(*args, **kargs):
-  pass
+  dia = elementary.InnerWindow(win)
+  win.resize_object_add(dia)
+  dia.show()
+  dia.style_set('minimal')
+  label = elementary.Label(win)
+  label.label_set('Not yet implemented')
+  label.show()
+  dia.content_set(label)
+  dia.activate()
+  timer_add(3, partial(inwin_close, dia))
 
 def search(*args, **kargs):
-  pass
+  dia = elementary.InnerWindow(win)
+  win.resize_object_add(dia)
+  dia.show()
+  dia.style_set('minimal')
+  label = elementary.Label(win)
+  label.label_set('Not yet implemented')
+  label.show()
+  dia.content_set(label)
+  dia.activate()
+  timer_add(3, partial(inwin_close, dia))
 
 win = elementary.Window("opimd-notes", 0)
 win.title_set("Notes")
@@ -319,6 +408,12 @@ def make_downbox():
   newbtn = elementary.Button(win)
   newbtn.label_set('New')
   downbox.pack_start(newbtn)
+  newicon = elementary.Icon(win)
+  newicon.scale_set(1,1)
+  newicon.smooth_set(1)
+  newicon.file_set("/usr/share/pixmaps/opimd-utils/newnote.png")
+  newicon.show()
+  newbtn.icon_set(newicon)
   newbtn.size_hint_weight_set(1.0, 0.0)
   newbtn.size_hint_align_set(-1.0, 0.0)
   newbtn.clicked = composeNote
@@ -328,6 +423,12 @@ def make_downbox():
   tagsbtn.label_set('Tags')
   tagsbtn.clicked = selectTag
   downbox.pack_end(tagsbtn)
+  tagsicon = elementary.Icon(win)
+  tagsicon.scale_set(1,1)
+  tagsicon.smooth_set(1)
+  tagsicon.file_set("/usr/share/pixmaps/opimd-utils/tags.png")
+  tagsicon.show()
+  tagsbtn.icon_set(tagsicon)
   tagsbtn.size_hint_weight_set(1.0, 0.0)
   tagsbtn.size_hint_align_set(-1.0, 0.0)
   tagsbtn.show()
@@ -335,6 +436,13 @@ def make_downbox():
   searchbtn = elementary.Button(win)
   searchbtn.label_set('Search')
   downbox.pack_end(searchbtn)
+  searchicon = elementary.Icon(win)
+  searchicon.file_set("/usr/share/pixmaps/opimd-utils/search.png")
+  searchicon.show()
+  searchicon.scale_set(1,1)
+  searchicon.smooth_set(1)
+  searchbtn.icon_set(searchicon)
+
   searchbtn.show()
   searchbtn.size_hint_weight_set(1.0, 0.0)
   searchbtn.size_hint_align_set(-1.0, 0.0)
