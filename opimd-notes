@@ -4,6 +4,7 @@ import e_dbus, dbus
 from re import escape
 from functools import partial
 from ecore import timer_add
+import time
 
 # define some nice dbus helper, which I really like, cause make code easier to read :)
 def getDbusObject (bus, busname , objectpath , interface):
@@ -71,6 +72,9 @@ def renderNote(*args, **kargs):
   if not title:
     title = ''
   bubble.label_set(title)
+  if data.get('Timestamp'):
+    timestamp = time.strftime('%d %b %Y',time.localtime(float(data['Timestamp'])))
+    bubble.info_set(timestamp)
   content = data.get('Content')
   if not content:
     content = ''
@@ -206,8 +210,8 @@ def noteNext (pager, dia, contente, titlee, *args, **kargs):
     dict['Title'] = title[:len(title)-1]
   if content:
     dict['Content'] = content[:len(content)-1]
-  # dict['Timestamp'] =
-  # dict['Timezone'] =
+  dict['Timestamp'] = time.time()
+  dict['Timezone'] = time.tzname[time.daylight]
   #TODO: tags
   if not kargs.get('path'):
     notes.Add(dict)
@@ -328,6 +332,8 @@ def composeNote(*args, **kargs):
   win.resize_object_add(dia)
   dia.show()
   dia.activate()
+
+#def editTags(
 
 def viewTag(tag, pager, *args, **kargs):
   pager.content_pop()
