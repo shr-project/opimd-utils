@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=Notes
+TryExec=opimd-notes
+StartupNotify=true
+Exec=opimd-notes
+Terminal=false
+Type=Application
+Categories=PIM;
+Icon=opimd-notes
