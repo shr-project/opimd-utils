@@ -39,8 +39,17 @@ def nothing(*args, **kwargs):
   print "nothing called" 
 
 def anchorClicked (tags, obj, event, sth):
-   pass
-#  obj.hover_end()
+  obj.hover_end()
+  dia = elementary.InnerWindow(win)
+  win.resize_object_add(dia)
+  dia.show()
+  dia.style_set('minimal')
+  label = elementary.Label(win)
+  label.label_set('Not yet implemented')
+  label.show()
+  dia.content_set(label)
+  dia.activate()
+  timer_add(2, partial(inwin_close, dia))      
 
 def makeAnchorsFromTags(tags, *args, **kwargs):
   #tags = ['brak', 'la', 'li', 'lo', 'le', 'lu', 'ugabuga', 'ala', 'ma', 'kota', 'a', 'kot', 'ma', 'ale', 'jestem', 'sobie', 'dos', 'la', 'la', 'la', 'la', 'la']
@@ -202,7 +211,7 @@ def noteDelete2(path, *args, **kargs):
   clearNotes()
   displayNotes()
 
-def noteNext (pager, dia, contente, titlee, *args, **kargs):
+def noteNext (pager, dia, titlee, contente, *args, **kargs):
   title = titlee.markup_to_utf8(titlee.entry_get())
   content = contente.markup_to_utf8(contente.entry_get())
   dict = {}
@@ -212,7 +221,11 @@ def noteNext (pager, dia, contente, titlee, *args, **kargs):
     dict['Content'] = content[:len(content)-1]
   dict['Timestamp'] = time.time()
   dict['Timezone'] = time.tzname[time.daylight]
-  #TODO: tags
+  if kargs.get('tags'):
+    if len(kargs['tags'])==1:
+      dict['Tag'] = kargs['tags'][0]
+    elif len(kargs['tags'])>1:
+      dict['Tag'] = kargs['tags']
   if not kargs.get('path'):
     notes.Add(dict)
   else:
@@ -305,11 +318,11 @@ def composeNote(*args, **kargs):
   if not data:
     nexticon.file_set("/usr/share/pixmaps/opimd-utils/next.png")
     next.label_set('Next')
-    next.clicked = partial(editTags, pager, dia, content, title, data = data, path = path)
+    next.clicked = partial(editTags, pager, dia, title, content, data = data, path = path)
   else:
     nexticon.file_set("/usr/share/pixmaps/opimd-utils/editnote.png")
     next.label_set('Edit')
-    next.clicked = partial(noteNext, pager, dia, content, title, data = data, path = path)
+    next.clicked = partial(noteNext, pager, dia, title, content, data = data, path = path)
   next.size_hint_weight_set(1.0, 0.0)
   next.size_hint_align_set(-1.0, 0.0)
   next.show()
@@ -333,6 +346,115 @@ def composeNote(*args, **kargs):
   win.resize_object_add(dia)
   dia.show()
   dia.activate()
+
+def delTag(list, tags, tag, item, *args, **kargs):
+  tags.remove(tag)
+  item.delete()
+  list.go()
+
+def saveTag(list, tags, dia, tag, *args, **kargs):
+  if isinstance(tag, elementary.Entry):
+    tag = tag.markup_to_utf8(tag.entry_get())
+    tag = tag[:len(tag)-1]
+  if not tag in tags:
+    tags.append(tag)
+    delbtn = elementary.Button(win)
+    delbtn.show()
+    delic = elementary.Icon(win)
+    delic.scale_set(1,1)
+    delic.smooth_set(1)
+    delic.file_set('/usr/share/pixmaps/opimd-utils/delete.png')
+    delic.show()
+    delbtn.icon_set(delic)
+    item = list.item_prepend(tag, None, delbtn, None)
+    delbtn.clicked = partial(delTag, list, tags, tag, item)
+    list.go()
+  dia.delete()
+
+def addTag(list, tags, *args, **kargs):
+  dia = elementary.InnerWindow(win)
+  win.resize_object_add(dia)
+#  dia.style_set('minimal_vertical')
+  dia.show()
+  dia.activate()
+  box = elementary.Box(win)
+  box.show()
+  dia.content_set(box)
+  label1 = elementary.Label(win)
+  label1.label_set('Enter name of tag...')
+  label1.show()
+  label1.size_hint_align_set(-1.0, -1.0)
+  box.pack_start(label1)
+
+  titlescr = elementary.Scroller(win)
+  titlescr.content_min_limit(0,1)
+  titlescr.bounce_set(0, 0)
+  titlescr.policy_set(elementary.ELM_SCROLLER_POLICY_OFF, elementary.ELM_SCROLLER_POLICY_OFF)
+  titlescr.size_hint_weight_set(1.0, -1.0)
+  titlescr.size_hint_align_set(-1.0, -1.0)
+  title = elementary.Entry(win)
+  title.show()
+  title.size_hint_weight_set(1.0, 0.0)
+  title.size_hint_align_set(-1.0, -1.0)
+  title.single_line_set(True)
+  title.scale_set(1.2)
+  titlescr.content_set(title)
+  titlescr.show()
+  box.pack_end(titlescr)
+
+  label2 = elementary.Label(win)
+  label2.label_set('...or select it from list below:')
+  label2.show()
+  label2.size_hint_align_set(-1.0, -1.0)
+  box.pack_end(label2)
+
+  relist = elementary.List(win)
+  relist.size_hint_weight_set(1.0, 1.0)
+  relist.size_hint_align_set(-1.0, -1.0)
+  relist.show()
+  retags = notes.GetTags()
+  for tag in retags:
+    if not tag in tags:
+      relist.item_append(tag, None, None, partial(saveTag, list, tags, dia, tag))
+  box.pack_end(relist)
+  relist.go()
+
+  downbox = elementary.Box(win)
+  downbox.horizontal_set(True)
+  downbox.size_hint_weight_set(1.0, 0.0)
+  downbox.size_hint_align_set(-1.0, -1.0)
+  downbox.show()
+  box.pack_end(downbox)
+
+  next = elementary.Button(win)
+  nexticon = elementary.Icon(win)
+  nexticon.scale_set(1,1)
+  nexticon.smooth_set(0)
+  nexticon.show()
+  next.icon_set(nexticon)
+
+  nexticon.file_set("/usr/share/pixmaps/opimd-utils/newtag.png")
+  next.label_set('Add')
+  next.size_hint_weight_set(1.0, 0.0)
+  next.size_hint_align_set(-1.0, 0.0)
+  next.clicked = partial(saveTag, list, tags, dia, title)
+  next.show()
+
+  downbox.pack_start(next)
+
+  back = elementary.Button(win)
+  back.label_set('Back')
+  backicon = elementary.Icon(win)
+  backicon.file_set('/usr/share/pixmaps/opimd-utils/prev.png')
+  backicon.scale_set(1, 1)
+  backicon.smooth_set(1)
+  backicon.show()
+  back.icon_set(backicon)
+  back.size_hint_weight_set(1.0, 0.0)
+  back.size_hint_align_set(-1.0, 0.0)
+  back.show()
+  back.clicked = partial(inwin_close, dia)
+  downbox.pack_end(back)
 
 def editTags(pager, dia, titlee, contente, *args, **kargs):
   data = kargs.get('data')
@@ -358,7 +480,13 @@ def editTags(pager, dia, titlee, contente, *args, **kargs):
   list.size_hint_align_set(-1.0, -1.0)
 #  list.item_append("All", None, None, partial(viewTag, None, pager))
 #  for tag in tags:
-  list.item_append('Not implemented yet', None, None, None)
+  tags = []
+  newtag = elementary.Icon(win)
+  newtag.file_set('/usr/share/pixmaps/opimd-utils/newtag.png')
+  newtag.scale_set(1, 1)
+  newtag.smooth_set(1)
+  newtag.show()
+  list.item_append('Add new tag...', None, newtag,  partial(addTag, list, tags))
   list.show()
   list.go()
   downbox = elementary.Box(win)
@@ -375,13 +503,13 @@ def editTags(pager, dia, titlee, contente, *args, **kargs):
 
   if not data:
     nexticon.file_set("/usr/share/pixmaps/opimd-utils/newnote.png")
-    next.label_set('Add')
+    next.label_set('Save')
   else:
     nexticon.file_set("/usr/share/pixmaps/opimd-utils/editnote.png")
     next.label_set('Edit')
   next.size_hint_weight_set(1.0, 0.0)
   next.size_hint_align_set(-1.0, 0.0)
-  next.clicked = partial(noteNext, pager, dia, contente, titlee, data = data, path = path)
+  next.clicked = partial(noteNext, pager, dia, titlee, contente, data = data, path = path, tags = tags)
   next.show()
   
   downbox.pack_start(next)
@@ -449,7 +577,7 @@ def search(*args, **kargs):
   label.show()
   dia.content_set(label)
   dia.activate()
-  timer_add(3, partial(inwin_close, dia))
+  timer_add(2, partial(inwin_close, dia))
 
 win = elementary.Window("opimd-notes", 0)
 win.title_set("Notes")
