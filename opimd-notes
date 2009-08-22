@@ -485,7 +485,7 @@ def editTags(pager, dia, titlee, contente, *args, **kargs):
 #  tlist.item_append("All", None, None, partial(viewTag, None, pager))
 #  for tag in tags:
   if data and data.get('Tag'):
-    if not isinstance(data['Tag'], list) and not isinstance(data['Tag'], Array):
+    if not isinstance(data['Tag'], list) and not isinstance(data['Tag'], dbus.Array):
       tags = [ data['Tag'] ]
     else:
       tags = data['Tag']
