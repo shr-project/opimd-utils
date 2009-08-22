@@ -60,7 +60,9 @@ def makeAnchorsFromTags(tags, *args, **kwargs):
   text = ''
   i = 0
   for tag in tags:
-    text = text+'<a href='+str(i)+'>'+tag+'</a>, '
+# TODO: FIXME: make use from anchors when python-elementary will support that
+#    text = text+'<a href='+str(i)+'>'+tag+'</a>, '
+    text = text + tag + ', '
     i += 1
   text = text[:len(text)-2]
   return text

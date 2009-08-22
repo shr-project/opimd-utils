@@ -1,7 +1,5 @@
 opimd-notes:
  * filtering tags with anchors (py-elm!)
- * editing tags (opimd!)
- * searching
  * async quering
 opimd-contacts:
  * editing contacts
