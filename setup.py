@@ -11,7 +11,7 @@ import commands
 
 
 dist = setup( name='opimd-utils',
-    version='0.0.2',
+    version='0.0.3',
     author='dos',
     author_email='seba.dos1@gmail.com',
     description='Test scripts for freesmartphone.org opimd interface',
@@ -37,4 +37,3 @@ if not installroot:
 if installdir:
     installdir = os.path.join(os.path.sep,
         installdir.replace(installroot, ""))
-
