@@ -371,7 +371,8 @@ def saveTag(list, tags, dia, tag, *args, **kargs):
     list.go()
   dia.delete()
 
-def addTag(list, tags, *args, **kargs):
+def addTag(list, tags, item, *args, **kargs):
+  item.selected_set(False)
   dia = elementary.InnerWindow(win)
   win.resize_object_add(dia)
 #  dia.style_set('minimal_vertical')
