@@ -413,7 +413,7 @@ def addTag(list, tags, item, *args, **kargs):
   relist.size_hint_weight_set(1.0, 1.0)
   relist.size_hint_align_set(-1.0, -1.0)
   relist.show()
-  retags = notes.GetTags()
+  retags = notes.GetUsedTags()
   for tag in retags:
     if not tag in tags:
       relist.item_append(tag, None, None, partial(saveTag, list, tags, dia, tag))
@@ -541,7 +541,7 @@ def viewTag(tag, pager, *args, **kargs):
     displayNotes()
 
 def selectTag(pager, *args, **kargs):
-  tags = notes.GetTags()
+  tags = notes.GetUsedTags()
   box = elementary.Box(win)
   list = elementary.List(win)
   box.pack_start(list)
