@@ -567,7 +567,7 @@ def selectTag(pager, *args, **kargs):
   box.pack_start(list)
   list.size_hint_weight_set(1.0, 1.0)
   list.size_hint_align_set(-1.0, -1.0)
-  list.item_append("All", None, None, partial(viewTag, None, pager))
+#  list.item_append("All", None, None, partial(viewTag, None, pager))
   for tag in tags:
     list.item_append(tag, None, None, partial(viewTag, tag, pager))
   list.show()
@@ -717,11 +717,67 @@ scrbox.size_hint_align_set(-1.0, 0.0)
 scr.content_set(scrbox)
 scrbox.show()
 
+status = None
+
+def displayStatus(stat, *args, **kargs):
+  global status
+
+  if status:
+    hideStatus()
+
+  upbox = elementary.Box(win)
+  upbox.horizontal_set(True)
+  upbox.size_hint_weight_set(1.0, 0.0)
+  upbox.size_hint_align_set(-1.0, -1.0)
+  upbox.show()
+
+  text = elementary.AnchorBlock(win)
+  text.text_set(stat)
+  text.size_hint_weight_set(1.0, 0.0)
+  text.size_hint_align_set(-1.0, 0.5)
+  text.show()
+  upbox.pack_start(text)
+
+  delbtn = elementary.Button(win)
+  delicon = elementary.Icon(delbtn)
+  delicon.file_set("/usr/share/pixmaps/opimd-utils/quit.png")
+  delicon.scale_set(1,1)
+  delicon.smooth_set(0)
+  delicon.show()
+  delbtn.icon_set(delicon)
+  delbtn.clicked = displayAllNotes
+  delbtn.show()
+  upbox.pack_end(delbtn)
+
+  mainbox.pack_start(upbox)
+  status = upbox  
+
+def displayAllNotes(*args, **kwargs):
+  clearNotes()
+  displayNotes()
+
+def hideStatus(*args, **kargs):
+  global status
+  if status:
+    status.delete()
+    status = None
+
 def displayNotes(*args, **kargs):
   if not kargs.get('query'):
     dict = {}
+    hideStatus()
   else:
     dict = kargs['query']
+    status = ''
+    if kargs['query'].get('Tag'):
+      status = status + '<b>Tag:</b> '+elementary.Entry.utf8_to_markup(kargs['query']['Tag'])+'<br>'
+    if kargs['query'].get('Title'):
+      status = status + '<b>Title:</b> '+elementary.Entry.utf8_to_markup(kargs['query']['Title'])+'<br>'
+    if kargs['query'].get('Content'):
+      status = status + '<b>Content:</b> '+elementary.Entry.utf8_to_markup(kargs['query']['Content'])+'<br>'
+    if not status:
+      status = '<b>Detailed view</b>'
+    displayStatus(status)
   x = notes.Query(dict)
   #print "Query: " + x
   query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.NoteQuery")
