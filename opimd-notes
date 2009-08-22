@@ -315,14 +315,14 @@ def composeNote(*args, **kargs):
   nexticon.show()
   next.icon_set(nexticon)
 
-  if not data:
-    nexticon.file_set("/usr/share/pixmaps/opimd-utils/next.png")
-    next.label_set('Next')
-    next.clicked = partial(editTags, pager, dia, title, content, data = data, path = path)
-  else:
-    nexticon.file_set("/usr/share/pixmaps/opimd-utils/editnote.png")
-    next.label_set('Edit')
-    next.clicked = partial(noteNext, pager, dia, title, content, data = data, path = path)
+#  if not data:
+  nexticon.file_set("/usr/share/pixmaps/opimd-utils/next.png")
+  next.label_set('Next')
+  next.clicked = partial(editTags, pager, dia, title, content, data = data, path = path)
+#  else:
+#    nexticon.file_set("/usr/share/pixmaps/opimd-utils/editnote.png")
+#    next.label_set('Edit')
+#    next.clicked = partial(noteNext, pager, dia, title, content, data = data, path = path)
   next.size_hint_weight_set(1.0, 0.0)
   next.size_hint_align_set(-1.0, 0.0)
   next.show()
@@ -369,7 +369,8 @@ def saveTag(list, tags, dia, tag, *args, **kargs):
     item = list.item_prepend(tag, None, delbtn, None)
     delbtn.clicked = partial(delTag, list, tags, tag, item)
     list.go()
-  dia.delete()
+  if dia:
+    dia.delete()
 
 def addTag(list, tags, item, *args, **kargs):
   item.selected_set(False)
@@ -472,24 +473,41 @@ def editTags(pager, dia, titlee, contente, *args, **kargs):
   frame.label_set('Select tags for note:')
   frame.show()
 
-  list = elementary.List(win)
-  frame.content_set(list)
+  tlist = elementary.List(win)
+  frame.content_set(tlist)
   frame.size_hint_weight_set(1.0, 1.0)
   frame.size_hint_align_set(-1.0, -1.0)
   box.pack_start(frame)
-  list.size_hint_weight_set(1.0, 1.0)
-  list.size_hint_align_set(-1.0, -1.0)
-#  list.item_append("All", None, None, partial(viewTag, None, pager))
+  tlist.size_hint_weight_set(1.0, 1.0)
+  tlist.size_hint_align_set(-1.0, -1.0)
+#  tlist.item_append("All", None, None, partial(viewTag, None, pager))
 #  for tag in tags:
-  tags = []
+  if data and data.get('Tag'):
+    if not isinstance(data['Tag'], list) and not isinstance(data['Tag'], Array):
+      tags = [ data['Tag'] ]
+    else:
+      tags = data['Tag']
+  else:
+    tags = []
+  for tag in tags:
+    delbtn = elementary.Button(win)
+    delbtn.show()
+    delic = elementary.Icon(win)
+    delic.scale_set(1,1)
+    delic.smooth_set(1)
+    delic.file_set('/usr/share/pixmaps/opimd-utils/delete.png')
+    delic.show()
+    delbtn.icon_set(delic)
+    item = tlist.item_prepend(tag, None, delbtn, None)
+    delbtn.clicked = partial(delTag, tlist, tags, tag, item)
   newtag = elementary.Icon(win)
   newtag.file_set('/usr/share/pixmaps/opimd-utils/newtag.png')
   newtag.scale_set(1, 1)
   newtag.smooth_set(1)
   newtag.show()
-  list.item_append('Add new tag...', None, newtag,  partial(addTag, list, tags))
-  list.show()
-  list.go()
+  tlist.item_append('Add new tag...', None, newtag,  partial(addTag, tlist, tags))
+  tlist.show()
+  tlist.go()
   downbox = elementary.Box(win)
   downbox.horizontal_set(True)
   downbox.show()
