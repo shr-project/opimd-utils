@@ -586,17 +586,104 @@ def selectTag(pager, *args, **kargs):
   box.show()
   pager.content_push(box)
 
+def doSearch(title, titles, regexps, dia, *args, **kargs):
+  text = title.entry_get()
+  text = title.markup_to_utf8(text)
+  text = text[:len(text)-1]
+  if not regexps.state_get():
+    text = escape(text)
+
+  clearNotes()
+  dict = {}
+  if not titles.state_get():
+    dict['Content']=text
+  else:
+    dict['Title']=text
+  displayNotes(query = dict)
+  if dia:
+    dia.delete()
+
 def search(*args, **kargs):
   dia = elementary.InnerWindow(win)
   win.resize_object_add(dia)
   dia.show()
-  dia.style_set('minimal')
+  dia.style_set('minimal_vertical')
+  box = elementary.Box(win)
+  box.show()
   label = elementary.Label(win)
-  label.label_set('Not yet implemented')
+  label.label_set('Enter text:')
+  label.size_hint_align_set(-1.0, -1.0)
   label.show()
-  dia.content_set(label)
+  box.pack_start(label)
+
+  titlescr = elementary.Scroller(win)
+  titlescr.content_min_limit(0,1)
+  titlescr.bounce_set(0, 0)
+  titlescr.policy_set(elementary.ELM_SCROLLER_POLICY_OFF, elementary.ELM_SCROLLER_POLICY_OFF)
+  titlescr.size_hint_weight_set(1.0, -1.0)
+  titlescr.size_hint_align_set(-1.0, -1.0)
+  title = elementary.Entry(win)
+  title.show()
+  title.size_hint_weight_set(1.0, 0.0)
+  title.size_hint_align_set(-1.0, -1.0)
+  title.single_line_set(True)
+  title.scale_set(1.2)
+  titlescr.content_set(title)
+  titlescr.show()
+  box.pack_end(titlescr)
+
+  regexp = elementary.Check(win)
+  regexp.label_set('regular expression')
+  regexp.size_hint_weight_set(1.0, 0.0)
+  regexp.size_hint_align_set(-1.0, 0.0)
+  regexp.show()
+  box.pack_end(regexp)
+
+  titles = elementary.Check(win)
+  titles.label_set('search in titles')
+  titles.size_hint_weight_set(1.0, 0.0)
+  titles.size_hint_align_set(-1.0, 0.0)
+  titles.show()
+  box.pack_end(titles)
+
+  downbox = elementary.Box(win)
+  downbox.horizontal_set(True)
+  downbox.size_hint_weight_set(1.0, 0.0)
+  downbox.size_hint_align_set(-1.0, 0.0)
+  downbox.show()
+  box.pack_end(downbox)
+  next = elementary.Button(win)
+  nexticon = elementary.Icon(win)
+  nexticon.scale_set(1,1)
+  nexticon.smooth_set(0)
+  nexticon.show()
+  next.icon_set(nexticon)
+  nexticon.file_set("/usr/share/pixmaps/opimd-utils/search.png")
+  next.label_set('Search')
+  next.clicked = partial(doSearch, title, titles, regexp, dia)
+  next.size_hint_weight_set(1.0, 0.0)
+  next.size_hint_align_set(-1.0, 0.0)
+  next.show()
+
+  back = elementary.Button(win)
+  back.label_set('Back')
+  backicon = elementary.Icon(win)
+  backicon.scale_set(1,1)
+  backicon.smooth_set(0)
+  backicon.show()
+  back.icon_set(backicon)
+  backicon.file_set("/usr/share/pixmaps/opimd-utils/quit.png")
+  back.size_hint_weight_set(1.0, 0.0)
+  back.size_hint_align_set(-1.0, 0.0)
+  back.clicked = partial(inwin_close, dia)
+  back.show()
+
+  downbox.pack_start(next)
+  downbox.pack_end(back)
+
+
+  dia.content_set(box)
   dia.activate()
-  timer_add(2, partial(inwin_close, dia))
 
 win = elementary.Window("opimd-notes", 0)
 win.title_set("Notes")
