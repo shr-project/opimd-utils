@@ -630,6 +630,7 @@ def search(*args, **kargs):
   title.size_hint_align_set(-1.0, -1.0)
   title.single_line_set(True)
   title.scale_set(1.2)
+  title.focus()
   titlescr.content_set(title)
   titlescr.show()
   box.pack_end(titlescr)
