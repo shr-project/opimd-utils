@@ -726,6 +726,12 @@ def displayStatus(stat, *args, **kargs):
   if status:
     hideStatus()
 
+  status = elementary.Frame(win)
+  status.style_set('outdent_top')
+  status.size_hint_weight_set(1.0, 0.0)
+  status.size_hint_align_set(-1.0, -1.0)
+  status.show()
+
   upbox = elementary.Box(win)
   upbox.horizontal_set(True)
   upbox.size_hint_weight_set(1.0, 0.0)
@@ -750,8 +756,8 @@ def displayStatus(stat, *args, **kargs):
   delbtn.show()
   upbox.pack_end(delbtn)
 
-  mainbox.pack_start(upbox)
-  status = upbox  
+  status.content_set(upbox)
+  mainbox.pack_start(status)
 
 def displayAllNotes(*args, **kwargs):
   clearNotes()
