@@ -13,4 +13,7 @@ opimd_reply:
  * support sending CSM
  * support unicode
 opimd-messages:
+ * load msgs on scroll
  * rewrite!
+opimd-tasks:
+ * write ;)
