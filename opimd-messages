@@ -222,7 +222,7 @@ def render_message(message, incoming = False):
   else:
     box.pack_end(bubble)
 
-  win.show()
+#  win.show()
 
 def add_new_message(q):
   message = getDbusObject (bus, "org.freesmartphone.opimd", q, "org.freesmartphone.PIM.Message")
@@ -324,7 +324,7 @@ print "Finished" # finito, fertig, koniec etc.
 scroll._callback_add('edge_bottom', partial(go_next, num = 1))
 
 win.destroy = destroy
-#win.show()
+win.show()
 
 messages.connect_to_signal("NewMessage", add_new_message)
 
