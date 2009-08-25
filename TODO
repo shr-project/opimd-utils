@@ -1,6 +1,6 @@
 opimd-notes:
  * filtering tags with anchors (py-elm!)
- * async quering
+ * inteligent queries and signals support
 opimd-contacts:
  * editing contacts
  * adding new contacts
