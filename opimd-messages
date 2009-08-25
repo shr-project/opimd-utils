@@ -268,44 +268,46 @@ def end(x):
   print str(x)
 
 def go_next(obj, event, *args, **kwargs):
-  global message_list
-  for message in message_list:
-    try:
-      bubble = message[0]
-      signal = message[1]
-      bubble.delete()
-      signal.remove()
-      del signal
-      del bubble
-    except:
-      pass
-  message_list = []
-  try:
-    obj.delete()
-  except:
-    print "FIXME: why it sometimes fails?"
-  proceed()  
+#  global message_list
+#  for message in message_list:
+#    try:
+#      bubble = message[0]
+#      signal = message[1]
+#      bubble.delete()
+#      signal.remove()
+#      del signal
+#      del bubble
+#    except:
+#      pass
+#  message_list = []
+#  try:
+#    obj.delete()
+#  except:
+#    print "FIXME: why it sometimes fails?"
+  proceed(kwargs.get('num'))
 
-def proceed():
+def proceed(num = 5):
+  if not num:
+    num = 5
   global counter
-  if counter<5:
-    query.GetResult(reply_handler=next_result, error_handler=end)
+  if counter<num:
+    query.GetResult(reply_handler=partial(next_result, num = num), error_handler=end)
   else:
     print "Counter reached"
-    next = elementary.Button(win)
-    next.label_set("Next page")
-    next.scale_set(2.0)
-    next.show()
-    next.clicked = go_next
-    box.pack_end(next)
+#    next = elementary.Button(win)
+#    next.label_set("Next page")
+#    next.scale_set(2.0)
+#    next.show()
+#    next.clicked = go_next
+#    box.pack_end(next)
     counter = 0
 
-def next_result(res):
+def next_result(res, *args, **kwargs):
   global counter
   counter = counter + 1
 #  query.Skip(-2, reply_handler=proceed, error_handler=end)
   render_message(res)
-  proceed()
+  proceed(kwargs.get('num'))
 
 #for i in results:
   #print "Result nr "+str(i+1)+":"
@@ -318,6 +320,8 @@ counter = 0
 proceed()
 
 print "Finished" # finito, fertig, koniec etc.
+
+scroll._callback_add('edge_bottom', partial(go_next, num = 1))
 
 win.destroy = destroy
 #win.show()
