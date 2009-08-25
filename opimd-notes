@@ -249,14 +249,34 @@ def noteNext (pager, dia, titlee, contente, *args, **kargs):
       dict['Tag'] = kargs['tags'][0]
     elif len(kargs['tags'])>1:
       dict['Tag'] = kargs['tags']
+  sdia = elementary.InnerWindow(win)
+  sdia.style_set('minimal')
+  win.resize_object_add(sdia)
+  lab = elementary.Label(win)
+  lab.show()
+  sdia.content_set(lab)
   if not kargs.get('path'):
-    notes.Add(dict)
+    lab.label_set('Adding...')
+    notes.Add(dict, reply_handler=partial(noteAdded, sdia, dia), error_handler=dbus_err)
   else:
+    lab.label_set('Editing...')
     note = getDbusObject (bus, "org.freesmartphone.opimd", kargs['path'], "org.freesmartphone.PIM.Note")
-    note.Update(dict)
+    note.Update(dict, reply_handler=partial(noteUpdated, sdia, dia), error_handler=dbus_err)
+  sdia.show()
+  sdia.activate()
+
+def noteSaved(dia, *args, **kargs):
   clearNotes()
   displayNotes()
   inwin_close(dia)
+
+def noteAdded(sdia, dia, path, *args, **kargs):
+  inwin_close(sdia)
+  noteSaved(dia)
+
+def noteUpdated(sdia, dia, *args, **kargs):
+  inwin_close(sdia)
+  noteSaved(dia)
 
 def composeNote(*args, **kargs):
   data = kargs.get('data')
