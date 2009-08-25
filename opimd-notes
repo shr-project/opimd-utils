@@ -806,12 +806,30 @@ def displayNotes(*args, **kargs):
     if not status:
       status = '<b>Detailed view</b>'
     displayStatus(status)
-  x = notes.Query(dict)
+  dia = elementary.InnerWindow(win)
+  dia.style_set('minimal')
+  lab = elementary.Label(win)
+  lab.label_set('Searching...')
+  lab.show()
+  dia.content_set(lab)
+  win.resize_object_add(dia)
+  dia.show()
+  dia.activate()
+  notes.Query(dict, reply_handler=partial(displayNotesQuery, dia), error_handler=dbus_err)
+
+def displayNotesQuery(dia, x, *args, **kargs):
   #print "Query: " + x
   query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.NoteQuery")
-  results = query.GetMultipleResults(query.GetResultCount())
+  query.GetResultCount(reply_handler=partial(displayNotesCount, dia, query), error_handler=dbus_err )
+
+def displayNotesCount(dia, query, count, *args, **kargs):
+  query.GetMultipleResults(count, reply_handler=partial(displayNotesResults, dia, query), error_handler=dbus_err)
+
+def displayNotesResults(dia, query, results, *args, **kargs):
   for result in results:
     renderNote(data = result)
+  if dia:
+    dia.delete()
   query.Dispose(reply_handler = dbus_ok, error_handler = dbus_err)
 
 def make_downbox():
