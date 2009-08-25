@@ -28,7 +28,14 @@ def dbus_err(x):
 def clearNotes(*args, **kargs):
   global displayedNotes
   for bubble in displayedNotes:
-    bubble.delete()
+    try:
+      bubble.delete()
+    except:
+      print "bubble.delete() failed"
+      try:
+        bubble.hide()
+      except:
+        print "bubble.hide() failed"
   displayedNotes = []
 
 def destroy(win, event, *args, **kargs):
@@ -140,7 +147,7 @@ def renderNote(*args, **kargs):
   delicon.show()
   delbtn.icon_set(delicon)
 #  delbtn.label_set('Delete')
-  delbtn.clicked = partial(noteDelete, data['Path'])
+  delbtn.clicked = partial(noteDelete, data['Path'], bubble)
   delbtn.show()
   framebox.pack_end(delbtn)
 
@@ -204,14 +211,28 @@ def are_you_sure(callback, *args, **kwargs):
   box.pack_end(box2)
   dia.activate()
 
-def noteDelete (path, *args, **kargs):
-  are_you_sure(partial(noteDelete2, path))
+def noteDelete (path, bubble = None, *args, **kargs):
+  are_you_sure(partial(noteDelete2, path, bubble))
 
-def noteDelete2(path, *args, **kargs):
+def noteDeleted(bubble, *args, **kargs):
+  global displayedNotes
+  if bubble:
+    displayedNotes.remove(bubble)
+    bubble.delete()
+
+def noteNotDeleted(bubble, x, *args, **kargs):
+  print str(x)
+  if bubble:
+    bubble.show()
+
+def noteDelete2(path, bubble, *args, **kargs):
   note = getDbusObject (bus, "org.freesmartphone.opimd", path, "org.freesmartphone.PIM.Note")
-  note.Delete()
-  clearNotes()
-  displayNotes()
+  note.Delete(reply_handler=partial(noteDeleted, bubble), error_handler=partial(noteNotDeleted, bubble))
+  if bubble:
+    bubble.hide()
+  else:
+    clearNotes()
+    displayNotes()
 
 def noteNext (pager, dia, titlee, contente, *args, **kargs):
   title = titlee.markup_to_utf8(titlee.entry_get())
