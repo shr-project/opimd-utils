@@ -837,6 +837,8 @@ def displayNotes(*args, **kargs):
   win.resize_object_add(dia)
   dia.show()
   dia.activate()
+  dict['_sortby'] = 'Timestamp'
+  dict['_sortdesc'] = True
   notes.Query(dict, reply_handler=partial(displayNotesQuery, dia), error_handler=dbus_err)
 
 def displayNotesQuery(dia, x, *args, **kargs):
