@@ -2,18 +2,18 @@ opimd-notes:
  * filtering tags with anchors (py-elm!)
  * inteligent queries and signals support
 opimd-contacts:
- * editing contacts
- * adding new contacts
+ * adding and editing contacts
  * contact history
 opimd-notifier:
- * change Reply to Actions
- * add Actions into missed call
+ * change Reply to Actions button
+ * add Actions button into missed calls
 opimd_reply:
  * add contact selector
  * support sending CSM
- * support unicode
+ * support unicode charset
 opimd-messages:
- * load msgs on scroll
- * rewrite!
+ * make it usable!
 opimd-tasks:
  * write ;)
+opimd-dates:
+ * integrate work by Heinervdm and morphis
