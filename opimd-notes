@@ -642,6 +642,8 @@ def doSearch(title, titles, regexps, dia, *args, **kargs):
     dict['Content']=text
   else:
     dict['Title']=text
+    dict['Content']=text
+    dict['_at_least_one']=True
   displayNotes(query = dict)
   if dia:
     dia.delete()
@@ -684,7 +686,7 @@ def search(*args, **kargs):
   box.pack_end(regexp)
 
   titles = elementary.Check(win)
-  titles.label_set('search in titles')
+  titles.label_set('search also in titles')
   titles.size_hint_weight_set(1.0, 0.0)
   titles.size_hint_align_set(-1.0, 0.0)
   titles.show()
