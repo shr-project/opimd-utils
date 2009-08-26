@@ -70,7 +70,10 @@ def sanity_name(name, startline = True):
   return result
 
 def sanity_mail(mail):
-  return '^mail:'+sanity_name(mail, False)
+  if mail!='\n':
+    return '^mail:'+sanity_name(mail, False)
+  else:
+    return '^'
 
 def sanity_phone(phone):
   if phone[len(phone)-1:]=='\n':
