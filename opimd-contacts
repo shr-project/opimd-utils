@@ -52,8 +52,11 @@ pager.content_push(mainbox)
 
 win.destroy = destroy
 
-def sanity_name(name):
-  result = '^'
+def sanity_name(name, startline = True):
+  if startline:
+    result = '^'
+  else:
+    result = ''
   name = name.decode('utf-8')
   for char in name:
     if char!='\n':
@@ -65,6 +68,9 @@ def sanity_name(name):
         result += escape(char)
 #  print result
   return result
+
+def sanity_mail(mail):
+  return '^mail:'+sanity_name(mail, False)
 
 def sanity_phone(phone):
   if phone[len(phone)-1:]=='\n':
@@ -90,8 +96,9 @@ def query_contacts_query_handler(callback, x=None, *args, **kwargs):
 def query_contacts(callback, name = None, que = None):
   if name:
     phone = sanity_phone(name)
+    mail = sanity_mail(name)
     name = sanity_name(name)
-    dict = {'Name':name, '_limit':3, 'Phone':phone, '_at_least_one':True}
+    dict = {'Name':name, '_limit':3, 'Phone':phone, 'E-mail': mail, '_at_least_one':True}
     dispose = False
   else:
     dict = {'_sortby':'Name'}
