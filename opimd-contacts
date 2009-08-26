@@ -7,12 +7,15 @@ from functools import partial
 from opimd_utils import opimd_reply
 from re import escape
 from ecore import timer_add
+import phoneutils
 import elementary
 
 # define some nice dbus helper, which I really like, cause make code easier to read :)
 def getDbusObject (bus, busname , objectpath , interface):
         dbusObject = bus.get_object(busname, objectpath)
         return dbus.Interface(dbusObject, dbus_interface=interface)
+
+phoneutils.init()
 
 bus = dbus.SystemBus(mainloop = e_dbus.DBusEcoreMainLoop())
 
@@ -63,6 +66,11 @@ def sanity_name(name):
 #  print result
   return result
 
+def sanity_phone(phone):
+  if phone[len(phone)-1:]=='\n':
+    phone = phone[:len(phone)-1]
+  return escape(phoneutils.normalize_number(phone))
+
 def query_contacts_query_handler(callback, x=None, *args, **kwargs):
   if kwargs.get('query'):
     query = kwargs['query']
@@ -81,8 +89,9 @@ def query_contacts_query_handler(callback, x=None, *args, **kwargs):
 
 def query_contacts(callback, name = None, que = None):
   if name:
+    phone = sanity_phone(name)
     name = sanity_name(name)
-    dict = {'Name':name, '_limit':3}
+    dict = {'Name':name, '_limit':3, 'Phone':phone, '_at_least_one':True}
     dispose = False
   else:
     dict = {'_sortby':'Name'}
