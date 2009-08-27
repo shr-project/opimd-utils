@@ -2,7 +2,8 @@ opimd-notes:
  * filtering tags with anchors (py-elm!)
  * inteligent queries and signals support
 opimd-contacts:
- * adding and editing contacts
+ * adding new fields to contacts
+ * update list on add/update/delete
  * contact history
 opimd-notifier:
  * change Reply to Actions button
