@@ -409,6 +409,11 @@ class Field():
 #    entry.scale_set(1.5)
 #    entry.password_set(True)
     if value:
+      if field.lower().endswith('phone') and value.startswith('tel:'):
+        value = value[4:]
+      elif field.lower().endswith('e-mail') and value.startswith('mail:'):
+        value = value[5:]
+
       entry.entry_set(entry.utf8_to_markup(value))
     entryscr.content_set(entry)
     entryscr.show()
@@ -429,6 +434,17 @@ class Field():
     self.frame = frame
     self.deleted = False
     table.pack(frame, 1, num+1, 1, 1)
+
+  def get_value(self):
+    if not self.deleted:
+      value = self.entry.markup_to_utf8(self.entry.entry_get()).replace('\n','')
+      if self.field_name.lower().endswith('phone'):
+        value = 'tel:' + value
+      elif self.field_name.lower().endswith('e-mail'):
+        value = 'mail:' + value
+    else:
+      value = ''
+    return value
 
   def delete(self, *args, **kwargs):
     self.deleted = True
@@ -459,21 +475,28 @@ class EditContact():
           field = Field(win, table, self.i, fie, value)
           self.fields.append(field)
           self.i += 2
+    self.win = win
+    self.table = table
+
+  def add_field(self, fie, value = None):
+    field = Field(self.win, self.table, self.i, fie, value)
+    self.fields.append(field)
+    self.i += 2
 
   def return_data(self):
     result = {}
     for field in self.fields:
-      if not field.deleted:
-        value = field.entry.markup_to_utf8(field.entry.entry_get()).replace('\n','')
-      else:
-        value = ''
+      value = field.get_value()
       if not result.get(field.field_name):
         result[field.field_name] = value
-      elif not field.deleted and not isinstance(result[field.field_name], list):
+      elif not field.deleted and not isinstance(result[field.field_name], __builtins__.list):
         result[field.field_name] = [result[field.field_name], value]
       elif not field.deleted:
         result[field.field_name].append(value)
     return result
+
+def add_field(edit, *args, **kargs):
+  edit.add_field('E-mail')
 
 def edit_contact(path, *args, **kwargs):
   if path:
@@ -503,6 +526,15 @@ def edit_contact(path, *args, **kwargs):
   scr.show()
 
   edit = EditContact(path, data, scbox)
+
+  newfie = elementary.Button(win)
+  newfie.label_set('New field')
+  newfie.clicked = partial(add_field, edit)
+  newfie.size_hint_weight_set(1.0, 0.0)
+  newfie.size_hint_align_set(-1.0, -1.0)
+  newfie.show()
+  box.pack_end(newfie)
+
 
   bbox = elementary.Box(win)
   bbox.horizontal_set(True)
