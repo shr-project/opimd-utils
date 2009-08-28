@@ -405,7 +405,7 @@ class Field():
     entry.show()
     entry.size_hint_weight_set(1.0, 0.0)
     entry.size_hint_align_set(-1.0, 1.0)
-    entry.single_line_set(True)
+#    entry.single_line_set(True)
 #    entry.scale_set(1.5)
 #    entry.password_set(True)
     if value:
@@ -413,8 +413,9 @@ class Field():
         value = value[4:]
       elif field.lower().endswith('e-mail') and value.startswith('mail:'):
         value = value[5:]
-
-      entry.entry_set(entry.utf8_to_markup(value))
+      value = entry.utf8_to_markup(value)
+      if value:
+        entry.entry_set(value)
     entryscr.content_set(entry)
     entryscr.show()
     table.pack(entryscr, 1, num, 1, 1)
@@ -437,7 +438,8 @@ class Field():
 
   def get_value(self):
     if not self.deleted:
-      value = self.entry.markup_to_utf8(self.entry.entry_get()).replace('\n','')
+      value = self.entry.markup_to_utf8(self.entry.entry_get())
+      value = value[:len(value)-1]
       if self.field_name.lower().endswith('phone'):
         value = 'tel:' + value
       elif self.field_name.lower().endswith('e-mail'):
@@ -496,7 +498,37 @@ class EditContact():
     return result
 
 def add_field(edit, *args, **kargs):
-  edit.add_field('E-mail')
+#  edit.add_field('E-mail')
+  dia = elementary.InnerWindow(win)
+  dia.style_set('minimal_vertical')
+  dia.show()
+  win.resize_object_add(dia)
+  box = elementary.Box(win)
+  dia.content_set(box)
+  box.show()
+
+  label = elementary.Label(win)
+  label.label_set('Enter field name:')
+  label.show()
+  box.pack_start(label)
+
+  entryscr = elementary.Scroller(win)
+  entryscr.content_min_limit(0,1)
+  entryscr.bounce_set(0, 0)
+  entryscr.policy_set(elementary.ELM_SCROLLER_POLICY_OFF, elementary.ELM_SCROLLER_POLICY_OFF)
+  entryscr.size_hint_weight_set(1.0, 0.0)
+  entryscr.size_hint_align_set(-1.0, -1.0)
+  entry = elementary.Entry(win)
+  entry.show()
+  entry.size_hint_weight_set(1.0, 0.0)
+  entry.size_hint_align_set(-1.0, -1.0)
+  entry.single_line_set(True)
+  entryscr.content_set(entry)
+  entryscr.show()
+  box.pack_end(entryscr)
+
+  dia.show()
+  dia.activate()
 
 def edit_contact(path, *args, **kwargs):
   if path:
