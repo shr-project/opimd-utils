@@ -397,7 +397,7 @@ class AddCalendarEntry(elementary.Box):
 		self.pack_end(sc)
 		sc.show()
 
-		# contains back and new butten
+		# contains back and new button
 		navbox = elementary.Table(self)
 		navbox.homogenous_set(True)
 		navbox.size_hint_weight_set(1.0, 0.0)
@@ -436,12 +436,20 @@ class AddCalendarEntry(elementary.Box):
 		title_label = elementary.Label(self)
 		box.pack_end(title_label)
 		title_label.size_hint_weight_set(0.0, 0.0)
+
 		title_label.label_set( _("Title:") )
 		title_label.show()
 
+		title_frame = elementary.Frame(self)
+		title_frame.style_set('outdent_top')
+		title_frame.show()
+		title_frame.size_hint_weight_set(1.0, 0.0)
+		title_frame.size_hint_align_set(-1.0, 0.0)
 		self.title = elementary.Entry(self)
-		box.pack_end(self.title)
-		self.title.size_hint_weight_set(0.0, 0.0)
+		title_frame.content_set(self.title)
+		box.pack_end(title_frame)
+		self.title.size_hint_weight_set(1.0, 0.0)
+		self.title.size_hint_align_set(-1.0, 0.0)
 		self.title.show()
 
 		begin_label = elementary.Label(self)
@@ -453,7 +461,7 @@ class AddCalendarEntry(elementary.Box):
 		self.begin_day = elementary.Entry(self)
 		box.pack_end(self.begin_day)
 		self.begin_day.entry_set(str(date.date()))
-		self.begin_day.size_hint_weight_set(0.0, 0.0)
+		self.begin_day.size_hint_weight_set(1.0, 0.0)
 		self.begin_day.single_line_set(True)
 		self.begin_day.show()
 
@@ -472,7 +480,7 @@ class AddCalendarEntry(elementary.Box):
 		self.end_day = elementary.Entry(self)
 		box.pack_end(self.end_day)
 		self.end_day.entry_set(str(date.date()))
-		self.end_day.size_hint_weight_set(0.0, 0.0)
+		self.end_day.size_hint_weight_set(1.0, 0.0)
 		self.end_day.single_line_set(True)
 		self.end_day.show()
 
