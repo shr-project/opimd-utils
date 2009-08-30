@@ -15,7 +15,6 @@ opimd_reply:
 opimd-messages:
  * make it Om2007.2 style
 opimd-dates:
- * don't overlap entries
  * support cross-day entries
  * entry details
 opimd-tasks:

@@ -316,7 +316,9 @@ class CalendarDay(elementary.Box):
 		results = query.GetMultipleResults(query.GetResultCount())
 		query.Dispose(reply_handler = dbus_ok, error_handler = dbus_err)
 
-		print results
+		#print results
+
+		levels = [[]]
 
 		for i in results:
 			end = datetime.datetime.fromtimestamp(float(i['End']))
@@ -330,18 +332,25 @@ class CalendarDay(elementary.Box):
 					end = end_day
 
 				length = (end - begin).seconds/600
+				if length<6:
+					length = 6
 				start = (begin - begin_day).seconds/600
 
 				# check for collisions
-				for j in results:
-					if i == j:
+				newlevel = False
+				for level in levels:
+					newlevel = False
+					for nr in range(start, start+length):
+						if nr in level:
+							newlevel = True
+							break
+					if not newlevel:
 						break
-					else:
-						end_col = datetime.datetime.fromtimestamp(float(j['End']))
-						begin_col = datetime.datetime.fromtimestamp(float(j['Begin']))
-
-						if end <= end_col and begin >= begin_col:
-							col += 1
+					col += 1
+				if newlevel:
+					levels.append([])
+				for nr in range(start, start+length):
+					levels[col-1].append(nr)
 
 				# add a button for this entry
 				entry = elementary.Button(self.table)
