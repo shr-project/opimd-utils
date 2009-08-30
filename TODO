@@ -2,9 +2,9 @@ opimd-notes:
  * filtering tags with anchors (py-elm!)
  * inteligent queries and signals support
 opimd-contacts:
- * adding new fields to contacts
  * update list on add/update/delete
  * contact history
+ * selecting new fields to add
 opimd-notifier:
  * change Reply to Actions button
  * add Actions button into missed calls
@@ -13,8 +13,10 @@ opimd_reply:
  * support sending CSM
  * support unicode charset
 opimd-messages:
- * make it usable!
+ * make it Om2007.2 style
+opimd-dates:
+ * don't overlap entries
+ * support cross-day entries
+ * entry details
 opimd-tasks:
  * write ;)
-opimd-dates:
- * integrate work by Heinervdm and morphis

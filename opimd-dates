@@ -345,9 +345,9 @@ class CalendarDay(elementary.Box):
 
 				# add a button for this entry
 				entry = elementary.Button(self.table)
-				try:
+				if i.get('Title'):
 					title = i['Title']
-				except KeyError:
+				else:
 					title = _("No Title")
 				entry.label_set(title)
 				entry.size_hint_weight_set(1.0, 1.0)
@@ -458,8 +458,12 @@ class AddCalendarEntry(elementary.Box):
 		begin_label.label_set( _("Begin:") )
 		begin_label.show()
 
+		begin_frame = elementary.Frame(self)
+		begin_frame.style_set('outdent_top')
+		begin_frame.show()
 		self.begin_day = elementary.Entry(self)
-		box.pack_end(self.begin_day)
+		begin_frame.content_set(self.begin_day)
+		box.pack_end(begin_frame)
 		self.begin_day.entry_set(str(date.date()))
 		self.begin_day.size_hint_weight_set(1.0, 0.0)
 		self.begin_day.single_line_set(True)
@@ -477,8 +481,12 @@ class AddCalendarEntry(elementary.Box):
 		end_label.label_set( _("End:") )
 		end_label.show()
 
+		end_frame = elementary.Frame(self)
+		end_frame.style_set('outdent_top')
+		end_frame.show()
 		self.end_day = elementary.Entry(self)
-		box.pack_end(self.end_day)
+		end_frame.content_set(self.end_day)
+		box.pack_end(end_frame)
 		self.end_day.entry_set(str(date.date()))
 		self.end_day.size_hint_weight_set(1.0, 0.0)
 		self.end_day.single_line_set(True)
