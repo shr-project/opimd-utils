@@ -8,7 +8,15 @@ from opimd_utils import opimd_reply
 from re import escape
 from ecore import timer_add
 import phoneutils
+import gettext
 import elementary
+
+
+try:
+	cat = gettext.Catalog("opimd-contacts")
+	_ = cat.gettext
+except IOError:
+	_ = lambda x: x
 
 # define some nice dbus helper, which I really like, cause make code easier to read :)
 def getDbusObject (bus, busname , objectpath , interface):
@@ -36,7 +44,7 @@ def destroy(win, event, *args, **kargs):
   elementary.exit()
 
 win = elementary.Window("opimd-contacts", 0)
-win.title_set("Contacts")
+win.title_set(_("Contacts"))
 
 bg = elementary.Background(win)
 win.resize_object_add(bg)
@@ -129,7 +137,7 @@ def display_contacts(list, name = None):
   label = elementary.Label(loading)
   label.scale_set(2.0)
   loading.content_set(label)
-  label.label_set('Searching...')
+  label.label_set(_("Searching..."))
   label.show()
   loading.show()
   query_contacts(partial(display_contacts_callback, loading), name)
@@ -164,7 +172,7 @@ def list_contact(path, *args, **kwargs):
   callbtn = None
   if check_contact(contact, 'Phone'):
     callbtn = elementary.Button(list)
-    callbtn.label_set('Call')
+    callbtn.label_set(_("Call"))
     callbtn.show()
     callbtn.clicked = partial(select_field, contact, 'Phone', 'tel:', call)
   list.item_append(name, photo, callbtn, partial(display_contact, contact['Path'], data=contact))
@@ -204,11 +212,11 @@ def close_search(frame, *args, **kwargs):
   make_downbox()
 
 def nothing(*args, **kwargs):
-  print "nothing called"
+  print _("nothing called")
 
 def search(downbox, obj, *args, **kwargs):
   frame = elementary.Frame(win)
-  frame.label_set('Type name to search...')
+  frame.label_set(_("Type name to search..."))
   frame.show()
   frame.size_hint_weight_set(1.0, 0.0)
   frame.size_hint_align_set(-1.0, -1.0)
@@ -252,7 +260,7 @@ def ussd_ok(dia, *args, **kwargs):
   dia.delete()
 
 def ussd_error(dia, label, x, *args, **kwargs):
-  label.label_set('Error while sending USSD request!')
+  label.label_set(_("Error while sending USSD request!"))
   timer_add(3, partial(inwin_close, dia))
   print str(x)
 
@@ -267,7 +275,7 @@ def call(to, *args, **kwargs):
       dia.show()
       dia.style_set('minimal')
       label = elementary.Label(win)
-      label.label_set('Sending USSD request...')
+      label.label_set(_("Sending USSD request..."))
       label.show()
       dia.content_set(label)
       network = getDbusObject (bus, "org.freesmartphone.ogsmd", "/org/freesmartphone/GSM/Device", "org.freesmartphone.GSM.Network")
@@ -283,7 +291,7 @@ def mail(to, *args, **kwargs):
   dia.show()
   dia.style_set('minimal')
   label = elementary.Label(win)
-  label.label_set('Not yet implemented')
+  label.label_set(_("Not yet implemented"))
   label.show()
   dia.content_set(label)
   dia.activate()
@@ -296,7 +304,7 @@ def sms_status(dia, icon, label, status):
   elif status=='error':
     dia.hide()
   elif status=='sent':
-    label.label_set('Message sent!')
+    label.label_set(_("Message sent!"))
     timer_add(3, partial(inwin_close, dia))
   elif status=='cancelled':
     dia.delete()
@@ -307,7 +315,7 @@ def sms(to, *args, **kwargs):
   win.resize_object_add(dia)
   dia.style_set('minimal')
   label = elementary.Label(dia)
-  label.label_set('Sending...')
+  label.label_set(_("Sending..."))
   label.show()
   dia.content_set(label)
   opimd_reply.reply([to, kwargs['contact']['Name']], '', bus, win, None, None, partial(sms_status, dia, None, label))
@@ -527,7 +535,7 @@ def add_field(edit, *args, **kargs):
 
   label = elementary.Label(win)
   label.size_hint_align_set(-1.0, 0.0)
-  label.label_set('Enter field name:')
+  label.label_set(_("Enter field name:"))
   label.show()
   box.pack_start(label)
 
@@ -555,7 +563,7 @@ def add_field(edit, *args, **kargs):
   bbox.show()
 
   add = elementary.Button(win)
-  add.label_set('Add')
+  add.label_set(_("Add"))
   add.size_hint_weight_set(1.0, 0.0)
   add.size_hint_align_set(-1.0, 0.0)
   add.clicked = partial(add_field2, dia, entry, edit)
@@ -563,7 +571,7 @@ def add_field(edit, *args, **kargs):
   bbox.pack_end(add)
 
   quit = elementary.Button(win)
-  quit.label_set('Quit')
+  quit.label_set(_("Quit"))
   quit.size_hint_weight_set(1.0, 0.0)
   quit.size_hint_align_set(-1.0, 0.0)
   quit.clicked = partial(inwin_close, dia)
@@ -603,7 +611,7 @@ def edit_contact(path, *args, **kwargs):
   edit = EditContact(path, data, scbox)
 
   newfie = elementary.Button(win)
-  newfie.label_set('New field')
+  newfie.label_set(_("New field"))
   newfie.clicked = partial(add_field, edit)
   newfie.size_hint_weight_set(1.0, 0.0)
   newfie.size_hint_align_set(-1.0, -1.0)
@@ -619,7 +627,7 @@ def edit_contact(path, *args, **kwargs):
   box.pack_end(bbox)
 
   save = elementary.Button(win)
-  save.label_set('Save')
+  save.label_set(_("Save"))
   save.clicked = partial(save_contact, path, edit)
   save.size_hint_weight_set(1.0, 0.0)
   save.size_hint_align_set(-1.0, -1.0)
@@ -628,13 +636,13 @@ def edit_contact(path, *args, **kwargs):
 
   if path:
     delbtn = elementary.Button(win)
-    delbtn.label_set('Delete')
+    delbtn.label_set(_("Delete"))
     delbtn.clicked = partial(del_contact, path)
     delbtn.show()
     bbox.pack_end(delbtn)
 
   back = elementary.Button(win)
-  back.label_set('Back')
+  back.label_set(_("Back"))
   back.clicked = partial(pager_pop, pager)
   back.show()
   bbox.pack_end(back)
@@ -682,7 +690,7 @@ def display_contact(path, *args, **kwargs):
                 elementary.ELM_ICON_STANDARD,partial(select_field,data, 'E-mail', 'mail:', mail))
 
   editbtn = elementary.Button(bottombox)
-  editbtn.label_set('Edit')
+  editbtn.label_set(_("Edit"))
   editbtn.show()
   editbtn.clicked = partial(edit_contact, path, data=data)
   if not (isphone or ismail):
@@ -692,7 +700,7 @@ def display_contact(path, *args, **kwargs):
 
 
   backbtn = elementary.Button(bottombox)
-  backbtn.label_set('Back')
+  backbtn.label_set(_("Back"))
   backbtn.show()
   backbtn.clicked = partial(pager_pop, pager)
   bottombox.pack_end(backbtn)
@@ -866,7 +874,7 @@ def make_downbox():
   mainbox.pack_end(downbox)
 
   searchbtn = elementary.Button(win)
-  searchbtn.label_set('Search')
+  searchbtn.label_set(_("Search"))
   downbox.pack_start(searchbtn)
   searchbtn.size_hint_weight_set(1.0, 0.0)
   searchbtn.size_hint_align_set(-1.0, 0.0)
@@ -874,14 +882,14 @@ def make_downbox():
   searchbtn.show()
 
   newbtn = elementary.Button(win)
-  newbtn.label_set('New')
+  newbtn.label_set(_("New"))
   newbtn.clicked = partial(edit_contact, None)
   downbox.pack_end(newbtn)
   newbtn.size_hint_align_set(-1.0, 0.0)
   newbtn.show()
 
   exitbtn = elementary.Button(win)
-  exitbtn.label_set('Close')
+  exitbtn.label_set(_("Close"))
   downbox.pack_end(exitbtn)
   exitbtn.show()
   exitbtn.size_hint_align_set(-1.0, 0.0)
