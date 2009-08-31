@@ -196,6 +196,7 @@ def are_you_sure(callback, *args, **kwargs):
   box.pack_start(label)
   box.show()
   box2 = elementary.Box(dia)
+  box2.homogenous_set(True)
   box2.horizontal_set(True)
   box2.show()
   btnyes = elementary.Button(dia)
@@ -345,6 +346,7 @@ def composeNote(*args, **kargs):
   box.pack_end(contentframe)
 
   downbox = elementary.Box(win)
+  downbox.homogenous_set(True)
   downbox.horizontal_set(True)
   downbox.size_hint_weight_set(1.0, 0.0)
   downbox.size_hint_align_set(-1.0, 0.0)
@@ -465,6 +467,7 @@ def addTag(list, tags, item, *args, **kargs):
   relist.go()
 
   downbox = elementary.Box(win)
+  downbox.homogenous_set(True)
   downbox.horizontal_set(True)
   downbox.size_hint_weight_set(1.0, 0.0)
   downbox.size_hint_align_set(-1.0, -1.0)
@@ -553,6 +556,7 @@ def editTags(pager, dia, titlee, contente, *args, **kargs):
   tlist.go()
   downbox = elementary.Box(win)
   downbox.horizontal_set(True)
+  downbox.homogenous_set(True)
   downbox.show()
   box.pack_end(downbox)
 
@@ -694,6 +698,7 @@ def search(*args, **kargs):
 
   downbox = elementary.Box(win)
   downbox.horizontal_set(True)
+  downbox.homogenous_set(True)
   downbox.size_hint_weight_set(1.0, 0.0)
   downbox.size_hint_align_set(-1.0, 0.0)
   downbox.show()
@@ -863,6 +868,7 @@ def make_downbox():
   downbox.size_hint_weight_set(1.0, 0.0)
   downbox.size_hint_align_set(-1.0, 0.0)
   downbox.horizontal_set(True)
+  downbox.homogenous_set(True)
   mainbox.pack_end(downbox)
 
   newbtn = elementary.Button(win)
