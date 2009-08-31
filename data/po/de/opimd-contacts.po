@@ -1,0 +1,80 @@
+# SOME DESCRIPTIVE TITLE.
+# This file is put in the public domain.
+# FIRST AUTHOR hersche@puzzle.ch, 2009.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-08-27 15:49+0200\n"
+"PO-Revision-Date: 2009-08-31 12:21+0100\n"
+"Last-Translator: Vinzenz Hersche <hersche@puzzle.ch>\n"
+"Language-Team: German <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+
+msgid "Contacts"
+msgstr "Kontakte"
+
+msgid "Searching..."
+msgstr "Suchen..."
+
+msgid "Call"
+msgstr "Anrufen"
+
+
+msgid "nothing called"
+msgstr "niemanden angerufen"
+
+msgid "Type name to search..."
+msgstr "Namen eintippen, um zu suchen..."
+
+msgid "Error while sending USSD request!"
+msgstr "Während der USSD-Anfrage ist ein Fehler aufgetretten!"
+
+msgid "Sending USSD request..."
+msgstr "Sende USSD-Anfrage..."
+
+msgid "Not yet implemented"
+msgstr "Noch nicht implementiert"
+
+msgid "Message sent!"
+msgstr "Nachricht gesendet!"
+
+msgid "Sending..."
+msgstr "Senden..."
+
+msgid "Enter field name:"
+msgstr "Feldnamen eingeben:"
+
+msgid "Add"
+msgstr "Hinzufügen"
+
+msgid "Quit"
+msgstr "Verlassen"
+
+msgid "New field"
+msgstr "Neues Feld"
+
+msgid "Save"
+msgstr "Speichern"
+
+msgid "Delete"
+msgstr "Löschen"
+
+msgid "Back"
+msgstr "Zurück"
+
+msgid "Edit"
+msgstr "Bearbeiten"
+
+msgid "Search"
+msgstr "Suchen"
+
+msgid "New"
+msgstr "Neu"
+
+msgid "Close"
+msgstr "Schliessen"
