@@ -73,6 +73,7 @@ class Opimd:
 
 		# not working!
 		def delete(self, path):
+#			print path
 			obj = self.getDbusObject (self.bus, "org.freesmartphone.opimd", path, "org.freesmartphone.PIM."+self.domain[:-1])
 			obj.Delete()
 
@@ -664,7 +665,8 @@ class CalendarEntry(elementary.Box):
 		title_label = elementary.Label(self)
 		box.pack_end(title_label)
 		title_label.size_hint_weight_set(0.0, 0.0)
-		title_label.label_set( _("Title:")+" "+entry["Title"] )
+		if entry.get('Title'):
+			title_label.label_set( _("Title:")+" "+entry['Title'] )
 		title_label.show()
 
 		begin_label = elementary.Label(self)
