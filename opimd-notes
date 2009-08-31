@@ -1,11 +1,18 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import elementary
 import e_dbus, dbus
+import gettext
 from re import escape
 from functools import partial
 from ecore import timer_add
 import time
 
+try:
+	cat = gettext.Catalog("opimd-notes")
+	_ = cat.gettext
+except IOError:
+	_ = lambda x: x
 # define some nice dbus helper, which I really like, cause make code easier to read :)
 def getDbusObject (bus, busname , objectpath , interface):
         dbusObject = bus.get_object(busname, objectpath)
@@ -31,11 +38,11 @@ def clearNotes(*args, **kargs):
     try:
       bubble.delete()
     except:
-      print "bubble.delete() failed"
+      print _("bubble.delete() failed")
       try:
         bubble.hide()
       except:
-        print "bubble.hide() failed"
+        print _("bubble.hide() failed")
   displayedNotes = []
 
 def destroy(win, event, *args, **kargs):
@@ -43,7 +50,7 @@ def destroy(win, event, *args, **kargs):
   elementary.exit()
 
 def nothing(*args, **kwargs):
-  print "nothing called" 
+  print _("nothing called")
 
 def anchorClicked (tags, obj, event, sth):
   obj.hover_end()
@@ -52,7 +59,7 @@ def anchorClicked (tags, obj, event, sth):
   dia.show()
   dia.style_set('minimal')
   label = elementary.Label(win)
-  label.label_set('Not yet implemented')
+  label.label_set(_("Not yet implemented"))
   label.show()
   dia.content_set(label)
   dia.activate()
@@ -191,21 +198,21 @@ def are_you_sure(callback, *args, **kwargs):
   box = elementary.Box(dia)
   dia.content_set(box)
   label = elementary.Label(dia)
-  label.label_set('Are you sure?')
+  label.label_set(_("Are you sure?"))
   label.show()
   box.pack_start(label)
   box.show()
   box2 = elementary.Box(dia)
-  box2.homogenous_set(True)
   box2.horizontal_set(True)
+  box2.homogenous_set(True)
   box2.show()
   btnyes = elementary.Button(dia)
-  btnyes.label_set('Yes')
+  btnyes.label_set(_("Yes"))
   btnyes.clicked = partial(sure, dia, callback)
   btnyes.show()
   box2.pack_start(btnyes)
   btnno = elementary.Button(dia)
-  btnno.label_set('No')
+  btnno.label_set(_("No"))
   btnno.clicked = partial(notsure, dia)
   btnno.show()
   box2.pack_end(btnno)
@@ -257,10 +264,10 @@ def noteNext (pager, dia, titlee, contente, *args, **kargs):
   lab.show()
   sdia.content_set(lab)
   if not kargs.get('path'):
-    lab.label_set('Adding...')
+    lab.label_set(_("Adding..."))
     notes.Add(dict, reply_handler=partial(noteAdded, sdia, dia), error_handler=dbus_err)
   else:
-    lab.label_set('Editing...')
+    lab.label_set(_("Editing..."))
     note = getDbusObject (bus, "org.freesmartphone.opimd", kargs['path'], "org.freesmartphone.PIM.Note")
     note.Update(dict, reply_handler=partial(noteUpdated, sdia, dia), error_handler=dbus_err)
   sdia.show()
@@ -346,8 +353,8 @@ def composeNote(*args, **kargs):
   box.pack_end(contentframe)
 
   downbox = elementary.Box(win)
-  downbox.homogenous_set(True)
   downbox.horizontal_set(True)
+  downbox.homogenous_set(True)
   downbox.size_hint_weight_set(1.0, 0.0)
   downbox.size_hint_align_set(-1.0, 0.0)
   downbox.show()
@@ -362,7 +369,7 @@ def composeNote(*args, **kargs):
 
 #  if not data:
   nexticon.file_set("/usr/share/pixmaps/opimd-utils/next.png")
-  next.label_set('Next')
+  next.label_set(_("Next"))
   next.clicked = partial(editTags, pager, dia, title, content, data = data, path = path)
 #  else:
 #    nexticon.file_set("/usr/share/pixmaps/opimd-utils/editnote.png")
@@ -373,7 +380,7 @@ def composeNote(*args, **kargs):
   next.show()
 
   back = elementary.Button(win)
-  back.label_set('Back')
+  back.label_set(_("Back"))
   backicon = elementary.Icon(win)
   backicon.scale_set(1,1)
   backicon.smooth_set(0)
@@ -428,7 +435,7 @@ def addTag(list, tags, item, *args, **kargs):
   box.show()
   dia.content_set(box)
   label1 = elementary.Label(win)
-  label1.label_set('Enter name of tag...')
+  label1.label_set(_("Enter name of tag..."))
   label1.show()
   label1.size_hint_align_set(-1.0, -1.0)
   box.pack_start(label1)
@@ -450,7 +457,7 @@ def addTag(list, tags, item, *args, **kargs):
   box.pack_end(titlescr)
 
   label2 = elementary.Label(win)
-  label2.label_set('...or select it from list below:')
+  label2.label_set(_("...or select it from list below:"))
   label2.show()
   label2.size_hint_align_set(-1.0, -1.0)
   box.pack_end(label2)
@@ -467,8 +474,8 @@ def addTag(list, tags, item, *args, **kargs):
   relist.go()
 
   downbox = elementary.Box(win)
-  downbox.homogenous_set(True)
   downbox.horizontal_set(True)
+  downbox.homogenous_set(True)
   downbox.size_hint_weight_set(1.0, 0.0)
   downbox.size_hint_align_set(-1.0, -1.0)
   downbox.show()
@@ -482,7 +489,7 @@ def addTag(list, tags, item, *args, **kargs):
   next.icon_set(nexticon)
 
   nexticon.file_set("/usr/share/pixmaps/opimd-utils/newtag.png")
-  next.label_set('Add')
+  next.label_set(_("Add"))
   next.size_hint_weight_set(1.0, 0.0)
   next.size_hint_align_set(-1.0, 0.0)
   next.clicked = partial(saveTag, list, tags, dia, title)
@@ -491,7 +498,7 @@ def addTag(list, tags, item, *args, **kargs):
   downbox.pack_start(next)
 
   back = elementary.Button(win)
-  back.label_set('Back')
+  back.label_set(_("Back"))
   backicon = elementary.Icon(win)
   backicon.file_set('/usr/share/pixmaps/opimd-utils/prev.png')
   backicon.scale_set(1, 1)
@@ -516,7 +523,7 @@ def editTags(pager, dia, titlee, contente, *args, **kargs):
   box = elementary.Box(win)
 
   frame = elementary.Frame(win)
-  frame.label_set('Select tags for note:')
+  frame.label_set(_("Select tags for note:"))
   frame.show()
 
   tlist = elementary.List(win)
@@ -551,7 +558,7 @@ def editTags(pager, dia, titlee, contente, *args, **kargs):
   newtag.scale_set(1, 1)
   newtag.smooth_set(1)
   newtag.show()
-  tlist.item_append('Add new tag...', None, newtag,  partial(addTag, tlist, tags))
+  tlist.item_append(_("Add new tag..."), None, newtag,  partial(addTag, tlist, tags))
   tlist.show()
   tlist.go()
   downbox = elementary.Box(win)
@@ -569,10 +576,10 @@ def editTags(pager, dia, titlee, contente, *args, **kargs):
 
   if not data:
     nexticon.file_set("/usr/share/pixmaps/opimd-utils/newnote.png")
-    next.label_set('Save')
+    next.label_set(_("Save"))
   else:
     nexticon.file_set("/usr/share/pixmaps/opimd-utils/editnote.png")
-    next.label_set('Edit')
+    next.label_set(_("Edit"))
   next.size_hint_weight_set(1.0, 0.0)
   next.size_hint_align_set(-1.0, 0.0)
   next.clicked = partial(noteNext, pager, dia, titlee, contente, data = data, path = path, tags = tags)
@@ -581,7 +588,7 @@ def editTags(pager, dia, titlee, contente, *args, **kargs):
   downbox.pack_start(next)
 
   back = elementary.Button(win)
-  back.label_set('Back')
+  back.label_set(_("Back"))
   backicon = elementary.Icon(win)
   backicon.file_set('/usr/share/pixmaps/opimd-utils/prev.png')
   backicon.scale_set(1, 1)
@@ -618,7 +625,7 @@ def selectTag(pager, *args, **kargs):
   list.show()
   list.go()
   back = elementary.Button(win)
-  back.label_set('Back')
+  back.label_set(_("Back"))
   backicon = elementary.Icon(win)
   backicon.file_set('/usr/share/pixmaps/opimd-utils/quit.png')
   backicon.scale_set(1, 1)
@@ -660,7 +667,7 @@ def search(*args, **kargs):
   box = elementary.Box(win)
   box.show()
   label = elementary.Label(win)
-  label.label_set('Enter text:')
+  label.label_set(_("Enter text:"))
   label.size_hint_align_set(-1.0, -1.0)
   label.show()
   box.pack_start(label)
@@ -683,14 +690,14 @@ def search(*args, **kargs):
   box.pack_end(titlescr)
 
   regexp = elementary.Check(win)
-  regexp.label_set('regular expression')
+  regexp.label_set(_("regular expression"))
   regexp.size_hint_weight_set(1.0, 0.0)
   regexp.size_hint_align_set(-1.0, 0.0)
   regexp.show()
   box.pack_end(regexp)
 
   titles = elementary.Check(win)
-  titles.label_set('search also in titles')
+  titles.label_set(_("search also in titles"))
   titles.size_hint_weight_set(1.0, 0.0)
   titles.size_hint_align_set(-1.0, 0.0)
   titles.show()
@@ -710,14 +717,14 @@ def search(*args, **kargs):
   nexticon.show()
   next.icon_set(nexticon)
   nexticon.file_set("/usr/share/pixmaps/opimd-utils/search.png")
-  next.label_set('Search')
+  next.label_set(_("Search"))
   next.clicked = partial(doSearch, title, titles, regexp, dia)
   next.size_hint_weight_set(1.0, 0.0)
   next.size_hint_align_set(-1.0, 0.0)
   next.show()
 
   back = elementary.Button(win)
-  back.label_set('Back')
+  back.label_set(_("Back"))
   backicon = elementary.Icon(win)
   backicon.scale_set(1,1)
   backicon.smooth_set(0)
@@ -737,7 +744,7 @@ def search(*args, **kargs):
   dia.activate()
 
 win = elementary.Window("opimd-notes", 0)
-win.title_set("Notes")
+win.title_set(_("Notes"))
 
 bg = elementary.Background(win)
 win.resize_object_add(bg)
@@ -836,7 +843,7 @@ def displayNotes(*args, **kargs):
   dia = elementary.InnerWindow(win)
   dia.style_set('minimal')
   lab = elementary.Label(win)
-  lab.label_set('Searching...')
+  lab.label_set(_("Searching..."))
   lab.show()
   dia.content_set(lab)
   win.resize_object_add(dia)
@@ -872,7 +879,7 @@ def make_downbox():
   mainbox.pack_end(downbox)
 
   newbtn = elementary.Button(win)
-  newbtn.label_set('New')
+  newbtn.label_set(_("New"))
   downbox.pack_start(newbtn)
   newicon = elementary.Icon(win)
   newicon.scale_set(1,1)
@@ -886,7 +893,7 @@ def make_downbox():
   newbtn.show()
 
   tagsbtn = elementary.Button(win)
-  tagsbtn.label_set('Tags')
+  tagsbtn.label_set(_("Tags"))
   tagsbtn.clicked = partial(selectTag, pager)
   downbox.pack_end(tagsbtn)
   tagsicon = elementary.Icon(win)
@@ -900,7 +907,7 @@ def make_downbox():
   tagsbtn.show()
 
   searchbtn = elementary.Button(win)
-  searchbtn.label_set('Search')
+  searchbtn.label_set(_("Search"))
   downbox.pack_end(searchbtn)
   searchicon = elementary.Icon(win)
   searchicon.file_set("/usr/share/pixmaps/opimd-utils/search.png")
