@@ -28,32 +28,84 @@ month_strings = [ _("January"), _("February"), _("March"), _("April"), _("May"),
 # shortnames of the days
 day_names = [ _("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri"), _("Sat"), _("Sun")  ]
 
-# define some nice dbus helper, which I really like, cause make code easier to read :)
-def getDbusObject (bus, busname , objectpath , interface):
-        dbusObject = bus.get_object(busname, objectpath)
-        return dbus.Interface(dbusObject, dbus_interface=interface)
 
-bus = dbus.SystemBus(mainloop = e_dbus.DBusEcoreMainLoop())
 
-dates = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Dates", "org.freesmartphone.PIM.Dates")
+class Opimd:
+	""" A python singleton """
 
-def dbus_ok(*args, **kwargs):
-	pass
+	class __impl:
+		""" Implementation of the singleton interface """
 
-def dbus_err(x): 
-	print "dbus error: " + str(x)
+		def __init__(self, domain = "Dates"):
+			self.bus = dbus.SystemBus(mainloop = e_dbus.DBusEcoreMainLoop())
+			self.dates = self.getDbusObject (self.bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/"+domain, "org.freesmartphone.PIM."+domain)
+			self.querypath = "org.freesmartphone.PIM."+domain[:-1]+"Query"
+			self.domain = domain
+
+		# define some nice dbus helper, which I really like, cause make code easier to read :)
+		def getDbusObject (self, bus, busname , objectpath , interface):
+			dbusObject = self.bus.get_object(busname, objectpath)
+			return dbus.Interface(dbusObject, dbus_interface=interface)
+
+
+		def dbus_ok(self, *args, **kwargs):
+			pass
+
+
+		def dbus_err(self, x): 
+			print "dbus error: " + str(x)
+
+
+		def query(self, q):
+			x = self.dates.Query(q)
+			query = self.getDbusObject (self.bus, "org.freesmartphone.opimd", x, self.querypath)
+			results = query.GetMultipleResults(query.GetResultCount())
+			query.Dispose(reply_handler = self.dbus_ok, error_handler = self.dbus_err)
+			return results
+
+
+		def add(self, dic):
+			self.dates.Add(dic)
+
+		# not working!
+		def get(self, path):
+			return self.getDbusObject (self.bus, "org.freesmartphone.opimd", path, "org.freesmartphone.PIM."+self.domain[:-1])
+
+		# not working!
+		def delete(self, path):
+			obj = self.getDbusObject (self.bus, "org.freesmartphone.opimd", path, "org.freesmartphone.PIM."+self.domain[:-1])
+			obj.Delete()
+
+	# storage for the instance reference
+	__instance = None
+
+	def __init__(self, domain):
+		""" Create singleton instance """
+		# Check whether we already have an instance
+		if Opimd.__instance is None:
+			# Create and remember instance
+			Opimd.__instance = Opimd.__impl(domain)
+
+		# Store instance reference as the only member in the handle
+		self.__dict__['_Singleton__instance'] = Opimd.__instance
+
+	def __getattr__(self, attr):
+		""" Delegate access to implementation """
+		return getattr(self.__instance, attr)
+
+	def __setattr__(self, attr, value):
+		""" Delegate access to implementation """
+		return setattr(self.__instance, attr, value)
+
 
 
 class MainWindow:
-
-
 
 	def destroy(self, obj, event, *args, **kargs):
 		elementary.exit()
 
 
 	def __init__(self):
-		self.dbus_system = None
 		elementary.init()
 		elementary.c_elementary.finger_size_set(35)
 		self.win = elementary.Window("opimd-dates", elementary.ELM_WIN_BASIC)
@@ -311,18 +363,15 @@ class CalendarDay(elementary.Box):
 		begin_day = date
 		end_day = date + datetime.timedelta(hours=24)
 
-		x = dates.Query({'_gt_Begin':time.mktime(begin_day.timetuple()), '_lt_End':time.mktime(end_day.timetuple())})
-		query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.DateQuery")
-		results = query.GetMultipleResults(query.GetResultCount())
-		query.Dispose(reply_handler = dbus_ok, error_handler = dbus_err)
-
-		#print results
+		opimd = Opimd("Dates")
+		results = opimd.query({'_gt_Begin':time.mktime(begin_day.timetuple()), '_lt_End':time.mktime(end_day.timetuple())})
 
 		levels = [[]]
 
 		for i in results:
 			end = datetime.datetime.fromtimestamp(float(i['End']))
 			begin = datetime.datetime.fromtimestamp(float(i['Begin']))
+
 			if end <= end_day and begin >= begin_day:
 				col = 1
 				# only show the part of this day
@@ -361,6 +410,7 @@ class CalendarDay(elementary.Box):
 				entry.label_set(title)
 				entry.size_hint_weight_set(1.0, 1.0)
 				entry.size_hint_align_set(-1.0, -1.0)
+				entry._callback_add("clicked", (self.show_entry, [i["Path"],]))
 				entry.show()
 				self.table.pack(entry,col,start,1,length)
 				entry.scale_set(1)
@@ -381,6 +431,15 @@ class CalendarDay(elementary.Box):
 		self.mainwin.cal = AddCalendarEntry(self.mainwin)
 		self.mainwin.mainbox.pack_start(self.mainwin.cal)
 		self.mainwin.cal.show(arguments[0],arguments[1],arguments[2])
+		self.mainwin.cal.scale_set(1)
+
+
+	# called when entry button is clicked
+	def show_entry(self, obj, event, arguments, *args, **kargs):
+		self.mainwin.cal.delete()
+		self.mainwin.cal = CalendarEntry(self.mainwin)
+		self.mainwin.mainbox.pack_start(self.mainwin.cal)
+		self.mainwin.cal.show(arguments[0])
 		self.mainwin.cal.scale_set(1)
 
 
@@ -417,7 +476,7 @@ class AddCalendarEntry(elementary.Box):
 
 		# back to month button
 		backbt = elementary.Button(navbox)
-		backbt._callback_add("clicked", (self.show_month, [year, month, day]))
+		backbt._callback_add("clicked", (self.show_day, [year, month, day]))
 		backbt.label_set(_("Back"))
 		backbt.size_hint_weight_set(1.0, 1.0)
 		backbt.size_hint_align_set(-1.0, -1.0)
@@ -445,7 +504,6 @@ class AddCalendarEntry(elementary.Box):
 		title_label = elementary.Label(self)
 		box.pack_end(title_label)
 		title_label.size_hint_weight_set(0.0, 0.0)
-
 		title_label.label_set( _("Title:") )
 		title_label.show()
 
@@ -509,7 +567,7 @@ class AddCalendarEntry(elementary.Box):
 
 
 	# called when entry button is clicked
-	def show_month(self, obj, event, arguments, *args, **kargs):
+	def show_day(self, obj, event, arguments, *args, **kargs):
 		self.mainwin.cal.delete()
 		self.mainwin.cal = CalendarDay(self.mainwin)
 		self.mainwin.mainbox.pack_start(self.mainwin.cal)
@@ -530,7 +588,8 @@ class AddCalendarEntry(elementary.Box):
 		begin = time.mktime(datetime.datetime.combine(begin_day,begin_time).timetuple())
 		end = time.mktime(datetime.datetime.combine(end_day,end_time).timetuple())
 
-		dates.Add({'Title':title, 'Begin':begin, 'End':end })
+		opimd = Opimd("Dates")
+		opimd.add({'Title':title, 'Begin':begin, 'End':end })
 
 		self.mainwin.cal.delete()
 		self.mainwin.cal = CalendarDay(self.mainwin)
@@ -549,8 +608,95 @@ class CalendarEntry(elementary.Box):
 		self.mainwin = mainwin
 
 
-	def show(self, entry):
+	def show(self, path):
 		elementary.Box.show(self)
+
+		self.opimd = Opimd("Dates")
+		result = self.opimd.get(path)
+		entry = result.GetContent()
+		
+		begin = datetime.datetime.fromtimestamp(entry["Begin"])
+		end = datetime.datetime.fromtimestamp(entry["End"])
+
+		sc = elementary.Scroller(self)
+		sc.size_hint_align_set(-1.0,-1.0)
+		sc.size_hint_weight_set(1.0, 1.0)
+		sc.bounce_set(False, True)
+		self.pack_end(sc)
+		sc.show()
+
+		# contains back and new button
+		navbox = elementary.Table(self)
+		navbox.homogenous_set(True)
+		navbox.size_hint_weight_set(1.0, 0.0)
+		navbox.size_hint_align_set(-1.0, -1.0)
+		self.pack_end(navbox)
+		navbox.show()
+		navbox.scale_set(1)
+
+		# back to month button
+		backbt = elementary.Button(navbox)
+		backbt._callback_add("clicked", (self.show_day, [begin.year, begin.month, begin.day]))
+		backbt.label_set(_("Back"))
+		backbt.size_hint_weight_set(1.0, 1.0)
+		backbt.size_hint_align_set(-1.0, -1.0)
+		backbt.show()
+		navbox.pack(backbt,0,0,1,1)
+		backbt.scale_set(1)
+
+		# delete button
+		newbt = elementary.Button(navbox)
+		newbt._callback_add("clicked", (self.del_entry, [path, begin.year, begin.month, begin.day]))
+		newbt.label_set(_("Delete"))
+		newbt.size_hint_weight_set(1.0, 1.0)
+		newbt.size_hint_align_set(-1.0, -1.0)
+		newbt.show()
+		navbox.pack(newbt,1,0,1,1)
+		newbt.scale_set(1)
+
+		# Box with infos
+		box = elementary.Box(self)
+		box.show()
+		box.size_hint_align_set(-1.0,-1.0)
+		box.size_hint_weight_set(1.0, 1.0)
+		sc.content_set(box)
+
+		title_label = elementary.Label(self)
+		box.pack_end(title_label)
+		title_label.size_hint_weight_set(0.0, 0.0)
+		title_label.label_set( _("Title:")+" "+entry["Title"] )
+		title_label.show()
+
+		begin_label = elementary.Label(self)
+		box.pack_end(begin_label)
+		begin_label.size_hint_weight_set(0.0, 0.0)
+		begin_label.label_set( _("Begin:")+" "+str(begin) )
+		begin_label.show()
+
+		end_label = elementary.Label(self)
+		box.pack_end(end_label)
+		end_label.size_hint_weight_set(0.0, 0.0)
+		end_label.label_set( _("End:")+" "+str(end) )
+		end_label.show()
+
+	# called when entry button is clicked
+	def show_day(self, obj, event, arguments, *args, **kargs):
+		self.mainwin.cal.delete()
+		self.mainwin.cal = CalendarDay(self.mainwin)
+		self.mainwin.mainbox.pack_start(self.mainwin.cal)
+		self.mainwin.cal.show(arguments[0],arguments[1],arguments[2])
+		self.mainwin.cal.scale_set(1)
+
+
+	# called when delete button is clicked
+	def del_entry(self, obj, event, arguments, *args, **kargs):
+		self.opimd.delete(arguments[0])
+
+		self.mainwin.cal.delete()
+		self.mainwin.cal = CalendarDay(self.mainwin)
+		self.mainwin.mainbox.pack_start(self.mainwin.cal)
+		self.mainwin.cal.show(arguments[1],arguments[2],arguments[3])
+		self.mainwin.cal.scale_set(1)
 
 
 
