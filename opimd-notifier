@@ -5,9 +5,16 @@ import dbus, e_dbus
 from sys import argv
 from os import system
 import time
+import gettext
 from functools import partial
 from opimd_utils import opimd_reply
 import elementary
+
+try:
+	cat = gettext.Catalog("opimd-notifier")
+	_ = cat.gettext
+except IOError:
+	_ = lambda x: x
 
 MESSAGES_ICON              = "/usr/share/icons/shr/86x86/apps/shr-messages.png"
 PHONELOG_ICON              = "/usr/share/pixmaps/phonelog.png"
@@ -67,7 +74,7 @@ while (not initialized):
     calls = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Calls", "org.freesmartphone.PIM.Calls")
     initialized = True
   except:
-    print "Init failed"
+    print _("Init failed")
     time.sleep(10)
 
 elementary.init()
@@ -126,11 +133,11 @@ def display_message_status(icon, out, text, data):
   if not something:
     return 0
 
-  print "Out: " + str(out)
-  print "Processing: " + str(processing)
-  print "Sent: " + str(sent)
-  print "Read: " + str(read)
-  print "Delivered: " + str(delivered)
+  print _("Out: ") + str(out)
+  print _("Processing: ") + str(processing)
+  print _("Sent: ") + str(sent)
+  print _("Read: ") + str(read)
+  print _("Delivered: ") + str(delivered)
 
   if out:
     if processing:
@@ -191,7 +198,7 @@ def resolve_time(t):
     return time.strftime('%d %b',time.localtime(t))
 
 win = elementary.Window("opimd-notifier", 1)
-win.title_set("Notifier")
+win.title_set(_("Notifier"))
 
 bg = elementary.Background(win)
 win.resize_object_add(bg)
@@ -226,7 +233,7 @@ boxb.horizontal_set(1)
 
 hoversel = elementary.Hoversel(win)
 hoversel.hover_parent_set(win)
-hoversel.label_set("Go to...")
+hoversel.label_set(_("Go to..."))
 hoversel.show()
 
 #inbox = elementary.Button(win)
@@ -261,7 +268,7 @@ close = elementary.Button(win)
 close.show()
 close.size_hint_align_set(-1.0, 0.0)
 close.clicked = close_win
-close.label_set("Close")
+close.label_set(_("Close"))
 boxb.pack_end(close)
 
 win.destroy = destroy
@@ -290,7 +297,7 @@ def missed_call(x, just_unread = False):
   icon.file_set("/usr/share/pixmaps/opimd-utils/phonecall.png")
 
   timestamp = time.strftime('%H:%M:%S, %d %b %Y',time.localtime(float(result['Timestamp'])))
-  text.text_set('Missed call at ' + timestamp)
+  text.text_set(_("Missed call at ") + timestamp)
   if result.has_key('Peer'):
     caller = resolve_phone(result['Peer'])
   else:
@@ -307,7 +314,7 @@ def missed_call(x, just_unread = False):
 
   box.pack_start(bubble)
 
-  print "Finished" # finito, fertig, koniec etc.
+  print _("Finished") # finito, fertig, koniec etc.
   win.show()
 
 def incoming_message(x, just_unread = False):
@@ -352,7 +359,7 @@ def incoming_message(x, just_unread = False):
 
     if smsclass!=0:
       replybtn = elementary.Button(win)
-      replybtn.label_set("Reply")
+      replybtn.label_set(_("Reply"))
       replybtn.show()
       replybtn.size_hint_weight_set(0.0, 1.0)
       replybtn.size_hint_align_set(1.0, -1.0)
@@ -365,9 +372,9 @@ def incoming_message(x, just_unread = False):
 
       read = elementary.Button(win)
       if just_unread:
-        read.label_set("Unread message!")
+        read.label_set(_("Unread message!"))
       else:
-        read.label_set("New message arrived!")
+        read.label_set(_("New message arrived!"))
       read.clicked = partial(show_msg, query, textbox, bubble, text, read)
 
       read.show()
@@ -406,7 +413,7 @@ def incoming_message(x, just_unread = False):
 
   box.pack_start(bubble)
 
-  print "Finished" # finito, fertig, koniec etc.
+  print _("Finished") # finito, fertig, koniec etc.
   win.show()
 
 messages.connect_to_signal("IncomingMessage", incoming_message)
@@ -433,7 +440,7 @@ for i in range(0, results_num):
 
 #missed_call("/org/freesmartphone/PIM/Calls/0")
 
-print "Ready"
+print _("Ready")
 
 elementary.run()
 elementary.shutdown()
