@@ -16,6 +16,8 @@ opimd-messages:
  * make it Om2007.2 style
 opimd-dates:
  * support cross-day entries
- * entry details
+ * nicer entry details
+ * better way to choose begin and end day (calendar widget)
+ * write and use elementary calendar widget
 opimd-tasks:
  * write ;)
