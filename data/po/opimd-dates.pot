@@ -1,0 +1,133 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2009-08-31 18:10+CEST\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: opimd-dates:27
+msgid "April"
+msgstr ""
+
+#: opimd-dates:27
+msgid "August"
+msgstr ""
+
+#: opimd-dates:27
+msgid "December"
+msgstr ""
+
+#: opimd-dates:27
+msgid "February"
+msgstr ""
+
+#: opimd-dates:27
+msgid "January"
+msgstr ""
+
+#: opimd-dates:27
+msgid "July"
+msgstr ""
+
+#: opimd-dates:27
+msgid "June"
+msgstr ""
+
+#: opimd-dates:27
+msgid "March"
+msgstr ""
+
+#: opimd-dates:27
+msgid "May"
+msgstr ""
+
+#: opimd-dates:27
+msgid "November"
+msgstr ""
+
+#: opimd-dates:27
+msgid "October"
+msgstr ""
+
+#: opimd-dates:27
+msgid "September"
+msgstr ""
+
+#: opimd-dates:29
+msgid "Fri"
+msgstr ""
+
+#: opimd-dates:29
+msgid "Mon"
+msgstr ""
+
+#: opimd-dates:29
+msgid "Sat"
+msgstr ""
+
+#: opimd-dates:29
+msgid "Sun"
+msgstr ""
+
+#: opimd-dates:29
+msgid "Thu"
+msgstr ""
+
+#: opimd-dates:29
+msgid "Tue"
+msgstr ""
+
+#: opimd-dates:29
+msgid "Wed"
+msgstr ""
+
+#: opimd-dates:113
+msgid "Dates"
+msgstr ""
+
+#: opimd-dates:133
+msgid "Quit"
+msgstr ""
+
+#: opimd-dates:337 opimd-dates:481 opimd-dates:641
+msgid "Back"
+msgstr ""
+
+#: opimd-dates:347
+msgid "New"
+msgstr ""
+
+#: opimd-dates:410
+msgid "No Title"
+msgstr ""
+
+#: opimd-dates:491
+msgid "Add"
+msgstr ""
+
+#: opimd-dates:508 opimd-dates:669
+msgid "Title:"
+msgstr ""
+
+#: opimd-dates:526 opimd-dates:675
+msgid "Begin:"
+msgstr ""
+
+#: opimd-dates:549 opimd-dates:681
+msgid "End:"
+msgstr ""
+
+#: opimd-dates:651
+msgid "Delete"
+msgstr ""
+
