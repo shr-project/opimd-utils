@@ -327,23 +327,32 @@ def reply(to, text, bus, win, func_ok, func_err, func_status, *args, **kwargs):
   box.pack_end(scroll)
 
   hbox = elementary.Box(win)
+  hbox.size_hint_weight_set(1.0, 0.0)
+  hbox.size_hint_align_set(-1.0, 0.0)
   hbox.horizontal_set(1)
+  hbox.homogenous_set(1)
   hbox.show()
 
   opts = elementary.Button(inwin)
   opts.label_set("Options")
+  opts.size_hint_weight_set(1.0, 0.0)
+  opts.size_hint_align_set(-1.0, 0.0)
   opts.show()
   opts.clicked = partial(show_opts, pager)
   hbox.pack_end(opts)
 
   hide = elementary.Button(inwin)
   hide.label_set("Close")
+  hide.size_hint_weight_set(1.0, 0.0)
+  hide.size_hint_align_set(-1.0, 0.0)
   hide.show()
   hide.clicked = partial(inwindelete, inwin, func_status)
   hbox.pack_end(hide)
 
   send = elementary.Button(inwin)
   send.label_set("Send")
+  send.size_hint_weight_set(1.0, 0.0)
+  send.size_hint_align_set(-1.0, 0.0)
   send.show()
   send.clicked = partial(send_msg, to, entry, bus, inwin, win, func_ok, func_err, func_status)
 
