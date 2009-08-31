@@ -101,7 +101,7 @@ def query_contacts(callback, name = None, que = None):
     phone = sanity_phone(name)
     mail = sanity_mail(name)
     name = sanity_name(name)
-    dict = {'Name':name, '_limit':3, 'Phone':phone, 'E-mail': mail, '_at_least_one':True}
+    dict = {'Name':name, '_limit':3, 'Surname':name, 'Nickname':name, 'Phone':phone, 'E-mail': mail, '_at_least_one':True}
     dispose = False
   else:
     dict = {'_sortby':'Name'}
@@ -145,13 +145,22 @@ def list_contact(path, *args, **kwargs):
   photo.scale_set(0.9)
   name = contact.get('Name')
   if not name:
-    name = contact.get('Phone')
+    name = contact.get('Surname')
     if not name:
-      name = contact.get('E-mail')
+      name = contact.get('Nickname')
       if not name:
-        name = '<???>'
+        name = contact.get('Phone')
+        if not name:
+          name = contact.get('E-mail')
+          if not name:
+            name = '<???>'
   if isinstance(name, dbus.Array):
     name = name[0]
+  if contact.get('Name') and contact.get('Surname'):
+    surname = contact['Surname']
+    if isinstance(surname, dbus.Array):
+      surname = surname[0]
+    name += ' ' + surname
   callbtn = None
   if check_contact(contact, 'Phone'):
     callbtn = elementary.Button(list)
@@ -731,10 +740,24 @@ def display_contact(path, *args, **kwargs):
 
   if data.get('Name'):
     label = elementary.Label(info)
-    label.label_set('<b>'+elementary.Entry.utf8_to_markup(str(data['Name']))+'</b>')
+    name = data['Name']
+    if data.get('Surname'):
+      name += ' ' + data['Surname']
+    label.label_set('<b>'+elementary.Entry.utf8_to_markup(name)+'</b>')
     label.show()
     label.size_hint_align_set(-1.0, 0.0)
     info.pack_start(label)
+
+  if data.get('Nickname'):
+    nicks = data['Nickname']
+    if not isinstance(nicks, dbus.Array):
+      nicks = [nicks]
+    for nick in nicks:
+      label = elementary.Label(info)
+      label.label_set('<i>'+elementary.Entry.utf8_to_markup(nick)+'</i>')
+      label.show()
+      label.size_hint_align_set(-1.0, 0.0)
+      info.pack_end(label)
 
   header_fields = {'Phone':'tel:','E-mail':'mail:'}
   icons = {'tel:':'phonecall','mail:':'sent'}
@@ -782,7 +805,7 @@ def display_contact(path, *args, **kwargs):
 
   i=0
   for field in data:
-    if not field in header_fields and not field in ('Name','Path'):
+    if not field in header_fields and not field in ('Name','Surname','Nickname','Path'):
       values = data[field]
       if type(values)!=dbus.Array:
         values = [values]
