@@ -1,6 +1,7 @@
 [Desktop Entry]
 Version=1.0
 Name=opimd contacts
+Name[de]=Opimd-Kontakte
 TryExec=opimd-contacts
 StartupNotify=true
 Exec=opimd-contacts

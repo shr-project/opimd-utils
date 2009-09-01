@@ -1,6 +1,7 @@
 [Desktop Entry]
 Version=1.0
 Name=opimd messages
+Name[de]=Opimd-Nachrichten
 TryExec=opimd-messages
 StartupNotify=true
 Exec=opimd-messages

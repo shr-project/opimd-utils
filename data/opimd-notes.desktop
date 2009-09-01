@@ -1,6 +1,7 @@
 [Desktop Entry]
 Version=1.0
 Name=Notes
+Name[de]=Notizen
 TryExec=opimd-notes
 StartupNotify=true
 Exec=opimd-notes
