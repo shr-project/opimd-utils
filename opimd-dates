@@ -240,6 +240,14 @@ class CalendarMonth(elementary.Table):
 			self.pack(l,e,row,1,1)
 
 		today = datetime.date.today()
+		begin_month = datetime.date(year,month,1)
+		if month == 12:
+			end_month = datetime.date(year+1,1,1)
+		else:
+			end_month = datetime.date(year,month+1,1)
+
+		opimd = Opimd("Dates")
+		results = opimd.query({'_gt_Begin':time.mktime(begin_month.timetuple()), '_lt_End':time.mktime(end_month.timetuple())})
 
 		# fill rows 3 to 8 with days
 		for week in self.calobj.monthdays2calendar(year, month):
@@ -247,22 +255,28 @@ class CalendarMonth(elementary.Table):
 			for (day,weekday) in week:
 				if day > 0:
 					bt = elementary.Button(self)
-					if today.year == year and today.month == month and today.day == day:
-						bt.style_set("default")
 					bt.size_hint_weight_set(1.0, 1.0)
 					#bt.size_hint_align_set(0.5, 0.5)
 					bt._callback_add("clicked", (self.show_day, [year, month, day]))
 					bt.label_set( str( day ) )
 					bt.show()
-					bt.scale_set(1)
 					self.pack(bt,weekday,row,1,1)
+
+					# check for dates at this day, if there are mark yellow 
+					date = datetime.datetime(year, month, day)
+					begin_day = date
+					end_day = date + datetime.timedelta(hours=24)
+					for i in results:
+						end = datetime.datetime.fromtimestamp(float(i['End']))
+						begin = datetime.datetime.fromtimestamp(float(i['Begin']))
+						if end <= end_day and begin >= begin_day:
+							bt.color_set(0, 200, 200, 255)
+							break
+
 					# mark current day red
 					if day == today.day and month == today.month and year == today.year:
 						bt.color_set(200, 0, 0, 255)
-						bt.scale_set(1)
-					# check for dates at this day, if there are mark yellow 
-					#
-
+					bt.scale_set(1)
 
 
 	# called when next or previus button is clicked
