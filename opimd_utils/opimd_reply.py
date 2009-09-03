@@ -1,8 +1,16 @@
+# -*- coding: utf-8 -*-
 
 import elementary, dbus
 import time
+import gettext
 import ConfigParser
 from functools import partial
+
+try:
+	cat = gettext.Catalog("opimd-messages")
+	_ = cat.gettext
+except IOError:
+	_ = lambda x: x
 
 CONF_FILE = '/etc/opimd-utils.conf'
 
@@ -75,7 +83,7 @@ def dbus_gsm_err(to, text, props, x, bus, win, func_ok, func_err, func_status, d
   box.show()
   inwin.content_set(box)
   label = elementary.Label(inwin)
-  label.label_set("Error while sending message!")
+  label.label_set(_("Error while sending message!"))
   label.show()
   box.pack_start(label)
   sc = elementary.Scroller(inwin)
@@ -94,13 +102,13 @@ def dbus_gsm_err(to, text, props, x, bus, win, func_ok, func_err, func_status, d
   hbox.show()
 
   retry = elementary.Button(inwin)
-  retry.label_set("Retry")
+  retry.label_set(_("Retry"))
   retry.show()
   retry.clicked = partial(retry_msg, to, text, bus, win, inwin, func_ok, func_err, func_status)
   hbox.pack_end(retry)
 
   hide = elementary.Button(inwin)
-  hide.label_set("Close")
+  hide.label_set(_("Close"))
   hide.show()
   hide.clicked = partial(inwindelete, inwin, func_status)
   hbox.pack_end(hide)  
@@ -198,7 +206,7 @@ def show_opts(pager, *args, **kwargs):
   box.pack_start(scroller)
 
   oframe = elementary.Frame(pager)
-  oframe.label_set("Options")
+  oframe.label_set(_("Options"))
   oframe.show()
   oframe.style_set('pad_small')
   oframe.size_hint_weight_set(1.0, 1.0)
@@ -263,7 +271,7 @@ def show_opts(pager, *args, **kwargs):
     optsval[opt] = chk
 
   button = elementary.Button(pager)
-  button.label_set('Back')
+  button.label_set(_("Back"))
   button.show()
   button.clicked = partial(hide_opts, pager, optsval)
   button.size_hint_weight_set(-1.0, 0.0)
@@ -296,7 +304,7 @@ def reply(to, text, bus, win, func_ok, func_err, func_status, *args, **kwargs):
   tbox.horizontal_set(1)  
 
   label = elementary.Label(inwin)
-  label.label_set("To: "+elementary.Entry.utf8_to_markup(to[1]))
+  label.label_set(_("To: ")+elementary.Entry.utf8_to_markup(to[1]))
   label.show()
   tbox.pack_start(label)
 
@@ -334,7 +342,7 @@ def reply(to, text, bus, win, func_ok, func_err, func_status, *args, **kwargs):
   hbox.show()
 
   opts = elementary.Button(inwin)
-  opts.label_set("Options")
+  opts.label_set(_("Options"))
   opts.size_hint_weight_set(1.0, 0.0)
   opts.size_hint_align_set(-1.0, 0.0)
   opts.show()
@@ -342,7 +350,7 @@ def reply(to, text, bus, win, func_ok, func_err, func_status, *args, **kwargs):
   hbox.pack_end(opts)
 
   hide = elementary.Button(inwin)
-  hide.label_set("Close")
+  hide.label_set(_("Close"))
   hide.size_hint_weight_set(1.0, 0.0)
   hide.size_hint_align_set(-1.0, 0.0)
   hide.show()
@@ -350,7 +358,7 @@ def reply(to, text, bus, win, func_ok, func_err, func_status, *args, **kwargs):
   hbox.pack_end(hide)
 
   send = elementary.Button(inwin)
-  send.label_set("Send")
+  send.label_set(_("Send"))
   send.size_hint_weight_set(1.0, 0.0)
   send.size_hint_align_set(-1.0, 0.0)
   send.show()
