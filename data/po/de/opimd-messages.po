@@ -51,3 +51,23 @@ msgstr "Nachrichten"
 msgid "Finished"
 msgstr "Fertig"
 
+msgid "Error while sending message!"
+msgstr "Beim verschicken der Nachricht ist ein Fehler aufgetretten!"
+
+msgid "Retry"
+msgstr "Neuversuch"
+
+msgid "Close"
+msgstr "Schliessen"
+
+msgid "Options"
+msgstr "Optionen"
+
+msgid "Back"
+msgstr "Zurück"
+
+msgid "To: "
+msgstr "An: "
+
+msgid "Send"
+msgstr "Senden"
