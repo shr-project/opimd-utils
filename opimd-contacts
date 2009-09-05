@@ -707,15 +707,16 @@ def display_contact(path, *args, **kwargs):
 
   scr = elementary.Scroller(box)
   scr.bounce_set(0, 0)
+  scr.content_min_limit(0,1)
   scr.policy_set(elementary.ELM_SCROLLER_POLICY_OFF, elementary.ELM_SCROLLER_POLICY_AUTO)
-  scr.size_hint_weight_set(1.0, 1.0)
+  scr.size_hint_weight_set(1.0, -1.0)
   scr.size_hint_align_set(-1.0, -1.0)
 
   headerframe = elementary.Frame(scr)
   headerframe.style_set('pad_small')
   headerframe.show()
   headerframe.size_hint_weight_set(1.0, 1.0)
-  headerframe.size_hint_align_set(-1.0, -1.0)
+  headerframe.size_hint_align_set(0.5, -1.0)
 
   scrbox = elementary.Box(scr)
   scrbox.size_hint_weight_set(1.0, 0.0)
@@ -726,18 +727,18 @@ def display_contact(path, *args, **kwargs):
   header.horizontal_set(True)
   header.show()
   header.size_hint_weight_set(1.0, 0.0)
-  header.size_hint_align_set(-1.0, -1.0)
+#  header.size_hint_align_set(0.5, -1.0)
   headerframe.content_set(header)
-  scrbox.pack_start(headerframe)
+#  scrbox.pack_start(headerframe)
 
   photo = elementary.Photo(header)
-  photo.size_hint_align_set(-1.0, -1.0)
+  photo.size_hint_align_set(0.5, -1.0)
   header.pack_start(photo)
   photo.show()
 
   infofr = elementary.Frame(header)
   infofr.size_hint_weight_set(1.0, 0.0)
-  infofr.size_hint_align_set(-1.0, -1.0)
+#  infofr.size_hint_align_set(-1.0, -1.0)
   infofr.show()
   infofr.style_set('pad_small')
   header.pack_end(infofr)
@@ -859,9 +860,29 @@ def display_contact(path, *args, **kwargs):
   wrapper.size_hint_align_set(-1.0, 0.0)
   wrapper.show()
 
-  scr.content_set(wrapper)
+  scr.content_set(header)
   scr.show()
 
+#  tb = elementary.Toolbar(win)
+#  tb.size_hint_weight_set(0, 0)
+#  tb.size_hint_align_set(-1.0, -1.0)
+
+#  det = tb.item_add(elementary.Photo(tb), 'Data', None)
+#  det.select()
+#  his = tb.item_add(None, 'History', None)
+
+#  tb.show()
+
+  scr2 = elementary.Scroller(box)
+  scr2.bounce_set(0, 0)
+#  scr2.policy_set(elementary.ELM_SCROLLER_POLICY_AUTO, elementary.ELM_SCROLLER_POLICY_AUTO)
+  scr2.size_hint_weight_set(1.0, 1.0)
+  scr2.size_hint_align_set(-1.0, -1.0)
+
+  scr2.content_set(wrapper)
+  scr2.show()
+  box.pack_start(scr2)
+#  box.pack_start(tb)
   box.pack_start(scr)
 
 def make_downbox():
