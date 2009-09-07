@@ -2,6 +2,7 @@ opimd-notes:
  * filtering tags with anchors (py-elm!)
  * inteligent queries and signals support
 opimd-contacts:
+ * use edje buttons as end in list items
  * update list on add/update/delete
  * contact history
  * selecting new fields to add
