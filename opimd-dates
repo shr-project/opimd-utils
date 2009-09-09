@@ -15,6 +15,7 @@ import calendar
 import datetime
 import time
 import e_dbus, dbus
+from functools import partial
 
 
 try:
@@ -47,14 +48,11 @@ class Opimd:
 			dbusObject = self.bus.get_object(busname, objectpath)
 			return dbus.Interface(dbusObject, dbus_interface=interface)
 
-
 		def dbus_ok(self, *args, **kwargs):
 			pass
 
-
 		def dbus_err(self, x): 
 			print "dbus error: " + str(x)
-
 
 		def query(self, q):
 			x = self.dates.Query(q)
@@ -63,17 +61,13 @@ class Opimd:
 			query.Dispose(reply_handler = self.dbus_ok, error_handler = self.dbus_err)
 			return results
 
-
 		def add(self, dic):
 			self.dates.Add(dic)
 
-		# not working!
 		def get(self, path):
 			return self.getDbusObject (self.bus, "org.freesmartphone.opimd", path, "org.freesmartphone.PIM."+self.domain[:-1])
 
-		# not working!
 		def delete(self, path):
-#			print path
 			obj = self.getDbusObject (self.bus, "org.freesmartphone.opimd", path, "org.freesmartphone.PIM."+self.domain[:-1])
 			obj.Delete()
 
@@ -468,30 +462,126 @@ class AddCalendarEntry(elementary.Box):
 		self.mainwin = mainwin
 
 
+	def pager_promote(self, content, *args, **kargs):
+		self.pager.content_promote(content)
+
+	def focusToContent(self, content, *args, **kargs):
+		print "enter"
+		content.focus()
+
 	def show(self, year, month, day):
 		elementary.Box.show(self)
 
+		data = False
+
 		date = datetime.datetime(year, month, day)
 
-		sc = elementary.Scroller(self)
-		sc.size_hint_align_set(-1.0,-1.0)
-		sc.size_hint_weight_set(1.0, 1.0)
-		sc.bounce_set(False, True)
-		self.pack_end(sc)
-		sc.show()
+		self.pager = elementary.Pager(self)
+		self.pager.size_hint_align_set(-1.0,-1.0)
+		self.pager.size_hint_weight_set(1.0, 1.0)
+		self.pack_start(self.pager)
+		self.pager.show()
 
-		# contains back and new button
-		navbox = elementary.Table(self)
+		# Box with end date
+		end_box = elementary.Box(self.pager)
+		end_box.show()
+		end_box.size_hint_align_set(-1.0,-1.0)
+		end_box.size_hint_weight_set(1.0, 1.0)
+		self.pager.content_push(end_box)
+		# Box with begin date
+		begin_box = elementary.Box(self.pager)
+		begin_box.show()
+		begin_box.size_hint_align_set(-1.0,-1.0)
+		begin_box.size_hint_weight_set(1.0, 1.0)
+		self.pager.content_push(begin_box)
+		# Box with title
+		title_box = elementary.Box(self.pager)
+		title_box.show()
+		title_box.size_hint_align_set(-1.0,-1.0)
+		title_box.size_hint_weight_set(1.0, 1.0)
+		self.pager.content_push(title_box)
+
+
+		# Content of title_box
+		title_label = elementary.Label(title_box)
+		title_box.pack_end(title_label)
+		title_label.size_hint_weight_set(0.0, 0.0)
+		title_label.label_set( _("Title:") )
+		title_label.show()
+
+		title_frame = elementary.Frame(title_box)
+		title_frame.style_set('outdent_top')
+		title_frame.show()
+		title_frame.size_hint_weight_set(1.0, 0.0)
+		title_frame.size_hint_align_set(-1.0, 0.0)
+		self.title = elementary.Entry(title_frame)
+		title_frame.content_set(self.title)
+		title_box.pack_end(title_frame)
+		self.title.size_hint_weight_set(1.0, 0.0)
+		self.title.size_hint_align_set(-1.0, 0.0)
+		self.title.show()
+
+		navbox = elementary.Table(title_box)
 		navbox.homogenous_set(True)
 		navbox.size_hint_weight_set(1.0, 0.0)
 		navbox.size_hint_align_set(-1.0, -1.0)
-		self.pack_end(navbox)
+		title_box.pack_end(navbox)
 		navbox.show()
 		navbox.scale_set(1)
 
-		# back to month button
 		backbt = elementary.Button(navbox)
 		backbt._callback_add("clicked", (self.show_day, [year, month, day]))
+		backbt.label_set(_("Cancel"))
+		backbt.size_hint_weight_set(1.0, 1.0)
+		backbt.size_hint_align_set(-1.0, -1.0)
+		backbt.show()
+		navbox.pack(backbt,0,0,1,1)
+		backbt.scale_set(1)
+
+		newbt = elementary.Button(navbox)
+		newbt.clicked = partial(self.pager_promote, begin_box)
+		newbt.label_set(_("Continue"))
+		newbt.size_hint_weight_set(1.0, 1.0)
+		newbt.size_hint_align_set(-1.0, -1.0)
+		newbt.show()
+		navbox.pack(newbt,1,0,1,1)
+		newbt.scale_set(1)
+
+
+		# Content of begin_box
+		begin_label = elementary.Label(begin_box)
+		begin_box.pack_end(begin_label)
+		begin_label.size_hint_weight_set(0.0, 0.0)
+		begin_label.label_set( _("Begin:") )
+		begin_label.show()
+
+		begin_frame = elementary.Frame(begin_box)
+		begin_frame.style_set('outdent_top')
+		begin_frame.show()
+		self.begin_day = elementary.Entry(begin_frame)
+		begin_frame.content_set(self.begin_day)
+		begin_box.pack_end(begin_frame)
+		self.begin_day.entry_set(str(date.date()))
+		self.begin_day.size_hint_weight_set(1.0, 0.0)
+		self.begin_day.single_line_set(True)
+		self.begin_day.show()
+
+		self.begin_time = elementary.Clock(begin_box)
+		begin_box.pack_end(self.begin_time)
+		self.begin_time.edit_set(True)
+		self.begin_time.size_hint_weight_set(0.0, 0.0)
+		self.begin_time.show()
+
+		navbox = elementary.Table(begin_box)
+		navbox.homogenous_set(True)
+		navbox.size_hint_weight_set(1.0, 0.0)
+		navbox.size_hint_align_set(-1.0, -1.0)
+		begin_box.pack_end(navbox)
+		navbox.show()
+		navbox.scale_set(1)
+
+		backbt = elementary.Button(navbox)
+		backbt.clicked = partial(self.pager_promote, title_box)
 		backbt.label_set(_("Back"))
 		backbt.size_hint_weight_set(1.0, 1.0)
 		backbt.size_hint_align_set(-1.0, -1.0)
@@ -499,86 +589,65 @@ class AddCalendarEntry(elementary.Box):
 		navbox.pack(backbt,0,0,1,1)
 		backbt.scale_set(1)
 
-		# new button
 		newbt = elementary.Button(navbox)
-		newbt._callback_add("clicked", (self.add_entry, [year, month, day]))
-		newbt.label_set(_("Add"))
+		newbt.clicked = partial(self.pager_promote, end_box)
+		newbt.label_set(_("Continue"))
 		newbt.size_hint_weight_set(1.0, 1.0)
 		newbt.size_hint_align_set(-1.0, -1.0)
 		newbt.show()
 		navbox.pack(newbt,1,0,1,1)
 		newbt.scale_set(1)
 
-		# Box with options
-		box = elementary.Box(self)
-		box.show()
-		box.size_hint_align_set(-1.0,-1.0)
-		box.size_hint_weight_set(1.0, 1.0)
-		sc.content_set(box)
 
-		title_label = elementary.Label(self)
-		box.pack_end(title_label)
-		title_label.size_hint_weight_set(0.0, 0.0)
-		title_label.label_set( _("Title:") )
-		title_label.show()
-
-		title_frame = elementary.Frame(self)
-		title_frame.style_set('outdent_top')
-		title_frame.show()
-		title_frame.size_hint_weight_set(1.0, 0.0)
-		title_frame.size_hint_align_set(-1.0, 0.0)
-		self.title = elementary.Entry(self)
-		title_frame.content_set(self.title)
-		box.pack_end(title_frame)
-		self.title.size_hint_weight_set(1.0, 0.0)
-		self.title.size_hint_align_set(-1.0, 0.0)
-		self.title.show()
-
-		begin_label = elementary.Label(self)
-		box.pack_end(begin_label)
-		begin_label.size_hint_weight_set(0.0, 0.0)
-		begin_label.label_set( _("Begin:") )
-		begin_label.show()
-
-		begin_frame = elementary.Frame(self)
-		begin_frame.style_set('outdent_top')
-		begin_frame.show()
-		self.begin_day = elementary.Entry(self)
-		begin_frame.content_set(self.begin_day)
-		box.pack_end(begin_frame)
-		self.begin_day.entry_set(str(date.date()))
-		self.begin_day.size_hint_weight_set(1.0, 0.0)
-		self.begin_day.single_line_set(True)
-		self.begin_day.show()
-
-		self.begin_time = elementary.Clock(self)
-		box.pack_end(self.begin_time)
-		self.begin_time.edit_set(True)
-		self.begin_time.size_hint_weight_set(0.0, 0.0)
-		self.begin_time.show()
-
-		end_label = elementary.Label(self)
-		box.pack_end(end_label)
+		# Content of end_box
+		end_label = elementary.Label(end_box)
+		end_box.pack_end(end_label)
 		end_label.size_hint_weight_set(0.0, 0.0)
 		end_label.label_set( _("End:") )
 		end_label.show()
 
-		end_frame = elementary.Frame(self)
+		end_frame = elementary.Frame(end_box)
 		end_frame.style_set('outdent_top')
 		end_frame.show()
-		self.end_day = elementary.Entry(self)
+		self.end_day = elementary.Entry(end_frame)
 		end_frame.content_set(self.end_day)
-		box.pack_end(end_frame)
+		end_box.pack_end(end_frame)
 		self.end_day.entry_set(str(date.date()))
 		self.end_day.size_hint_weight_set(1.0, 0.0)
 		self.end_day.single_line_set(True)
 		self.end_day.show()
 
-		self.end_time = elementary.Clock(self)
-		box.pack_end(self.end_time)
+		self.end_time = elementary.Clock(end_box)
+		end_box.pack_end(self.end_time)
 		self.end_time.edit_set(True)
 		self.end_time.size_hint_weight_set(0.0, 0.0)
 		self.end_time.show()
+
+		navbox = elementary.Table(end_box)
+		navbox.homogenous_set(True)
+		navbox.size_hint_weight_set(1.0, 0.0)
+		navbox.size_hint_align_set(-1.0, -1.0)
+		end_box.pack_end(navbox)
+		navbox.show()
+		navbox.scale_set(1)
+
+		backbt = elementary.Button(navbox)
+		backbt.clicked = partial(self.pager_promote, begin_box)
+		backbt.label_set(_("Back"))
+		backbt.size_hint_weight_set(1.0, 1.0)
+		backbt.size_hint_align_set(-1.0, -1.0)
+		backbt.show()
+		navbox.pack(backbt,0,0,1,1)
+		backbt.scale_set(1)
+
+		newbt = elementary.Button(navbox)
+		newbt._callback_add("clicked", (self.add_entry, [year, month, day]))
+		newbt.label_set(_("Save"))
+		newbt.size_hint_weight_set(1.0, 1.0)
+		newbt.size_hint_align_set(-1.0, -1.0)
+		newbt.show()
+		navbox.pack(newbt,1,0,1,1)
+		newbt.scale_set(1)
 
 
 	# called when entry button is clicked
