@@ -68,6 +68,14 @@ def add(data):
   interface.Add(dict)
   query(data)
 
+def addincoming(data):
+  check_args(data)
+  dict = prepare_dict(data)
+  print "Adding incoming item " + str(dict) + " using " + default_backend(domain+'s') + " backend..."
+  interface.AddIncoming(dict)
+  query(data)
+
+
 def edit(id, data):
   check_args(data)
   dict = prepare_dict(data)
@@ -133,6 +141,8 @@ try:
     query(argv[3:])
   elif argv[2].lower()=='add':
     add(argv[3:])
+  elif argv[2].lower()=='addincoming':
+    addincoming(argv[3:])  
   elif argv[2].lower()=='edit':
     edit(argv[3], argv[4:])
   elif argv[2].lower()=='delete':
