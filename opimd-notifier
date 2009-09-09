@@ -19,6 +19,7 @@ except IOError:
 MESSAGES_ICON              = "/usr/share/icons/shr/86x86/apps/shr-messages.png"
 PHONELOG_ICON              = "/usr/share/pixmaps/phonelog.png"
 
+SUPPORTED_SOURCES = ['SMS','MMS']
 
 cache = {}
 
@@ -358,17 +359,19 @@ def incoming_message(x, just_unread = False):
       smsclass=1
 
     if smsclass!=0:
-      replybtn = elementary.Button(win)
-      replybtn.label_set(_("Reply"))
-      replybtn.show()
-      replybtn.size_hint_weight_set(0.0, 1.0)
-      replybtn.size_hint_align_set(1.0, -1.0)
+      if result.get('Source') in SUPPORTED_SOURCES:
+        replybtn = elementary.Button(win)
+        replybtn.label_set(_("Reply"))
+        replybtn.show()
+        replybtn.size_hint_weight_set(0.0, 1.0)
+        replybtn.size_hint_align_set(1.0, -1.0)
 
       textbox = elementary.Box(win)
       textbox.horizontal_set(1)
       textbox.pack_start(text)
       textbox.hide()
-      textbox.pack_end(replybtn)
+      if result.get('Source') in SUPPORTED_SOURCES:
+        textbox.pack_end(replybtn)
 
       read = elementary.Button(win)
       if just_unread:
@@ -378,7 +381,8 @@ def incoming_message(x, just_unread = False):
       read.clicked = partial(show_msg, query, textbox, bubble, text, read)
 
       read.show()
-      replybtn.clicked = partial(opimd_reply.reply, [number, name], '', bus, win, incoming_message, win.show, None)
+      if result.get('Source') in SUPPORTED_SOURCES:
+        replybtn.clicked = partial(opimd_reply.reply, [number, name], '', bus, win, incoming_message, win.show, None)
       bubble.content_set(read)
     else:
       text.show()
