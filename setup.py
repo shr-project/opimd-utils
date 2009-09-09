@@ -25,6 +25,7 @@ dist = setup( name='opimd-utils',
 		('pixmaps', ['data/opimd-notes.png', 'data/opimd-dates.png']),
 		('pixmaps/opimd-utils', glob("data/icons/*.png")),
 		('locale/de/LC_MESSAGES', ['data/po/de/opimd-dates.mo','data/po/de/opimd-contacts.mo','data/po/de/opimd-notifier.mo','data/po/de/opimd-notes.mo','data/po/de/opimd-messages.mo']),
+                ('locale/fr/LC_MESSAGES', ['data/po/fr/opimd-contacts.mo', 'data/po/fr/opimd-dates.mo', 'data/po/fr/opimd-messages.mo', 'data/po/fr/opimd-notes.mo', 'data/po/fr/opimd-notifier.mo']),
 		('locale/ru/LC_MESSAGES', ['data/po/ru/opimd-contacts.mo', 'data/po/ru/opimd-dates.mo']),
 		('../../etc/X11/Xsession.d', ['data/89opimd-notifier'])
   ]

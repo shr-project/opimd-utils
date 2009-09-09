@@ -1,0 +1,71 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: opimd-messages\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-08-27 15:49+0200\n"
+"PO-Revision-Date: 2009-09-09 17:42+0100\n"
+"Last-Translator: Ghislain MARY <gmary@lunacymaze.org>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: French\n"
+"X-Poedit-Country: FRANCE\n"
+
+msgid "Init entries..."
+msgstr "Initialisation..."
+
+msgid "Out: "
+msgstr "Envoi :"
+
+msgid "Processing: "
+msgstr "En cours de traitement :"
+
+msgid "Sent: "
+msgstr "Envoyés : "
+
+msgid "Read: "
+msgstr "Lus : "
+
+msgid "Delivered: "
+msgstr "Délivrés : "
+
+msgid "Delete"
+msgstr "Supprimer"
+
+msgid "Reply"
+msgstr "Répondre"
+
+msgid "Querying..."
+msgstr "Interrogation en cours..."
+
+msgid "Number of results: "
+msgstr "Nombre de résultats :"
+
+msgid "Messages"
+msgstr "Messages"
+
+msgid "Finished"
+msgstr "Terminé"
+
+msgid "Error while sending message!"
+msgstr "Erreur pendant l'envoi du message !"
+
+msgid "Retry"
+msgstr "Ré-essayer"
+
+msgid "Close"
+msgstr "Fermer"
+
+msgid "Options"
+msgstr "Options"
+
+msgid "Back"
+msgstr "Retour"
+
+msgid "To: "
+msgstr "À : "
+
+msgid "Send"
+msgstr "Envoyé"
+

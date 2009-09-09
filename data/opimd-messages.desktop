@@ -2,6 +2,7 @@
 Version=1.0
 Name=opimd messages
 Name[de]=Opimd-Nachrichten
+Name[fr]=Messages Opimd
 TryExec=opimd-messages
 StartupNotify=true
 Exec=opimd-messages

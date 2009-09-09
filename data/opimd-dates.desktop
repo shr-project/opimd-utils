@@ -2,6 +2,7 @@
 Version=1.0
 Name=Dates
 Name[de]=Kalender
+Name[fr]=Calendrier
 TryExec=opimd-dates
 GenericName=opimd Dates
 Comment=python-elementary and fso-opimd based dates app for SHR systems

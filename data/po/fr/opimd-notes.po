@@ -1,0 +1,87 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: opimd-notes\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-08-27 15:49+0200\n"
+"PO-Revision-Date: 2009-09-07 18:54+0100\n"
+"Last-Translator: Ghislain MARY <gmary@lunacymaze.org>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: French\n"
+"X-Poedit-Country: FRANCE\n"
+
+msgid "nothing called"
+msgstr ""
+
+msgid "Not yet implemented"
+msgstr "Pas encore implémenté"
+
+msgid "Are you sure?"
+msgstr "Êtes-vous sûr ?"
+
+msgid "Yes"
+msgstr "Oui"
+
+msgid "No"
+msgstr "Non"
+
+msgid "Adding..."
+msgstr "Ajout en cours..."
+
+msgid "Editing..."
+msgstr "Edition en cours..."
+
+msgid "Next"
+msgstr "Suivante"
+
+msgid "Back"
+msgstr "Précédente"
+
+msgid "Enter name of tag..."
+msgstr "Entrez le nom de l'étiquette..."
+
+msgid "...or select it from list below:"
+msgstr "...ou sélectionnez-la dans la liste suivante :"
+
+msgid "Add"
+msgstr "Ajouter"
+
+msgid "Select tags for note:"
+msgstr "Sélectionnez les étiquettes pour la note :"
+
+msgid "Add new tag..."
+msgstr "Ajouter une étiquette..."
+
+msgid "Save"
+msgstr "Enregistrer"
+
+msgid "Edit"
+msgstr "Éditer"
+
+msgid "Enter text:"
+msgstr "Entrez le texte :"
+
+#TODO!
+msgid "regular expression"
+msgstr "expression rationnelle"
+
+msgid "search also in titles"
+msgstr "chercher dans le titre également"
+
+msgid "Search"
+msgstr "Rechercher"
+
+msgid "Notes"
+msgstr "Notes"
+
+msgid "Searching..."
+msgstr "Recherche en cours..."
+
+msgid "New"
+msgstr "Nouvelle"
+
+msgid "Tags"
+msgstr "Étiquettes"
+

@@ -2,6 +2,7 @@
 Version=1.0
 Name=Notes
 Name[de]=Notizen
+Name[fr]=Notes
 TryExec=opimd-notes
 StartupNotify=true
 Exec=opimd-notes

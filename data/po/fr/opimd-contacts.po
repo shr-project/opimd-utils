@@ -1,0 +1,77 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: opimd-contacts\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-08-27 15:49+0200\n"
+"PO-Revision-Date: 2009-09-07 19:07+0100\n"
+"Last-Translator: Ghislain MARY <gmary@lunacymaze.org>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: French\n"
+"X-Poedit-Country: FRANCE\n"
+
+msgid "Contacts"
+msgstr "Contacts"
+
+msgid "Searching..."
+msgstr "Recherche en cours..."
+
+msgid "Call"
+msgstr "Appeler"
+
+msgid "nothing called"
+msgstr "niemanden angerufen"
+
+msgid "Type name to search..."
+msgstr "Entrez le nom à chercher..."
+
+msgid "Error while sending USSD request!"
+msgstr "Erreur lors de l'envoi de la requête USSD !"
+
+msgid "Sending USSD request..."
+msgstr "Envoi de la requête USSD en cours..."
+
+msgid "Not yet implemented"
+msgstr "Pas encore implémenté"
+
+msgid "Message sent!"
+msgstr "Message envoyé !"
+
+msgid "Sending..."
+msgstr "Envoi en cours..."
+
+msgid "Enter field name:"
+msgstr "Entrez le nom du champs :"
+
+msgid "Add"
+msgstr "Ajouter"
+
+msgid "Quit"
+msgstr "Quitter"
+
+msgid "New field"
+msgstr "Nouveau champs"
+
+msgid "Save"
+msgstr "Enregistrer"
+
+msgid "Delete"
+msgstr "Supprimer"
+
+msgid "Back"
+msgstr "Retour"
+
+msgid "Edit"
+msgstr "Éditer"
+
+msgid "Search"
+msgstr "Rechercher"
+
+msgid "New"
+msgstr "Nouveau"
+
+msgid "Close"
+msgstr "Fermer"
+

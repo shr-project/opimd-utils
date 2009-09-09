@@ -2,6 +2,7 @@
 Version=1.0
 Name=opimd contacts
 Name[de]=Opimd-Kontakte
+Name[fr]=Contacts Opimd
 TryExec=opimd-contacts
 StartupNotify=true
 Exec=opimd-contacts
