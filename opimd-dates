@@ -241,7 +241,7 @@ class CalendarMonth(elementary.Table):
 			end_month = datetime.date(year,month+1,1)
 
 		opimd = Opimd("Dates")
-		results = opimd.query({'_gt_Begin':time.mktime(begin_month.timetuple()), '_lt_End':time.mktime(end_month.timetuple())})
+		results = opimd.query({'_gt_Begin':(time.mktime(begin_month.timetuple())-604800), '_lt_End':(time.mktime(end_month.timetuple())+604800)})
 
 		# fill rows 3 to 8 with days
 		for week in self.calobj.monthdays2calendar(year, month):
@@ -263,7 +263,7 @@ class CalendarMonth(elementary.Table):
 					for i in results:
 						end = datetime.datetime.fromtimestamp(float(i['End']))
 						begin = datetime.datetime.fromtimestamp(float(i['Begin']))
-						if end <= end_day and begin >= begin_day:
+						if (end <= end_day and begin >= begin_day) or (begin <= end_day and begin >= begin_day) or (end >= begin_day and end <= end_day) or (begin <= begin_day and end >= end_day):
 							bt.color_set(0, 200, 200, 255)
 							break
 
@@ -372,8 +372,16 @@ class CalendarDay(elementary.Box):
 		begin_day = date
 		end_day = date + datetime.timedelta(hours=24)
 
+		# (end <= end_day and begin >= begin_day) or 
+		# (begin <= end_day and begin >= begin_day) or 
+		# (end >= begin_day and end <= end_day) or 
+		# (begin <= begin_day and end >= end_day):
+
 		opimd = Opimd("Dates")
 		results = opimd.query({'_gt_Begin':time.mktime(begin_day.timetuple()), '_lt_End':time.mktime(end_day.timetuple())})
+		results.extend( opimd.query({'_lt_Begin':time.mktime(end_day.timetuple()), '_gt_Begin':time.mktime(begin_day.timetuple()), '_gt_End':time.mktime(end_day.timetuple())}) )
+		results.extend( opimd.query({'_gt_End':time.mktime(begin_day.timetuple()), '_lt_End':time.mktime(end_day.timetuple()), '_lt_Begin':time.mktime(begin_day.timetuple())}) )
+		results.extend( opimd.query({'_lt_Begin':time.mktime(begin_day.timetuple()), '_gt_End':time.mktime(end_day.timetuple())}) )
 
 		levels = [[]]
 
@@ -381,7 +389,7 @@ class CalendarDay(elementary.Box):
 			end = datetime.datetime.fromtimestamp(float(i['End']))
 			begin = datetime.datetime.fromtimestamp(float(i['Begin']))
 
-			if end <= end_day and begin >= begin_day:
+			if (end <= end_day and begin >= begin_day) or (begin <= end_day and begin >= begin_day) or (end >= begin_day and end <= end_day) or (begin <= begin_day and end >= end_day):
 				col = 1
 				# only show the part of this day
 				if begin < begin_day: 
@@ -389,7 +397,7 @@ class CalendarDay(elementary.Box):
 				if end > end_day:
 					end = end_day
 
-				length = (end - begin).seconds/600
+				length = int((time.mktime(end.timetuple()) - time.mktime(begin.timetuple()))/600)
 				if length<6:
 					length = 6
 				start = (begin - begin_day).seconds/600
@@ -439,7 +447,7 @@ class CalendarDay(elementary.Box):
 		self.mainwin.cal.delete()
 		self.mainwin.cal = AddCalendarEntry(self.mainwin)
 		self.mainwin.mainbox.pack_start(self.mainwin.cal)
-		self.mainwin.cal.show(arguments[0],arguments[1],arguments[2])
+		self.mainwin.cal.show(date=datetime.date(arguments[0],arguments[1],arguments[2]))
 		self.mainwin.cal.scale_set(1)
 
 
@@ -469,12 +477,19 @@ class AddCalendarEntry(elementary.Box):
 		print "enter"
 		content.focus()
 
-	def show(self, year, month, day):
+	def show(self, *args, **kargs):
 		elementary.Box.show(self)
 
-		data = False
-
-		date = datetime.datetime(year, month, day)
+		if kargs.get('date'):
+			data = None
+			date = kargs['date']
+		if kargs.get('path'):
+			opimd = Opimd("Dates")
+			data = opimd.get(kargs['path'])
+			date = datetime.date.fromtimestamp(data['Begin'])
+		if kargs.get('data'):
+			data = kwargs['data']
+			date = datetime.date.fromtimestamp(data['Begin'])
 
 		self.pager = elementary.Pager(self)
 		self.pager.size_hint_align_set(-1.0,-1.0)
@@ -515,6 +530,9 @@ class AddCalendarEntry(elementary.Box):
 		title_frame.size_hint_weight_set(1.0, 0.0)
 		title_frame.size_hint_align_set(-1.0, 0.0)
 		self.title = elementary.Entry(title_frame)
+		if data:
+			if data.get('Title'):
+				self.title.entry_set(data['Title'])
 		title_frame.content_set(self.title)
 		title_box.pack_end(title_frame)
 		self.title.size_hint_weight_set(1.0, 0.0)
@@ -530,7 +548,7 @@ class AddCalendarEntry(elementary.Box):
 		navbox.scale_set(1)
 
 		backbt = elementary.Button(navbox)
-		backbt._callback_add("clicked", (self.show_day, [year, month, day]))
+		backbt._callback_add("clicked", (self.show_day, [date.year, date.month, date.day]))
 		backbt.label_set(_("Cancel"))
 		backbt.size_hint_weight_set(1.0, 1.0)
 		backbt.size_hint_align_set(-1.0, -1.0)
@@ -561,7 +579,11 @@ class AddCalendarEntry(elementary.Box):
 		self.begin_day = elementary.Entry(begin_frame)
 		begin_frame.content_set(self.begin_day)
 		begin_box.pack_end(begin_frame)
-		self.begin_day.entry_set(str(date.date()))
+		if data:
+			if data.get('Begin'):
+				self.begin_day.entry_set(str(datetime.date.fromtimestamp(data['Begin'])))
+		else:
+			self.begin_day.entry_set(str(date))
 		self.begin_day.size_hint_weight_set(1.0, 0.0)
 		self.begin_day.single_line_set(True)
 		self.begin_day.show()
@@ -569,6 +591,10 @@ class AddCalendarEntry(elementary.Box):
 		self.begin_time = elementary.Clock(begin_box)
 		begin_box.pack_end(self.begin_time)
 		self.begin_time.edit_set(True)
+		if data:
+			if data.get('Begin'):
+				time = datetime.datetime.fromtimestamp(data['Begin'])
+				self.begin_time.time_set(time.hour, time.minute, time.second)
 		self.begin_time.size_hint_weight_set(0.0, 0.0)
 		self.begin_time.show()
 
@@ -612,7 +638,11 @@ class AddCalendarEntry(elementary.Box):
 		self.end_day = elementary.Entry(end_frame)
 		end_frame.content_set(self.end_day)
 		end_box.pack_end(end_frame)
-		self.end_day.entry_set(str(date.date()))
+		if data:
+			if data.get('End'):
+				self.end_day.entry_set(str(datetime.date.fromtimestamp(data['End'])))
+		else:
+			self.end_day.entry_set(str(date))
 		self.end_day.size_hint_weight_set(1.0, 0.0)
 		self.end_day.single_line_set(True)
 		self.end_day.show()
@@ -620,6 +650,10 @@ class AddCalendarEntry(elementary.Box):
 		self.end_time = elementary.Clock(end_box)
 		end_box.pack_end(self.end_time)
 		self.end_time.edit_set(True)
+		if data:
+			if data.get('End'):
+				time = datetime.datetime.fromtimestamp(data['End'])
+				self.end_time.time_set(time.hour, time.minute, time.second)
 		self.end_time.size_hint_weight_set(0.0, 0.0)
 		self.end_time.show()
 
@@ -641,7 +675,10 @@ class AddCalendarEntry(elementary.Box):
 		backbt.scale_set(1)
 
 		newbt = elementary.Button(navbox)
-		newbt._callback_add("clicked", (self.add_entry, [year, month, day]))
+		if data:
+			newbt._callback_add("clicked", (self.update_entry, [date.year, date.month, date.day, data['Path']]))
+		else:
+			newbt._callback_add("clicked", (self.add_entry, [date.year, date.month, date.day]))
 		newbt.label_set(_("Save"))
 		newbt.size_hint_weight_set(1.0, 1.0)
 		newbt.size_hint_align_set(-1.0, -1.0)
@@ -658,6 +695,28 @@ class AddCalendarEntry(elementary.Box):
 		self.mainwin.cal.show(arguments[0],arguments[1],arguments[2])
 		self.mainwin.cal.scale_set(1)
 
+	# called when entry button is clicked
+	def update_entry(self, obj, event, arguments, *args, **kargs):
+		title = elementary.Entry.markup_to_utf8(self.title.entry_get()).strip()
+
+		begin_day = datetime.datetime.strptime(elementary.Entry.markup_to_utf8(self.begin_day.entry_get()).strip(),"%Y-%m-%d")
+		begin_time = datetime.time(self.begin_time.time_get()[0],self.begin_time.time_get()[1],self.begin_time.time_get()[2])
+
+		end_day = datetime.datetime.strptime(elementary.Entry.markup_to_utf8(self.end_day.entry_get()).strip(),"%Y-%m-%d")
+		end_time = datetime.time(self.end_time.time_get()[0],self.end_time.time_get()[1],self.end_time.time_get()[2])
+
+		begin = time.mktime(datetime.datetime.combine(begin_day,begin_time).timetuple())
+		end = time.mktime(datetime.datetime.combine(end_day,end_time).timetuple())
+
+		opimd = Opimd("Dates")
+		opimd.delete(arguments[3])
+		opimd.add({'Title':title, 'Begin':begin, 'End':end })
+
+		self.mainwin.cal.delete()
+		self.mainwin.cal = CalendarDay(self.mainwin)
+		self.mainwin.mainbox.pack_start(self.mainwin.cal)
+		self.mainwin.cal.show(arguments[0],arguments[1],arguments[2])
+		self.mainwin.cal.scale_set(1)
 
 	# called when entry button is clicked
 	def add_entry(self, obj, event, arguments, *args, **kargs):
