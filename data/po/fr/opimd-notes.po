@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: opimd-notes\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-08-27 15:49+0200\n"
-"PO-Revision-Date: 2009-09-07 18:54+0100\n"
+"PO-Revision-Date: 2009-09-13 16:17+0100\n"
 "Last-Translator: Ghislain MARY <gmary@lunacymaze.org>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -34,25 +34,25 @@ msgid "Editing..."
 msgstr "Edition en cours..."
 
 msgid "Next"
-msgstr "Suivante"
+msgstr "Suite"
 
 msgid "Back"
-msgstr "Précédente"
+msgstr "Retour"
 
 msgid "Enter name of tag..."
-msgstr "Entrez le nom de l'étiquette..."
+msgstr "Entrez le nom du tag..."
 
 msgid "...or select it from list below:"
-msgstr "...ou sélectionnez-la dans la liste suivante :"
+msgstr "...ou sélectionnez-le dans la liste suivante :"
 
 msgid "Add"
 msgstr "Ajouter"
 
 msgid "Select tags for note:"
-msgstr "Sélectionnez les étiquettes pour la note :"
+msgstr "Sélectionnez les tags pour la note :"
 
 msgid "Add new tag..."
-msgstr "Ajouter une étiquette..."
+msgstr "Ajouter un tag..."
 
 msgid "Save"
 msgstr "Enregistrer"
@@ -71,7 +71,7 @@ msgid "search also in titles"
 msgstr "chercher dans le titre également"
 
 msgid "Search"
-msgstr "Rechercher"
+msgstr "Chercher"
 
 msgid "Notes"
 msgstr "Notes"
@@ -80,8 +80,8 @@ msgid "Searching..."
 msgstr "Recherche en cours..."
 
 msgid "New"
-msgstr "Nouvelle"
+msgstr "Créer"
 
 msgid "Tags"
-msgstr "Étiquettes"
+msgstr "Tags"
 
