@@ -1,6 +1,7 @@
 opimd-notes:
  * filtering tags with anchors (py-elm!)
  * inteligent queries and signals support
+ * expanding content of notes (showing by default only 1-2 lines)
 opimd-contacts:
  * use edje buttons as end in list items
  * update list on add/update/delete
