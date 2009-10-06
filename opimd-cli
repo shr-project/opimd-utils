@@ -110,9 +110,9 @@ if len(argv)==1 or argv[1]=='--help' or argv[1]=='-h':
   print "      add:    every pair of arguments is combined to fields (name, value)"
   print "              for instance: "+argv[0]+" contacts add Name dos"
   print "      edit:   first argument from args is ID of edited item, next are pairs of arguments combined to fields (name, value)"
-  print "              for instance: "+argv[0]+" contact edit 0 Name dos1"
+  print "              for instance: "+argv[0]+" contacts edit 0 Name dos1"
   print "      delete: argument is ID of deleted item"
-  print "              for instance: "+argv[0]+" contact delete 0"
+  print "              for instance: "+argv[0]+" contacts delete 0"
   exit(0)
 
 bus = dbus.SystemBus()
