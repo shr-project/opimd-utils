@@ -22,13 +22,21 @@ def resolve_phone(number):
   if number in cache:
     return cache[number]
   else:
-    x = contacts.Query({'Phone':number})
-    query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.ContactQuery")
-    if query.GetResultCount():
-      name = query.GetResult()['Name']
-    else:
-      name = number.strip('tel:')
-    cache[number] = name
+    tryme = 'Cell Phone', 'Work phone', 'Phone', 'Home phone'
+    for field in tryme:
+      x = contacts.Query({field:number})
+      query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.ContactQuery")
+      if query.GetResultCount():
+        result = query.GetResult()
+        try:
+          name = result['Name']
+          sn = result['Surname']
+          if sn:
+            name = sn + " " + name
+          cache[number] = name
+          return name
+        except:
+    name = number.strip('tel:')
     return name
 
 def resolve_time(t):

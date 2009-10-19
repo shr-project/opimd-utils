@@ -3,12 +3,20 @@ import dbus
 from sys import argv
 
 def resolve_phone(number):
-  x = contacts.Query({'Phone':'tel:'+number})
-  query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.ContactQuery")
-  if query.GetResultCount():
-    return query.GetResult()['Name']
-  else:
-    return "nothing"
+  tryme = 'Cell Phone', 'Work phone', 'Phone', 'Home phone'
+  for field in tryme:
+    x = contacts.Query({field:number})
+    query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.ContactQuery")
+    if query.GetResultCount():
+      result = query.GetResult()
+      try:
+        name = result['Name']
+        sn = result['Surname']
+        if sn:
+          name = sn + " " + name
+        return name
+      except:
+  return "nothing"
 
 def getDbusObject (bus, busname , objectpath , interface):
   dbusObject = bus.get_object(busname, objectpath)
