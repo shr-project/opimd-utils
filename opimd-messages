@@ -22,8 +22,8 @@ def resolve_phone(number):
   if number in cache:
     return cache[number]
   else:
-    tryme = 'Cell Phone', 'Work phone', 'Phone', 'Home phone'
-    for field in tryme:
+    tryme = 'Cell phone', 'Work phone', 'Phone', 'Home phone'
+    for field in tryme: # UGLY, FIXME!
       x = contacts.Query({field:number})
       query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.ContactQuery")
       if query.GetResultCount():
@@ -32,7 +32,7 @@ def resolve_phone(number):
           name = result['Name']
           sn = result['Surname']
           if sn:
-            name = sn + " " + name
+            name = name + " " + sn
           cache[number] = name
           return name
         except:

@@ -13,7 +13,7 @@ def resolve_phone(number):
         name = result['Name']
         sn = result['Surname']
         if sn:
-          name = sn + " " + name
+          name = name + " " + sn
         return name
       except:
   return "nothing"
