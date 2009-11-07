@@ -16,6 +16,7 @@ def resolve_phone(number):
           name = name + " " + sn
         return name
       except:
+        pass
   return "nothing"
 
 def getDbusObject (bus, busname , objectpath , interface):
