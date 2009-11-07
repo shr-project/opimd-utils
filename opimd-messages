@@ -36,7 +36,9 @@ def resolve_phone(number):
           cache[number] = name
           return name
         except:
-    name = number.strip('tel:')
+          name = number.strip('tel:')
+      else:
+        name = number.strip('tel:')
     return name
 
 def resolve_time(t):
