@@ -52,7 +52,13 @@ def destroy(win, event, *args, **kargs):
 def nothing(*args, **kwargs):
   print _("nothing called")
 
-def anchorClicked (tags, obj, event, sth):
+def anchorClicked (tags, obj, event, sth, *args, **kargs):
+  print tags
+  print obj
+  print event
+  print sth
+  print args
+  print kargs
   obj.hover_end()
   dia = elementary.InnerWindow(win)
   win.resize_object_add(dia)
@@ -75,8 +81,8 @@ def makeAnchorsFromTags(tags, *args, **kwargs):
   i = 0
   for tag in tags:
 # TODO: FIXME: make use from anchors when python-elementary will support that
-#    text = text+'<a href='+str(i)+'>'+tag+'</a>, '
-    text = text + tag + ', '
+    text = text+'<a href='+str(i)+'>'+tag+'</a>, '
+#    text = text + tag + ', '
     i += 1
   text = text[:len(text)-2]
   return text
@@ -425,7 +431,7 @@ def saveTag(list, tags, dia, tag, *args, **kargs):
     dia.delete()
 
 def addTag(list, tags, item, *args, **kargs):
-  item.selected_set(False)
+  #item.selected_set(False)
   dia = elementary.InnerWindow(win)
   win.resize_object_add(dia)
 #  dia.style_set('minimal_vertical')
