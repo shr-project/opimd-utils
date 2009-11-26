@@ -249,13 +249,9 @@ def noteDelete2(path, bubble, *args, **kargs):
     displayNotes()
 
 def noteNext (pager, dia, titlee, contente, *args, **kargs):
-  title = titlee.markup_to_utf8(titlee.entry_get())
-  content = contente.markup_to_utf8(contente.entry_get())
   dict = {}
-  if title:
-    dict['Title'] = title[:len(title)-1]
-  if content:
-    dict['Content'] = content[:len(content)-1]
+  dict['Title'] = titlee.markup_to_utf8(titlee.entry_get())
+  dict['Content'] = contente.markup_to_utf8(contente.entry_get())
   dict['Timestamp'] = int(time.time())
   dict['Timezone'] = time.tzname[time.daylight]
   if kargs.get('tags'):
@@ -413,7 +409,6 @@ def delTag(list, tags, tag, item, *args, **kargs):
 def saveTag(list, tags, dia, tag, *args, **kargs):
   if isinstance(tag, elementary.Entry):
     tag = tag.markup_to_utf8(tag.entry_get())
-    tag = tag[:len(tag)-1]
   if not tag in tags:
     tags.append(tag)
     delbtn = elementary.Button(win)
@@ -649,7 +644,6 @@ def selectTag(pager, *args, **kargs):
 def doSearch(title, titles, regexps, dia, *args, **kargs):
   text = title.entry_get()
   text = title.markup_to_utf8(text)
-  text = text[:len(text)-1]
   if not regexps.state_get():
     text = escape(text)
 
