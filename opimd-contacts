@@ -67,7 +67,7 @@ def sanity_name(name, startline = True):
     result = ''
   name = name.decode('utf-8')
   for char in name:
-    if char!='\n':
+    if char!='':
       lower = char.lower()
       upper = char.upper()
       if lower!=upper:
@@ -78,14 +78,12 @@ def sanity_name(name, startline = True):
   return result
 
 def sanity_mail(mail):
-  if mail!='\n':
+  if mail!='':
     return '^mail:'+sanity_name(mail, False)
   else:
     return '^'
 
 def sanity_phone(phone):
-  if phone[len(phone)-1:]=='\n':
-    phone = phone[:len(phone)-1]
   return escape(phoneutils.normalize_number(phone))
 
 def query_contacts_query_handler(callback, x=None, *args, **kwargs):
@@ -199,7 +197,7 @@ def display_contacts_callback(loading, contact_list, *args, **kwargs):
 
 def search_changed(frame, obj, *args, **kwargs):
   text = obj.markup_to_utf8(obj.entry_get())
-  if text[len(text)-2:]=="\n\n":
+  if text[len(text)-1:]=="\n":
     obj.delete()
     close_search(frame)
   else:
@@ -456,7 +454,6 @@ class Field():
   def get_value(self):
     if not self.deleted:
       value = self.entry.markup_to_utf8(self.entry.entry_get())
-      value = value[:len(value)-1]
       if self.field_name.lower().endswith('phone'):
         value = 'tel:' + value
       elif self.field_name.lower().endswith('e-mail'):
@@ -518,8 +515,6 @@ def add_field2(dia, entry, edit, *args, **kargs):
   field = entry.entry_get()
   if field:
     field = entry.markup_to_utf8(field)
-  if field:
-    field = field[:len(field)-1]
   if field:
     edit.add_field(field)
   inwin_close(dia)
