@@ -338,7 +338,7 @@ proceed()
 
 print _("Finished") # finito, fertig, koniec etc.
 
-scroll._callback_add('edge_bottom', partial(go_next, num = 1))
+scroll._callback_add('edge,bottom', partial(go_next, num = 1))
 
 win.destroy = destroy
 win.show()
