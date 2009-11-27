@@ -28,15 +28,15 @@ def resolve_phone(number):
       query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.ContactQuery")
       if query.GetResultCount():
         result = query.GetResult()
+        name = result['Name']
         try:
-          name = result['Name']
           sn = result['Surname']
           if sn:
             name = name + " " + sn
-          cache[number] = name
-          return name
         except:
-          name = number.strip('tel:')
+          pass
+        cache[number] = name
+        return name
       else:
         name = number.strip('tel:')
     return name
