@@ -104,13 +104,13 @@ def dbus_gsm_err(to, text, props, x, bus, win, func_ok, func_err, func_status, d
   retry = elementary.Button(inwin)
   retry.label_set(_("Retry"))
   retry.show()
-  retry.clicked = partial(retry_msg, to, text, bus, win, inwin, func_ok, func_err, func_status)
+  retry._callback_add('clicked', partial(retry_msg, to, text, bus, win, inwin, func_ok, func_err, func_status))
   hbox.pack_end(retry)
 
   hide = elementary.Button(inwin)
   hide.label_set(_("Close"))
   hide.show()
-  hide.clicked = partial(inwindelete, inwin, func_status)
+  hide._callback_add('clicked', partial(inwindelete, inwin, func_status))
   hbox.pack_end(hide)  
 
   box.pack_end(hbox)
@@ -273,7 +273,7 @@ def show_opts(pager, *args, **kwargs):
   button = elementary.Button(pager)
   button.label_set(_("Back"))
   button.show()
-  button.clicked = partial(hide_opts, pager, optsval)
+  button._callback_add('clicked', partial(hide_opts, pager, optsval))
   button.size_hint_weight_set(-1.0, 0.0)
   button.size_hint_align_set(-1.0, 0.0)
   box.pack_end(button)
@@ -324,7 +324,7 @@ def reply(to, text, bus, win, func_ok, func_err, func_status, *args, **kwargs):
   entry = elementary.Entry(inwin)
   if text:
     entry.entry_set(entry.utf8_to_markup(text))
-  entry.changed = partial(update_chars, chars, entry)
+  entry._callback_add('changed', partial(update_chars, chars, entry))
   entry.size_hint_weight_set(1.0, 1.0)
   entry.size_hint_align_set(-1.0, -1.0)
   entry.show()
@@ -346,7 +346,7 @@ def reply(to, text, bus, win, func_ok, func_err, func_status, *args, **kwargs):
   opts.size_hint_weight_set(1.0, 0.0)
   opts.size_hint_align_set(-1.0, 0.0)
   opts.show()
-  opts.clicked = partial(show_opts, pager)
+  opts._callback_add('clicked', partial(show_opts, pager))
   hbox.pack_end(opts)
 
   hide = elementary.Button(inwin)
@@ -354,7 +354,7 @@ def reply(to, text, bus, win, func_ok, func_err, func_status, *args, **kwargs):
   hide.size_hint_weight_set(1.0, 0.0)
   hide.size_hint_align_set(-1.0, 0.0)
   hide.show()
-  hide.clicked = partial(inwindelete, inwin, func_status)
+  hide._callback_add('clicked', partial(inwindelete, inwin, func_status))
   hbox.pack_end(hide)
 
   send = elementary.Button(inwin)
@@ -362,7 +362,7 @@ def reply(to, text, bus, win, func_ok, func_err, func_status, *args, **kwargs):
   send.size_hint_weight_set(1.0, 0.0)
   send.size_hint_align_set(-1.0, 0.0)
   send.show()
-  send.clicked = partial(send_msg, to, entry, bus, inwin, win, func_ok, func_err, func_status)
+  send._callback_add('clicked', partial(send_msg, to, entry, bus, inwin, win, func_ok, func_err, func_status))
 
   hbox.pack_start(send)
 

@@ -278,11 +278,11 @@ boxb.pack_start(hoversel)
 close = elementary.Button(win)
 close.show()
 close.size_hint_align_set(-1.0, 0.0)
-close.clicked = close_win
+close._callback_add('clicked', close_win)
 close.label_set(_("Close"))
 boxb.pack_end(close)
 
-win.destroy = destroy
+win._callback_add('destroy', destroy)
 
 message_list = []
 signal_list = []
@@ -388,11 +388,11 @@ def incoming_message(x, just_unread = False):
         read.label_set(_("Unread message!"))
       else:
         read.label_set(_("New message arrived!"))
-      read.clicked = partial(show_msg, query, textbox, bubble, text, read)
+      read._callback_add('clicked', partial(show_msg, query, textbox, bubble, text, read))
 
       read.show()
       if result.get('Source') in SUPPORTED_SOURCES:
-        replybtn.clicked = partial(opimd_reply.reply, [number, name], '', bus, win, incoming_message, win.show, None)
+        replybtn._callback_add('clicked', partial(opimd_reply.reply, [number, name], '', bus, win, incoming_message, win.show, None))
       bubble.content_set(read)
     else:
       text.show()

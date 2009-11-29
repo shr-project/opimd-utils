@@ -39,7 +39,7 @@ def dbus_ok(*args, **kwargs):
 def dbus_error(x):
   print "dbus error: " + str(x)
 
-def destroy(win, event, *args, **kargs):
+def destroy(*args, **kargs):
 #  print "kabum"
   elementary.exit()
 
@@ -58,7 +58,7 @@ mainbox = elementary.Box(win)
 mainbox.show()
 pager.content_push(mainbox)
 
-win.destroy = destroy
+win._callback_add('destroy', destroy)
 
 def sanity_name(name, startline = True):
   if startline:
@@ -172,7 +172,7 @@ def list_contact(path, *args, **kwargs):
     callbtn = elementary.Button(list)
     callbtn.label_set(_("Call"))
     callbtn.show()
-    callbtn.clicked = partial(select_field, contact, 'Phone', 'tel:', call)
+    callbtn._callback_add('clicked', partial(select_field, contact, 'Phone', 'tel:', call))
   list.item_append(name, photo, callbtn, partial(display_contact, contact['Path'], data=contact))
   if kwargs.get('go'):
     list.go()  
@@ -197,11 +197,12 @@ def display_contacts_callback(loading, contact_list, *args, **kwargs):
 
 def search_changed(frame, obj, *args, **kwargs):
   text = obj.markup_to_utf8(obj.entry_get())
-  if text[len(text)-1:]=="\n":
-    obj.delete()
-    close_search(frame)
-  else:
-    display_contacts(list, text)
+  if text:
+    if "\n" in text:
+      obj.delete()
+      close_search(frame)
+    else:
+      display_contacts(list, text)
 
 def close_search(frame, *args, **kwargs):
   frame.delete()
@@ -242,7 +243,7 @@ def search(downbox, obj, *args, **kwargs):
   frame.content_set(entryscr)
 
   mainbox.pack_start(frame)
-  obj.clicked = nothing
+  obj._callback_add('clicked', nothing)
 
 def pager_pop(pager, *args, **kwargs):
   pager.content_pop()
@@ -363,7 +364,7 @@ def select_field(contact, fieldname, prefix, callback, *args, **kwargs):
     btn.size_hint_weight_set(-1.0, 0.0)
     btn.size_hint_align_set(-1.0, 0.0)
     btn.show()
-    btn.clicked = partial(inwin_close, dia)
+    btn._callback_add('clicked', partial(inwin_close, dia))
 
     box.pack_end(btn)
 
@@ -437,7 +438,7 @@ class Field():
 
     delb = elementary.Button(win)
     delb.label_set('X')
-    delb.clicked = self.delete
+    delb._callback_add('clicked', self.delete)
     if allowdel:
        delb.show()
     table.pack(delb, 2, num, 1, 1)
@@ -561,7 +562,7 @@ def add_field(edit, *args, **kargs):
   add.label_set(_("Add"))
   add.size_hint_weight_set(1.0, 0.0)
   add.size_hint_align_set(-1.0, 0.0)
-  add.clicked = partial(add_field2, dia, entry, edit)
+  add._callback_add('clicked', partial(add_field2, dia, entry, edit))
   add.show()
   bbox.pack_end(add)
 
@@ -569,7 +570,7 @@ def add_field(edit, *args, **kargs):
   quit.label_set(_("Quit"))
   quit.size_hint_weight_set(1.0, 0.0)
   quit.size_hint_align_set(-1.0, 0.0)
-  quit.clicked = partial(inwin_close, dia)
+  quit._callback_add('clicked', partial(inwin_close, dia))
   quit.show()
   bbox.pack_end(quit)
 
@@ -607,7 +608,7 @@ def edit_contact(path, *args, **kwargs):
 
   newfie = elementary.Button(win)
   newfie.label_set(_("New field"))
-  newfie.clicked = partial(add_field, edit)
+  newfie._callback_add('clicked', partial(add_field, edit))
   newfie.size_hint_weight_set(1.0, 0.0)
   newfie.size_hint_align_set(-1.0, -1.0)
   newfie.show()
@@ -623,7 +624,7 @@ def edit_contact(path, *args, **kwargs):
 
   save = elementary.Button(win)
   save.label_set(_("Save"))
-  save.clicked = partial(save_contact, path, edit)
+  save._callback_add('clicked', partial(save_contact, path, edit))
   save.size_hint_weight_set(1.0, 0.0)
   save.size_hint_align_set(-1.0, -1.0)
   save.show()
@@ -632,13 +633,13 @@ def edit_contact(path, *args, **kwargs):
   if path:
     delbtn = elementary.Button(win)
     delbtn.label_set(_("Delete"))
-    delbtn.clicked = partial(del_contact, path)
+    delbtn._callback_add('clicked', partial(del_contact, path))
     delbtn.show()
     bbox.pack_end(delbtn)
 
   back = elementary.Button(win)
   back.label_set(_("Back"))
-  back.clicked = partial(pager_pop, pager)
+  back._callback_add('clicked', partial(pager_pop, pager))
   back.show()
   bbox.pack_end(back)
 
@@ -687,7 +688,7 @@ def display_contact(path, *args, **kwargs):
   editbtn = elementary.Button(bottombox)
   editbtn.label_set(_("Edit"))
   editbtn.show()
-  editbtn.clicked = partial(edit_contact, path, data=data)
+  editbtn._callback_add('clicked', partial(edit_contact, path, data=data))
   if not (isphone or ismail):
     editbtn.size_hint_weight_set(1.0, 0.0)
     editbtn.size_hint_align_set(-1.0, 0.0)
@@ -697,7 +698,7 @@ def display_contact(path, *args, **kwargs):
   backbtn = elementary.Button(bottombox)
   backbtn.label_set(_("Back"))
   backbtn.show()
-  backbtn.clicked = partial(pager_pop, pager)
+  backbtn._callback_add('clicked', partial(pager_pop, pager))
   bottombox.pack_end(backbtn)
 
   scr = elementary.Scroller(box)
@@ -894,12 +895,12 @@ def make_downbox():
   downbox.pack_start(searchbtn)
   searchbtn.size_hint_weight_set(1.0, 0.0)
   searchbtn.size_hint_align_set(-1.0, 0.0)
-  searchbtn.clicked = partial(search, downbox)
+  searchbtn._callback_add('clicked', partial(search, downbox))
   searchbtn.show()
 
   newbtn = elementary.Button(win)
   newbtn.label_set(_("New"))
-  newbtn.clicked = partial(edit_contact, None)
+  newbtn._callback_add('clicked', partial(edit_contact, None))
   downbox.pack_end(newbtn)
   newbtn.size_hint_align_set(-1.0, 0.0)
   newbtn.show()
@@ -909,7 +910,7 @@ def make_downbox():
   downbox.pack_end(exitbtn)
   exitbtn.show()
   exitbtn.size_hint_align_set(-1.0, 0.0)
-  exitbtn.clicked = destroy
+  exitbtn._callback_add('clicked', destroy)
 
 make_downbox()
 

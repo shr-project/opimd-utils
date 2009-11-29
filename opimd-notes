@@ -148,7 +148,7 @@ def renderNote(*args, **kargs):
   editicon.file_set("/usr/share/pixmaps/opimd-utils/editnote.png")
   editicon.show()
   editbtn.icon_set(editicon)
-  editbtn.clicked = partial(composeNote, data = data, path = data['Path'])
+  editbtn._callback_add('clicked', partial(composeNote, data = data, path = data['Path']))
   editbtn.show()
   framebox.pack_end(editbtn)
 
@@ -160,7 +160,8 @@ def renderNote(*args, **kargs):
   delicon.show()
   delbtn.icon_set(delicon)
 #  delbtn.label_set('Delete')
-  delbtn.clicked = partial(noteDelete, data['Path'], bubble)
+  delbtn._callback_add('clicked', partial(noteDelete, 
+data['Path'], bubble))
   delbtn.show()
   framebox.pack_end(delbtn)
 
@@ -214,12 +215,12 @@ def are_you_sure(callback, *args, **kwargs):
   box2.show()
   btnyes = elementary.Button(dia)
   btnyes.label_set(_("Yes"))
-  btnyes.clicked = partial(sure, dia, callback)
+  btnyes._callback_add('clicked', partial(sure, dia, callback))
   btnyes.show()
   box2.pack_start(btnyes)
   btnno = elementary.Button(dia)
   btnno.label_set(_("No"))
-  btnno.clicked = partial(notsure, dia)
+  btnno._callback_add('clicked', partial(notsure, dia))
   btnno.show()
   box2.pack_end(btnno)
   box.pack_end(box2)
@@ -372,7 +373,7 @@ def composeNote(*args, **kargs):
 #  if not data:
   nexticon.file_set("/usr/share/pixmaps/opimd-utils/next.png")
   next.label_set(_("Next"))
-  next.clicked = partial(editTags, pager, dia, title, content, data = data, path = path)
+  next._callback_add('clicked', partial(editTags, pager, dia, title, content, data = data, path = path))
 #  else:
 #    nexticon.file_set("/usr/share/pixmaps/opimd-utils/editnote.png")
 #    next.label_set('Edit')
@@ -391,7 +392,7 @@ def composeNote(*args, **kargs):
   backicon.file_set("/usr/share/pixmaps/opimd-utils/quit.png")
   back.size_hint_weight_set(1.0, 0.0)
   back.size_hint_align_set(-1.0, 0.0)
-  back.clicked = partial(inwin_close, dia)
+  back._callback_add('clicked', partial(inwin_close, dia))
   back.show()
 
   downbox.pack_start(next)
@@ -420,7 +421,7 @@ def saveTag(list, tags, dia, tag, *args, **kargs):
     delic.show()
     delbtn.icon_set(delic)
     item = list.item_prepend(tag, None, delbtn, None)
-    delbtn.clicked = partial(delTag, list, tags, tag, item)
+    delbtn._callback_add('clicked', partial(delTag, list, tags, tag, item))
     list.go()
   if dia:
     dia.delete()
@@ -493,7 +494,7 @@ def addTag(list, tags, item, *args, **kargs):
   next.label_set(_("Add"))
   next.size_hint_weight_set(1.0, 0.0)
   next.size_hint_align_set(-1.0, 0.0)
-  next.clicked = partial(saveTag, list, tags, dia, title)
+  next._callback_add('clicked', partial(saveTag, list, tags, dia, title))
   next.show()
 
   downbox.pack_start(next)
@@ -509,7 +510,7 @@ def addTag(list, tags, item, *args, **kargs):
   back.size_hint_weight_set(1.0, 0.0)
   back.size_hint_align_set(-1.0, 0.0)
   back.show()
-  back.clicked = partial(inwin_close, dia)
+  back._callback_add('clicked', partial(inwin_close, dia))
   downbox.pack_end(back)
 
 def editTags(pager, dia, titlee, contente, *args, **kargs):
@@ -553,7 +554,7 @@ def editTags(pager, dia, titlee, contente, *args, **kargs):
     delic.show()
     delbtn.icon_set(delic)
     item = tlist.item_prepend(tag, None, delbtn, None)
-    delbtn.clicked = partial(delTag, tlist, tags, tag, item)
+    delbtn._callback_add('clicked', partial(delTag, tlist, tags, tag, item))
   newtag = elementary.Icon(win)
   newtag.file_set('/usr/share/pixmaps/opimd-utils/newtag.png')
   newtag.scale_set(1, 1)
@@ -583,7 +584,7 @@ def editTags(pager, dia, titlee, contente, *args, **kargs):
     next.label_set(_("Edit"))
   next.size_hint_weight_set(1.0, 0.0)
   next.size_hint_align_set(-1.0, 0.0)
-  next.clicked = partial(noteNext, pager, dia, titlee, contente, data = data, path = path, tags = tags)
+  next._callback_add('clicked', partial(noteNext, pager, dia, titlee, contente, data = data, path = path, tags = tags))
   next.show()
   
   downbox.pack_start(next)
@@ -599,7 +600,7 @@ def editTags(pager, dia, titlee, contente, *args, **kargs):
   back.size_hint_weight_set(1.0, 0.0)
   back.size_hint_align_set(-1.0, 0.0)
   back.show()
-  back.clicked = partial(pager_pop, pager)
+  back._callback_add('clicked', partial(pager_pop, pager))
   downbox.pack_end(back)
   downbox.size_hint_weight_set(1.0, 0.0)
   downbox.size_hint_align_set(-1.0, 0.0)
@@ -636,7 +637,7 @@ def selectTag(pager, *args, **kargs):
   back.size_hint_weight_set(1.0, 0.0)
   back.size_hint_align_set(-1.0, 0.0)
   back.show()
-  back.clicked = partial(pager_pop, pager)
+  back._callback_add('clicked', partial(pager_pop, pager))
   box.pack_end(back)
   box.show()
   pager.content_push(box)
@@ -718,7 +719,7 @@ def search(*args, **kargs):
   next.icon_set(nexticon)
   nexticon.file_set("/usr/share/pixmaps/opimd-utils/search.png")
   next.label_set(_("Search"))
-  next.clicked = partial(doSearch, title, titles, regexp, dia)
+  next._callback_add('clicked', partial(doSearch, title, titles, regexp, dia))
   next.size_hint_weight_set(1.0, 0.0)
   next.size_hint_align_set(-1.0, 0.0)
   next.show()
@@ -733,7 +734,7 @@ def search(*args, **kargs):
   backicon.file_set("/usr/share/pixmaps/opimd-utils/quit.png")
   back.size_hint_weight_set(1.0, 0.0)
   back.size_hint_align_set(-1.0, 0.0)
-  back.clicked = partial(inwin_close, dia)
+  back._callback_add('clicked', partial(inwin_close, dia))
   back.show()
 
   downbox.pack_start(next)
@@ -758,7 +759,7 @@ mainbox = elementary.Box(win)
 mainbox.show()
 pager.content_push(mainbox)
 
-win.destroy = destroy
+win._callback_add('destroy', destroy)
 
 scr = elementary.Scroller(win)
 scr.size_hint_align_set(-1.0, -1.0)
@@ -807,7 +808,7 @@ def displayStatus(stat, *args, **kargs):
   delicon.smooth_set(0)
   delicon.show()
   delbtn.icon_set(delicon)
-  delbtn.clicked = displayAllNotes
+  delbtn._callback_add('clicked', displayAllNotes)
   delbtn.show()
   upbox.pack_end(delbtn)
 
@@ -889,12 +890,12 @@ def make_downbox():
   newbtn.icon_set(newicon)
   newbtn.size_hint_weight_set(1.0, 0.0)
   newbtn.size_hint_align_set(-1.0, 0.0)
-  newbtn.clicked = composeNote
+  newbtn._callback_add('clicked', composeNote)
   newbtn.show()
 
   tagsbtn = elementary.Button(win)
   tagsbtn.label_set(_("Tags"))
-  tagsbtn.clicked = partial(selectTag, pager)
+  tagsbtn._callback_add('clicked', partial(selectTag, pager))
   downbox.pack_end(tagsbtn)
   tagsicon = elementary.Icon(win)
   tagsicon.scale_set(1,1)
@@ -919,7 +920,7 @@ def make_downbox():
   searchbtn.show()
   searchbtn.size_hint_weight_set(1.0, 0.0)
   searchbtn.size_hint_align_set(-1.0, 0.0)
-  searchbtn.clicked = search
+  searchbtn._callback_add('clicked', search)
 
 displayNotes()
 make_downbox()

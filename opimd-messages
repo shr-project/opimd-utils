@@ -59,7 +59,7 @@ def delete_msg(path, bubble, button, event, *args, **kwargs):
   bubble.delete()
   del bubble
 
-def destroy(obj, event, *args, **kargs):
+def destroy(obj, *args, **kargs):
   print "kabum"
   elementary.exit()
 
@@ -203,7 +203,7 @@ def render_message(message, incoming = False):
 
   deletebutton = elementary.Button(win)
   deletebutton.label_set(_("Delete"))
-  deletebutton.clicked = partial(delete_msg, message['Path'], bubble)
+  deletebutton._callback_add('clicked', partial(delete_msg, message['Path'], bubble))
   deletebutton.show()
   deletebutton.size_hint_weight_set(1.0, 0.0)
   deletebutton.size_hint_align_set(1.0, -1.0)
@@ -215,7 +215,7 @@ def render_message(message, incoming = False):
   if message['Direction']=='in':
     replybutton = elementary.Button(win)
     replybutton.label_set(_("Reply"))
-    replybutton.clicked = partial(opimd_reply.reply, [number, name], '', bus, win, None, None, None)
+    replybutton._callback_add('clicked', partial(opimd_reply.reply, [number, name], '', bus, win, None, None, None))
     replybutton.show()
     replybutton.size_hint_weight_set(0.0, 0.0)
     replybutton.size_hint_align_set(0.0, -1.0)
@@ -284,7 +284,7 @@ scroll.content_set(box)
 def end(x):
   print str(x)
 
-def go_next(obj, event, *args, **kwargs):
+def go_next(obj, *args, **kwargs):
 #  global message_list
 #  for message in message_list:
 #    try:
@@ -340,7 +340,7 @@ print _("Finished") # finito, fertig, koniec etc.
 
 scroll._callback_add('edge,bottom', partial(go_next, num = 1))
 
-win.destroy = destroy
+win._callback_add('destroy', destroy) 
 win.show()
 
 messages.connect_to_signal("NewMessage", add_new_message)

@@ -96,7 +96,7 @@ class Opimd:
 
 class MainWindow:
 
-	def destroy(self, obj, event, *args, **kargs):
+	def destroy(self, obj, *args, **kargs):
 		elementary.exit()
 
 
@@ -105,7 +105,7 @@ class MainWindow:
 		elementary.c_elementary.finger_size_set(35)
 		self.win = elementary.Window("opimd-dates", elementary.ELM_WIN_BASIC)
 		self.win.title_set(_("Dates"))
-		self.win.destroy = self.destroy
+		self.win._callback_add('destroy', self.destroy)
 
 		# add background to main window
 		bg = elementary.Background(self.win)
@@ -123,7 +123,7 @@ class MainWindow:
 
 		# quit button
 		quitbt = elementary.Button(self.mainbox)
-		quitbt.clicked = self.destroy      
+		quitbt._callback_add('clicked', self.destroy)
 		quitbt.label_set(_("Quit"))        
 		quitbt.size_hint_align_set(-1.0, 0.0)
 		#quitbt.size_hint_weight_set(1.0, 1.0)
@@ -199,7 +199,7 @@ class CalendarMonth(elementary.Table):
 
 		# previus month button
 		prevbt = elementary.Button(navbox)
-		prevbt._callback_add("clicked", (self.show_month, [prevyear, prevmonth]))    
+		prevbt._callback_add("clicked", partial(self.show_month, [prevyear, prevmonth]))
 		prevbt.label_set("< " + month_strings[ prevmonth - 1 ] + " " + str(prevyear))        
 		prevbt.size_hint_weight_set(1.0, 1.0)                            
 		prevbt.show()                                    
@@ -216,7 +216,7 @@ class CalendarMonth(elementary.Table):
 
 		# next month button
 		nextbt = elementary.Button(navbox)
-		nextbt._callback_add("clicked", (self.show_month, [nextyear, nextmonth]))    
+		nextbt._callback_add("clicked", partial(self.show_month, [nextyear, nextmonth]))    
 		nextbt.label_set(month_strings[ nextmonth - 1 ] + " " + str(nextyear) + " >")        
 		nextbt.size_hint_weight_set(1.0, 1.0)                            
 		nextbt.show()                                    
@@ -251,7 +251,7 @@ class CalendarMonth(elementary.Table):
 					bt = elementary.Button(self)
 					bt.size_hint_weight_set(1.0, 1.0)
 					#bt.size_hint_align_set(0.5, 0.5)
-					bt._callback_add("clicked", (self.show_day, [year, month, day]))
+					bt._callback_add("clicked", partial(self.show_day, [year, month, day]))
 					bt.label_set( str( day ) )
 					bt.show()
 					self.pack(bt,weekday,row,1,1)
@@ -274,7 +274,7 @@ class CalendarMonth(elementary.Table):
 
 
 	# called when next or previus button is clicked
-	def show_month(self, obj, event, arguments, *args, **kargs):
+	def show_month(self, arguments, obj, *args, **kargs):
 		self.mainwin.cal.delete()
 		self.mainwin.cal = CalendarMonth(self.mainwin)
 		self.mainwin.mainbox.pack_start(self.mainwin.cal)
@@ -283,7 +283,7 @@ class CalendarMonth(elementary.Table):
 
 
 	# called when day is clicked
-	def show_day(self, obj, event, arguments, *args, **kargs):
+	def show_day(self, arguments, obj, *args, **kargs):
 		self.mainwin.cal.delete()
 		self.mainwin.cal = CalendarDay(self.mainwin)
 		self.mainwin.mainbox.pack_start(self.mainwin.cal)
@@ -341,7 +341,7 @@ class CalendarDay(elementary.Box):
 
 		# back to month button
 		backbt = elementary.Button(navbox)
-		backbt._callback_add("clicked", (self.show_month, [year, month]))
+		backbt._callback_add("clicked", partial(self.show_month, [year, month]))
 		backbt.label_set(_("Back"))
 		backbt.size_hint_weight_set(1.0, 1.0)
 		backbt.size_hint_align_set(-1.0, -1.0)
@@ -351,7 +351,7 @@ class CalendarDay(elementary.Box):
 
 		# new button
 		newbt = elementary.Button(navbox)
-		newbt._callback_add("clicked", (self.add_entry, [year, month, day]))
+		newbt._callback_add("clicked", partial(self.add_entry, [year, month, day]))
 		newbt.label_set(_("New"))
 		newbt.size_hint_weight_set(1.0, 1.0)
 		newbt.size_hint_align_set(-1.0, -1.0)
@@ -427,14 +427,14 @@ class CalendarDay(elementary.Box):
 				entry.label_set(title)
 				entry.size_hint_weight_set(1.0, 1.0)
 				entry.size_hint_align_set(-1.0, -1.0)
-				entry._callback_add("clicked", (self.show_entry, [i["Path"],]))
+				entry._callback_add("clicked", partial(self.show_entry, [i["Path"],]))
 				entry.show()
 				self.table.pack(entry,col,start,1,length)
 				entry.scale_set(1)
 
 
 	# called when next or previus button is clicked
-	def show_month(self, obj, event, arguments, *args, **kargs):
+	def show_month(self, arguments, obj, *args, **kargs):
 		self.mainwin.cal.delete()
 		self.mainwin.cal = CalendarMonth(self.mainwin)
 		self.mainwin.mainbox.pack_start(self.mainwin.cal)
@@ -443,7 +443,7 @@ class CalendarDay(elementary.Box):
 
 
 	# called when entry button is clicked
-	def add_entry(self, obj, event, arguments, *args, **kargs):
+	def add_entry(self, arguments, obj, *args, **kargs):
 		self.mainwin.cal.delete()
 		self.mainwin.cal = AddCalendarEntry(self.mainwin)
 		self.mainwin.mainbox.pack_start(self.mainwin.cal)
@@ -452,7 +452,7 @@ class CalendarDay(elementary.Box):
 
 
 	# called when entry button is clicked
-	def show_entry(self, obj, event, arguments, *args, **kargs):
+	def show_entry(self, arguments, obj, *args, **kargs):
 		self.mainwin.cal.delete()
 		self.mainwin.cal = CalendarEntry(self.mainwin)
 		self.mainwin.mainbox.pack_start(self.mainwin.cal)
@@ -548,7 +548,7 @@ class AddCalendarEntry(elementary.Box):
 		navbox.scale_set(1)
 
 		backbt = elementary.Button(navbox)
-		backbt._callback_add("clicked", (self.show_day, [date.year, date.month, date.day]))
+		backbt._callback_add("clicked", partial(self.show_day, [date.year, date.month, date.day]))
 		backbt.label_set(_("Cancel"))
 		backbt.size_hint_weight_set(1.0, 1.0)
 		backbt.size_hint_align_set(-1.0, -1.0)
@@ -557,7 +557,7 @@ class AddCalendarEntry(elementary.Box):
 		backbt.scale_set(1)
 
 		newbt = elementary.Button(navbox)
-		newbt.clicked = partial(self.pager_promote, begin_box)
+		newbt._callback_add('clicked', partial(self.pager_promote, begin_box))
 		newbt.label_set(_("Continue"))
 		newbt.size_hint_weight_set(1.0, 1.0)
 		newbt.size_hint_align_set(-1.0, -1.0)
@@ -607,7 +607,7 @@ class AddCalendarEntry(elementary.Box):
 		navbox.scale_set(1)
 
 		backbt = elementary.Button(navbox)
-		backbt.clicked = partial(self.pager_promote, title_box)
+		backbt._callback_add('clicked', partial(self.pager_promote, title_box))
 		backbt.label_set(_("Back"))
 		backbt.size_hint_weight_set(1.0, 1.0)
 		backbt.size_hint_align_set(-1.0, -1.0)
@@ -616,7 +616,7 @@ class AddCalendarEntry(elementary.Box):
 		backbt.scale_set(1)
 
 		newbt = elementary.Button(navbox)
-		newbt.clicked = partial(self.pager_promote, end_box)
+		newbt._callback_add('clicked', partial(self.pager_promote, end_box))
 		newbt.label_set(_("Continue"))
 		newbt.size_hint_weight_set(1.0, 1.0)
 		newbt.size_hint_align_set(-1.0, -1.0)
@@ -666,7 +666,7 @@ class AddCalendarEntry(elementary.Box):
 		navbox.scale_set(1)
 
 		backbt = elementary.Button(navbox)
-		backbt.clicked = partial(self.pager_promote, begin_box)
+		backbt._callback_add('clicked', partial(self.pager_promote, begin_box))
 		backbt.label_set(_("Back"))
 		backbt.size_hint_weight_set(1.0, 1.0)
 		backbt.size_hint_align_set(-1.0, -1.0)
@@ -676,9 +676,9 @@ class AddCalendarEntry(elementary.Box):
 
 		newbt = elementary.Button(navbox)
 		if data:
-			newbt._callback_add("clicked", (self.update_entry, [date.year, date.month, date.day, data['Path']]))
+			newbt._callback_add("clicked", partial(self.update_entry, [date.year, date.month, date.day, data['Path']]))
 		else:
-			newbt._callback_add("clicked", (self.add_entry, [date.year, date.month, date.day]))
+			newbt._callback_add("clicked", partial(self.add_entry, [date.year, date.month, date.day]))
 		newbt.label_set(_("Save"))
 		newbt.size_hint_weight_set(1.0, 1.0)
 		newbt.size_hint_align_set(-1.0, -1.0)
@@ -688,7 +688,7 @@ class AddCalendarEntry(elementary.Box):
 
 
 	# called when entry button is clicked
-	def show_day(self, obj, event, arguments, *args, **kargs):
+	def show_day(self, arguments, obj, event, *args, **kargs):
 		self.mainwin.cal.delete()
 		self.mainwin.cal = CalendarDay(self.mainwin)
 		self.mainwin.mainbox.pack_start(self.mainwin.cal)
@@ -696,7 +696,7 @@ class AddCalendarEntry(elementary.Box):
 		self.mainwin.cal.scale_set(1)
 
 	# called when entry button is clicked
-	def update_entry(self, obj, event, arguments, *args, **kargs):
+	def update_entry(self, arguments, obj, *args, **kargs):
 		title = elementary.Entry.markup_to_utf8(self.title.entry_get()).strip()
 
 		begin_day = datetime.datetime.strptime(elementary.Entry.markup_to_utf8(self.begin_day.entry_get()).strip(),"%Y-%m-%d")
@@ -719,7 +719,7 @@ class AddCalendarEntry(elementary.Box):
 		self.mainwin.cal.scale_set(1)
 
 	# called when entry button is clicked
-	def add_entry(self, obj, event, arguments, *args, **kargs):
+	def add_entry(self, arguments, obj, *args, **kargs):
 		title = elementary.Entry.markup_to_utf8(self.title.entry_get()).strip()
 
 		begin_day = datetime.datetime.strptime(elementary.Entry.markup_to_utf8(self.begin_day.entry_get()).strip(),"%Y-%m-%d")
@@ -779,7 +779,7 @@ class CalendarEntry(elementary.Box):
 
 		# back to month button
 		backbt = elementary.Button(navbox)
-		backbt._callback_add("clicked", (self.show_day, [begin.year, begin.month, begin.day]))
+		backbt._callback_add("clicked", partial(self.show_day, [begin.year, begin.month, begin.day]))
 		backbt.label_set(_("Back"))
 		backbt.size_hint_weight_set(1.0, 1.0)
 		backbt.size_hint_align_set(-1.0, -1.0)
@@ -789,7 +789,7 @@ class CalendarEntry(elementary.Box):
 
 		# delete button
 		newbt = elementary.Button(navbox)
-		newbt._callback_add("clicked", (self.del_entry, [path, begin.year, begin.month, begin.day]))
+		newbt._callback_add("clicked", partial(self.del_entry, [path, begin.year, begin.month, begin.day]))
 		newbt.label_set(_("Delete"))
 		newbt.size_hint_weight_set(1.0, 1.0)
 		newbt.size_hint_align_set(-1.0, -1.0)
@@ -824,7 +824,7 @@ class CalendarEntry(elementary.Box):
 		end_label.show()
 
 	# called when entry button is clicked
-	def show_day(self, obj, event, arguments, *args, **kargs):
+	def show_day(self, arguments, obj, *args, **kargs):
 		self.mainwin.cal.delete()
 		self.mainwin.cal = CalendarDay(self.mainwin)
 		self.mainwin.mainbox.pack_start(self.mainwin.cal)
@@ -833,7 +833,7 @@ class CalendarEntry(elementary.Box):
 
 
 	# called when delete button is clicked
-	def del_entry(self, obj, event, arguments, *args, **kargs):
+	def del_entry(self, arguments, obj, *args, **kargs):
 		self.opimd.delete(arguments[0])
 
 		self.mainwin.cal.delete()
