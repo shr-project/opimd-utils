@@ -282,7 +282,7 @@ close._callback_add('clicked', close_win)
 close.label_set(_("Close"))
 boxb.pack_end(close)
 
-win._callback_add('destroy', destroy)
+win.callback_destroy_add(destroy)
 
 message_list = []
 signal_list = []

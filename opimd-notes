@@ -759,7 +759,7 @@ mainbox = elementary.Box(win)
 mainbox.show()
 pager.content_push(mainbox)
 
-win._callback_add('destroy', destroy)
+win.callback_destroy_add(destroy)
 
 scr = elementary.Scroller(win)
 scr.size_hint_align_set(-1.0, -1.0)

@@ -340,7 +340,7 @@ print _("Finished") # finito, fertig, koniec etc.
 
 scroll._callback_add('edge,bottom', partial(go_next, num = 1))
 
-win._callback_add('destroy', destroy) 
+win.callback_destroy_add(destroy) 
 win.show()
 
 messages.connect_to_signal("NewMessage", add_new_message)
