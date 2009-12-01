@@ -46,7 +46,7 @@ def resolve_phone(number):
         name = number.strip('tel:')
     return name
 
-def destroy(win, event, *args, **kargs):
+def destroy(win, *args, **kargs):
   global message_list
   global signal_list
   global function_list
@@ -181,20 +181,20 @@ def show_msg(msg, box, bubble, text, obj, *args, **kwargs):
   signal = msg.connect_to_signal("MessageUpdated", partial(handle_csm, msg, text))
   signal_list.append(signal)
 
-def close_win(obj, event, *args, **kwargs):
-  destroy(win, event, args, kwargs)
+def close_win(obj, *args, **kwargs):
+  destroy(win, args, kwargs)
 
-def delete_msg(msg, win, obj, event, *args, **kwargs):
+def delete_msg(msg, win, obj, *args, **kwargs):
   msg.Delete()
-  destroy(win, event, args, kwargs)
+  destroy(win, args, kwargs)
 
-def open_inbox(obj, event, *args, **kwargs):
+def open_inbox(obj, *args, **kwargs):
   system("opimd-messages &")
-  destroy(win, event, args, kwargs)
+  destroy(win, args, kwargs)
 
-def open_phonelog(obj, event, *args, **kwargs):
+def open_phonelog(obj, *args, **kwargs):
   system("phonelog &")
-  destroy(win, event, args, kwargs) 
+  destroy(win, args, kwargs) 
 
 def resolve_time(t):
   try:

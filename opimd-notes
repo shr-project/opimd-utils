@@ -45,17 +45,16 @@ def clearNotes(*args, **kargs):
         print _("bubble.hide() failed")
   displayedNotes = []
 
-def destroy(win, event, *args, **kargs):
+def destroy(win, *args, **kargs):
 #  print "kabum"
   elementary.exit()
 
 def nothing(*args, **kwargs):
   print _("nothing called")
 
-def anchorClicked (tags, obj, event, sth, *args, **kargs):
+def anchorClicked (tags, obj, sth, *args, **kargs):
   print tags
   print obj
-  print event
   print sth
   print args
   print kargs

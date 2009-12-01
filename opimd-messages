@@ -53,7 +53,7 @@ def resolve_time(t):
   else:
     return time.strftime('%d %b',time.localtime(t))
 
-def delete_msg(path, bubble, button, event, *args, **kwargs):
+def delete_msg(path, bubble, button, *args, **kwargs):
   message = getDbusObject (bus, "org.freesmartphone.opimd", path, "org.freesmartphone.PIM.Message")
   message.Delete()
   bubble.delete()
