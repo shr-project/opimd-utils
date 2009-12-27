@@ -1,0 +1,81 @@
+# David Garabana Barro <david@garabana.com>, 2009.
+msgid ""
+msgstr ""
+"Project-Id-Version: opimd-contacts\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-08-27 15:49+0200\n"
+"PO-Revision-Date: 2009-12-19 04:08+0100\n"
+"Last-Translator: David Garabana Barro <david@garabana.com>\n"
+"Language-Team: Galician <>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: French\n"
+"X-Poedit-Country: FRANCE\n"
+"X-Generator: Lokalize 1.0\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+msgid "Contacts"
+msgstr "Contactos"
+
+msgid "Searching..."
+msgstr "Procurando..."
+
+msgid "Call"
+msgstr "Chamar"
+
+msgid "nothing called"
+msgstr "non se chamou nada"
+
+msgid "Type name to search..."
+msgstr "Introduza o nome a procurar..."
+
+msgid "Error while sending USSD request!"
+msgstr "Produciuse un erro mentres se enviaba a petición USSD!"
+
+msgid "Sending USSD request..."
+msgstr "Enviando a petición USSD..."
+
+msgid "Not yet implemented"
+msgstr "Aínda non está implementado"
+
+msgid "Message sent!"
+msgstr "Mensaxe enviada!"
+
+msgid "Sending..."
+msgstr "Enviando..."
+
+msgid "Enter field name:"
+msgstr "Introduza o nome do campo:"
+
+msgid "Add"
+msgstr "Engadir"
+
+msgid "Quit"
+msgstr "Saír"
+
+msgid "New field"
+msgstr "Novo campo"
+
+msgid "Save"
+msgstr "Gardar"
+
+msgid "Delete"
+msgstr "Borrar"
+
+msgid "Back"
+msgstr "Atrás"
+
+msgid "Edit"
+msgstr "Editar"
+
+msgid "Search"
+msgstr "Procurar"
+
+msgid "New"
+msgstr "Novo"
+
+msgid "Close"
+msgstr "Pechar"
+
+

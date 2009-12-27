@@ -1,0 +1,91 @@
+# David Garabana Barro <david@garabana.com>, 2009.
+msgid ""
+msgstr ""
+"Project-Id-Version: opimd-notes\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-08-27 15:49+0200\n"
+"PO-Revision-Date: 2009-12-19 04:08+0100\n"
+"Last-Translator: David Garabana Barro <david@garabana.com>\n"
+"Language-Team: Galician <>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: French\n"
+"X-Poedit-Country: FRANCE\n"
+"X-Generator: Lokalize 1.0\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+msgid "nothing called"
+msgstr "non se chamou nada"
+
+msgid "Not yet implemented"
+msgstr "Aínda non está implementado"
+
+msgid "Are you sure?"
+msgstr "Está certo?"
+
+msgid "Yes"
+msgstr "Sí"
+
+msgid "No"
+msgstr "Non"
+
+msgid "Adding..."
+msgstr "Engadindo..."
+
+msgid "Editing..."
+msgstr "Editando..."
+
+msgid "Next"
+msgstr "Seguinte"
+
+msgid "Back"
+msgstr "Atrás"
+
+msgid "Enter name of tag..."
+msgstr "Introduza o nome da etiqueta..."
+
+msgid "...or select it from list below:"
+msgstr "...ou escolla un da lista:"
+
+msgid "Add"
+msgstr "Engadir"
+
+msgid "Select tags for note:"
+msgstr "Escolla as etiquetas para a nota:"
+
+msgid "Add new tag..."
+msgstr "Nova etiqueta..."
+
+msgid "Save"
+msgstr "Gardar"
+
+msgid "Edit"
+msgstr "Editar"
+
+msgid "Enter text:"
+msgstr "Introduza o texto:"
+
+#TODO!
+msgid "regular expression"
+msgstr "expresión regular"
+
+msgid "search also in titles"
+msgstr "procurar tamén nos títulos"
+
+msgid "Search"
+msgstr "Procurar"
+
+msgid "Notes"
+msgstr "Notas"
+
+msgid "Searching..."
+msgstr "Procurando..."
+
+msgid "New"
+msgstr "Nova"
+
+msgid "Tags"
+msgstr "Etiquetas"
+
+
