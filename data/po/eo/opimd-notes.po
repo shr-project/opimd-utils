@@ -1,0 +1,86 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: opimd-notes\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-08-27 15:49+0200\n"
+"PO-Revision-Date: 2009-10-14 15:22:08+0100\n"
+"Last-Translator: Moroni Michael <haikara90@gmail.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Esperanto\n"
+
+msgid "nothing called"
+msgstr ""
+
+msgid "Not yet implemented"
+msgstr "Ne ankoraŭ implementita"
+
+msgid "Are you sure?"
+msgstr "Ĉu vi certe volas?"
+
+msgid "Yes"
+msgstr "Jes"
+
+msgid "No"
+msgstr "Ne"
+
+msgid "Adding..."
+msgstr "Aldonanta..."
+
+msgid "Editing..."
+msgstr "Redaktanta..."
+
+msgid "Next"
+msgstr "Sekva"
+
+msgid "Back"
+msgstr "Antaŭ"
+
+msgid "Enter name of tag..."
+msgstr "Tajpi la nomon de la markon..."
+
+msgid "...or select it from list below:"
+msgstr "...aŭ elekti ĝin el listo sube:"
+
+msgid "Add"
+msgstr "Aldoni"
+
+msgid "Select tags for note:"
+msgstr "Elekti markon por la noto:"
+
+msgid "Add new tag..."
+msgstr "Aldoni novan markon..."
+
+msgid "Save"
+msgstr "Konservi"
+
+msgid "Edit"
+msgstr "Redakti"
+
+msgid "Enter text:"
+msgstr "Aldoni tekston:"
+
+#TODO!
+msgid "regular expression"
+msgstr "regula esprimo"
+
+msgid "search also in titles"
+msgstr "serĉi ankaŭ en titoloj"
+
+msgid "Search"
+msgstr "Serĉi"
+
+msgid "Notes"
+msgstr "Notoj"
+
+msgid "Searching..."
+msgstr "Serĉanta..."
+
+msgid "New"
+msgstr "Nova"
+
+msgid "Tags"
+msgstr "Markoj"
+

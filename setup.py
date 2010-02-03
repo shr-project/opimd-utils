@@ -25,8 +25,11 @@ dist = setup( name='opimd-utils',
 		('pixmaps', ['data/opimd-notes.png', 'data/opimd-dates.png']),
 		('pixmaps/opimd-utils', glob("data/icons/*.png")),
 		('locale/de/LC_MESSAGES', ['data/po/de/opimd-dates.mo','data/po/de/opimd-contacts.mo','data/po/de/opimd-notifier.mo','data/po/de/opimd-notes.mo','data/po/de/opimd-messages.mo']),
-                ('locale/fr/LC_MESSAGES', ['data/po/fr/opimd-contacts.mo', 'data/po/fr/opimd-dates.mo', 'data/po/fr/opimd-messages.mo', 'data/po/fr/opimd-notes.mo', 'data/po/fr/opimd-notifier.mo']),
+		('locale/fr/LC_MESSAGES', ['data/po/fr/opimd-contacts.mo', 'data/po/fr/opimd-dates.mo', 'data/po/fr/opimd-messages.mo', 'data/po/fr/opimd-notes.mo', 'data/po/fr/opimd-notifier.mo']),
 		('locale/ru/LC_MESSAGES', ['data/po/ru/opimd-contacts.mo', 'data/po/ru/opimd-dates.mo']),
+		('locale/gl/LC_MESSAGES', ['data/po/gl/opimd-dates.mo','data/po/gl/opimd-contacts.mo','data/po/gl/opimd-notifier.mo','data/po/gl/opimd-notes.mo','data/po/gl/opimd-messages.mo']),
+		('locale/es/LC_MESSAGES', ['data/po/es/opimd-dates.mo','data/po/es/opimd-contacts.mo','data/po/es/opimd-notifier.mo','data/po/es/opimd-notes.mo','data/po/es/opimd-messages.mo']),
+		('locale/eo/LC_MESSAGES', ['data/po/eo/opimd-dates.mo','data/po/eo/opimd-contacts.mo','data/po/eo/opimd-notifier.mo','data/po/eo/opimd-notes.mo','data/po/eo/opimd-messages.mo']),
 		('../../etc/X11/Xsession.d', ['data/89opimd-notifier'])
   ]
 )

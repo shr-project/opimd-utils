@@ -1,0 +1,74 @@
+# David Garabana Barro <david@garabana.com>, 2009.
+msgid ""
+msgstr ""
+"Project-Id-Version: opimd-messages\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-08-27 15:49+0200\n"
+"PO-Revision-Date: 2009-12-27 16:55+0100\n"
+"Last-Translator: Sebastian Krzyszkowiak <seba.dos1@gmail.com>\n"
+"Language-Team: Galician <>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: French\n"
+"X-Poedit-Country: FRANCE\n"
+"X-Generator: Lokalize 1.0\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+msgid "Init entries..."
+msgstr "Inicializando..."
+
+msgid "Out: "
+msgstr "Salida: "
+
+msgid "Processing: "
+msgstr "Procesando: "
+
+msgid "Sent: "
+msgstr "Enviado: "
+
+msgid "Read: "
+msgstr "Leído: "
+
+msgid "Delivered: "
+msgstr "Entregado : "
+
+msgid "Delete"
+msgstr "Borrar"
+
+msgid "Reply"
+msgstr "Responder"
+
+msgid "Querying..."
+msgstr "Consultando..."
+
+msgid "Number of results: "
+msgstr "Número de resultados: "
+
+msgid "Messages"
+msgstr "Mensajes"
+
+msgid "Finished"
+msgstr "Finalizado"
+
+msgid "Error while sending message!"
+msgstr "¡Se ha producido un error durante el envío del mensaje!"
+
+msgid "Retry"
+msgstr "Reintentar"
+
+msgid "Close"
+msgstr "Cerrar"
+
+msgid "Options"
+msgstr "Opciones"
+
+msgid "Back"
+msgstr "Atrás"
+
+msgid "To: "
+msgstr "Para: "
+
+msgid "Send"
+msgstr "Enviado"
+

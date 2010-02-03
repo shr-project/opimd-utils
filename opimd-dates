@@ -15,8 +15,6 @@ import calendar
 import datetime
 import time
 import e_dbus, dbus
-from functools import partial
-
 
 try:
 	cat = gettext.Catalog("opimd-dates")
@@ -102,7 +100,7 @@ class MainWindow:
 
 	def __init__(self):
 		elementary.init()
-		elementary.c_elementary.finger_size_set(35)
+#		elementary.c_elementary.finger_size_set(35)
 		self.win = elementary.Window("opimd-dates", elementary.ELM_WIN_BASIC)
 		self.win.title_set(_("Dates"))
 		self.win.callback_destroy_add(self.destroy)
@@ -112,35 +110,18 @@ class MainWindow:
 		self.win.resize_object_add(bg)
 		bg.size_hint_weight_set(1.0, 1.0)
 		bg.show()
-		bg.scale_set(1)
 
 		# main container contains the calendar and the Quit button
 		self.mainbox = elementary.Box(self.win)
 		self.mainbox.size_hint_weight_set(1.0, 1.0)
 		self.win.resize_object_add(self.mainbox)
 		self.mainbox.show()
-		self.mainbox.scale_set(1)
-
-		# quit button
-		quitbt = elementary.Button(self.mainbox)
-		quitbt._callback_add('clicked', self.destroy)
-		quitbt.label_set(_("Quit"))        
-		quitbt.size_hint_align_set(-1.0, 0.0)
-		#quitbt.size_hint_weight_set(1.0, 1.0)
-		ic = elementary.Icon(quitbt)         
-		ic.file_set( "/usr/share/pixmaps/icon_quit.png" )
-		ic.smooth_set(1)                                 
-		ic.scale_set(1, 1)                               
-		quitbt.icon_set(ic)                              
-		quitbt.show()                                    
-		self.mainbox.pack_end(quitbt)
 
 		# calendar
 		today = datetime.date.today()
 		self.cal = CalendarMonth(self)
 		self.mainbox.pack_start(self.cal)
 		self.cal.show(today.year,today.month)
-		self.cal.scale_set(1)
 
 		# show main window
 		self.win.show()
@@ -156,13 +137,11 @@ class CalendarMonth(elementary.Table):
 	def __init__(self,mainwin):
 		elementary.Table.__init__(self,mainwin.mainbox)
 		self.mainwin = mainwin
-		mainwin.mainbox.scale_set(1)
-		self.size_hint_align_set(-1.0,-1.0)
+		self.size_hint_align_set(-1.0, 0.0)
 		self.size_hint_weight_set(1.0, 1.0)
 		# set table homogenous
 		self.homogenous_set(True)
 		self.calobj = calendar.Calendar(self.firstweekday)
-		self.scale_set(1)
 
 
 	def setfirstweekday(weekday):
@@ -174,21 +153,6 @@ class CalendarMonth(elementary.Table):
 		elementary.Table.show(self)
 		row = 0
 
-		# put month and year in first row
-		title_label = elementary.Label(self)
-		self.pack(title_label,row,0,7,1)
-		title_label.show()
-		title_label.label_set( month_strings[ month-1 ] + " " + str(year) )
-
-		# contains previus and next butten, located in the 9th row
-		navbox = elementary.Table(self)
-		navbox.homogenous_set(True)
-		#navbox.size_hint_align_set(-1.0,-1.0)
-		navbox.size_hint_weight_set(1.0, 1.0)
-		self.pack(navbox,0,8,7,1)
-		navbox.show()
-		navbox.scale_set(1)
-
 		# calculate previus month
 		if month <= 1:
 			prevyear = year - 1
@@ -198,13 +162,17 @@ class CalendarMonth(elementary.Table):
 			prevmonth = month - 1
 
 		# previus month button
-		prevbt = elementary.Button(navbox)
-		prevbt._callback_add("clicked", partial(self.show_month, [prevyear, prevmonth]))
-		prevbt.label_set("< " + month_strings[ prevmonth - 1 ] + " " + str(prevyear))        
-		prevbt.size_hint_weight_set(1.0, 1.0)                            
+		prevbt = elementary.Button(self)
+		prevbt._callback_add("clicked", self.show_month, prevyear, prevmonth)
+		prevbt.label_set("< ")        
 		prevbt.show()                                    
-		navbox.pack(prevbt,0,0,1,1)
-		prevbt.scale_set(1)
+		self.pack(prevbt,row,0,1,1)
+
+		# put month and year in first row
+		title_label = elementary.Label(self)
+		self.pack(title_label,1,row,5,1)
+		title_label.show()
+		title_label.label_set( month_strings[ month-1 ] + " " + str(year) )
 
 		# calculate next month
 		if month >= 12:
@@ -215,13 +183,11 @@ class CalendarMonth(elementary.Table):
 			nextmonth = month + 1
 
 		# next month button
-		nextbt = elementary.Button(navbox)
-		nextbt._callback_add("clicked", partial(self.show_month, [nextyear, nextmonth]))    
-		nextbt.label_set(month_strings[ nextmonth - 1 ] + " " + str(nextyear) + " >")        
-		nextbt.size_hint_weight_set(1.0, 1.0)                            
+		nextbt = elementary.Button(self)
+		nextbt._callback_add("clicked", self.show_month, nextyear, nextmonth)    
+		nextbt.label_set(" >")                                
 		nextbt.show()                                    
-		navbox.pack(nextbt,1,0,1,1)
-		nextbt.scale_set(1)
+		self.pack(nextbt,6,row,1,1)
 
 		# put day names in second row
 		row += 1
@@ -251,7 +217,7 @@ class CalendarMonth(elementary.Table):
 					bt = elementary.Button(self)
 					bt.size_hint_weight_set(1.0, 1.0)
 					#bt.size_hint_align_set(0.5, 0.5)
-					bt._callback_add("clicked", partial(self.show_day, [year, month, day]))
+					bt._callback_add("clicked", self.show_day, year, month, day)
 					bt.label_set( str( day ) )
 					bt.show()
 					self.pack(bt,weekday,row,1,1)
@@ -274,22 +240,18 @@ class CalendarMonth(elementary.Table):
 
 
 	# called when next or previus button is clicked
-	def show_month(self, arguments, obj, *args, **kargs):
+	def show_month(self, obj, year, month, *args, **kargs):
 		self.mainwin.cal.delete()
 		self.mainwin.cal = CalendarMonth(self.mainwin)
 		self.mainwin.mainbox.pack_start(self.mainwin.cal)
-		self.mainwin.cal.show(arguments[0],arguments[1])
-		self.mainwin.cal.scale_set(1)
-
+		self.mainwin.cal.show(year, month)
 
 	# called when day is clicked
-	def show_day(self, arguments, obj, *args, **kargs):
+	def show_day(self, obj, year, month, day, *args, **kargs):
 		self.mainwin.cal.delete()
 		self.mainwin.cal = CalendarDay(self.mainwin)
 		self.mainwin.mainbox.pack_start(self.mainwin.cal)
-
-		self.mainwin.cal.show(arguments[0],arguments[1],arguments[2])
-		self.mainwin.cal.scale_set(1)
+		self.mainwin.cal.show(year, month, day)
 
 
 class CalendarDay(elementary.Box):
@@ -341,7 +303,7 @@ class CalendarDay(elementary.Box):
 
 		# back to month button
 		backbt = elementary.Button(navbox)
-		backbt._callback_add("clicked", partial(self.show_month, [year, month]))
+		backbt._callback_add("clicked", self.show_month, year, month)
 		backbt.label_set(_("Back"))
 		backbt.size_hint_weight_set(1.0, 1.0)
 		backbt.size_hint_align_set(-1.0, -1.0)
@@ -351,7 +313,7 @@ class CalendarDay(elementary.Box):
 
 		# new button
 		newbt = elementary.Button(navbox)
-		newbt._callback_add("clicked", partial(self.add_entry, [year, month, day]))
+		newbt._callback_add("clicked", self.add_entry, year, month, day)
 		newbt.label_set(_("New"))
 		newbt.size_hint_weight_set(1.0, 1.0)
 		newbt.size_hint_align_set(-1.0, -1.0)
@@ -427,37 +389,34 @@ class CalendarDay(elementary.Box):
 				entry.label_set(title)
 				entry.size_hint_weight_set(1.0, 1.0)
 				entry.size_hint_align_set(-1.0, -1.0)
-				entry._callback_add("clicked", partial(self.show_entry, [i["Path"],]))
+				entry._callback_add("clicked", self.show_entry, i["Path"])
 				entry.show()
 				self.table.pack(entry,col,start,1,length)
 				entry.scale_set(1)
 
 
 	# called when next or previus button is clicked
-	def show_month(self, arguments, obj, *args, **kargs):
+	def show_month(self, obj, year, month, *args, **kargs):
 		self.mainwin.cal.delete()
 		self.mainwin.cal = CalendarMonth(self.mainwin)
 		self.mainwin.mainbox.pack_start(self.mainwin.cal)
-		self.mainwin.cal.show(arguments[0],arguments[1])
-		self.mainwin.cal.scale_set(1)
+		self.mainwin.cal.show(year, month)
 
 
 	# called when entry button is clicked
-	def add_entry(self, arguments, obj, *args, **kargs):
+	def add_entry(self, obj, year, month, day, *args, **kargs):
 		self.mainwin.cal.delete()
 		self.mainwin.cal = AddCalendarEntry(self.mainwin)
 		self.mainwin.mainbox.pack_start(self.mainwin.cal)
-		self.mainwin.cal.show(date=datetime.date(arguments[0],arguments[1],arguments[2]))
-		self.mainwin.cal.scale_set(1)
+		self.mainwin.cal.show(date=datetime.date(year,month,day))
 
 
 	# called when entry button is clicked
-	def show_entry(self, arguments, obj, *args, **kargs):
+	def show_entry(self, obj, path, *args, **kargs):
 		self.mainwin.cal.delete()
 		self.mainwin.cal = CalendarEntry(self.mainwin)
 		self.mainwin.mainbox.pack_start(self.mainwin.cal)
-		self.mainwin.cal.show(arguments[0])
-		self.mainwin.cal.scale_set(1)
+		self.mainwin.cal.show(path)
 
 
 
@@ -468,14 +427,6 @@ class AddCalendarEntry(elementary.Box):
 		self.size_hint_align_set(-1.0,-1.0)
 		self.size_hint_weight_set(1.0, 1.0)
 		self.mainwin = mainwin
-
-
-	def pager_promote(self, content, *args, **kargs):
-		self.pager.content_promote(content)
-
-	def focusToContent(self, content, *args, **kargs):
-		print "enter"
-		content.focus()
 
 	def show(self, *args, **kargs):
 		elementary.Box.show(self)
@@ -491,213 +442,152 @@ class AddCalendarEntry(elementary.Box):
 			data = kwargs['data']
 			date = datetime.date.fromtimestamp(data['Begin'])
 
-		self.pager = elementary.Pager(self)
-		self.pager.size_hint_align_set(-1.0,-1.0)
-		self.pager.size_hint_weight_set(1.0, 1.0)
-		self.pack_start(self.pager)
-		self.pager.show()
+		sc = elementary.Scroller(self)
+		sc.show()
+		sc.size_hint_align_set(-1.0,-1.0)
+		sc.size_hint_weight_set(1.0, 1.0)
+		self.pack_start(sc)
 
-		# Box with end date
-		end_box = elementary.Box(self.pager)
-		end_box.show()
-		end_box.size_hint_align_set(-1.0,-1.0)
-		end_box.size_hint_weight_set(1.0, 1.0)
-		self.pager.content_push(end_box)
-		# Box with begin date
-		begin_box = elementary.Box(self.pager)
-		begin_box.show()
-		begin_box.size_hint_align_set(-1.0,-1.0)
-		begin_box.size_hint_weight_set(1.0, 1.0)
-		self.pager.content_push(begin_box)
-		# Box with title
-		title_box = elementary.Box(self.pager)
-		title_box.show()
-		title_box.size_hint_align_set(-1.0,-1.0)
-		title_box.size_hint_weight_set(1.0, 1.0)
-		self.pager.content_push(title_box)
+		box = elementary.Table(sc)
+		#box.homogenous_set(True)
+		box.size_hint_weight_set(1.0, 0.0)
+		box.size_hint_align_set(-1.0, -1.0)
+		sc.content_set(box)
+		box.show()
 
-
-		# Content of title_box
-		title_label = elementary.Label(title_box)
-		title_box.pack_end(title_label)
-		title_label.size_hint_weight_set(0.0, 0.0)
+		# Title
+		title_label = elementary.Label(box)
+		box.pack(title_label,0,0,1,1)
 		title_label.label_set( _("Title:") )
 		title_label.show()
+		title_label.size_hint_align_set(0.0, 0.0)
 
-		title_frame = elementary.Frame(title_box)
+		title_frame = elementary.Frame(box)
 		title_frame.style_set('outdent_top')
 		title_frame.show()
 		title_frame.size_hint_weight_set(1.0, 0.0)
 		title_frame.size_hint_align_set(-1.0, 0.0)
-		self.title = elementary.Entry(title_frame)
+		self.title = elementary.Entry(box)
 		if data:
 			if data.get('Title'):
-				self.title.entry_set(data['Title'])
-		title_frame.content_set(self.title)
-		title_box.pack_end(title_frame)
-		self.title.size_hint_weight_set(1.0, 0.0)
-		self.title.size_hint_align_set(-1.0, 0.0)
+				self.title.entry_insert(data['Title'])
 		self.title.show()
+		self.title.editable_set(True)
+		self.title.single_line_set(True)
+		self.title.size_hint_align_set(-1.0, 0.5)
+		title_frame.content_set(self.title)
+		box.pack(title_frame,1,0,1,1)
 
-		navbox = elementary.Table(title_box)
-		navbox.homogenous_set(True)
-		navbox.size_hint_weight_set(1.0, 0.0)
-		navbox.size_hint_align_set(-1.0, -1.0)
-		title_box.pack_end(navbox)
-		navbox.show()
-		navbox.scale_set(1)
-
-		backbt = elementary.Button(navbox)
-		backbt._callback_add("clicked", partial(self.show_day, [date.year, date.month, date.day]))
-		backbt.label_set(_("Cancel"))
-		backbt.size_hint_weight_set(1.0, 1.0)
-		backbt.size_hint_align_set(-1.0, -1.0)
-		backbt.show()
-		navbox.pack(backbt,0,0,1,1)
-		backbt.scale_set(1)
-
-		newbt = elementary.Button(navbox)
-		newbt._callback_add('clicked', partial(self.pager_promote, begin_box))
-		newbt.label_set(_("Continue"))
-		newbt.size_hint_weight_set(1.0, 1.0)
-		newbt.size_hint_align_set(-1.0, -1.0)
-		newbt.show()
-		navbox.pack(newbt,1,0,1,1)
-		newbt.scale_set(1)
-
-
-		# Content of begin_box
-		begin_label = elementary.Label(begin_box)
-		begin_box.pack_end(begin_label)
-		begin_label.size_hint_weight_set(0.0, 0.0)
+		# Begin
+		begin_label = elementary.Label(box)
+		box.pack(begin_label,0,1,1,1)
 		begin_label.label_set( _("Begin:") )
 		begin_label.show()
+		begin_label.size_hint_align_set(0.0, 0.0)
 
-		begin_frame = elementary.Frame(begin_box)
+		begin_frame = elementary.Frame(box)
 		begin_frame.style_set('outdent_top')
 		begin_frame.show()
-		self.begin_day = elementary.Entry(begin_frame)
-		begin_frame.content_set(self.begin_day)
-		begin_box.pack_end(begin_frame)
+		begin_frame.size_hint_weight_set(1.0, 0.0)
+		begin_frame.size_hint_align_set(-1.0, 0.0)
+		self.begin_day = elementary.Entry(box)
 		if data:
 			if data.get('Begin'):
-				self.begin_day.entry_set(str(datetime.date.fromtimestamp(data['Begin'])))
+				self.begin_day.entry_insert(str(datetime.date.fromtimestamp(data['Begin'])))
 		else:
 			self.begin_day.entry_set(str(date))
-		self.begin_day.size_hint_weight_set(1.0, 0.0)
 		self.begin_day.single_line_set(True)
+		self.begin_day.editable_set(True)
 		self.begin_day.show()
+		self.begin_day.size_hint_align_set(-1.0, 0.5)
+		begin_frame.content_set(self.begin_day)
+		box.pack(begin_frame,1,1,1,1)
 
-		self.begin_time = elementary.Clock(begin_box)
-		begin_box.pack_end(self.begin_time)
+		self.begin_time = elementary.Clock(box)
+		box.pack(self.begin_time,1,2,1,1)
 		self.begin_time.edit_set(True)
 		if data:
 			if data.get('Begin'):
 				time = datetime.datetime.fromtimestamp(data['Begin'])
 				self.begin_time.time_set(time.hour, time.minute, time.second)
-		self.begin_time.size_hint_weight_set(0.0, 0.0)
 		self.begin_time.show()
 
-		navbox = elementary.Table(begin_box)
-		navbox.homogenous_set(True)
-		navbox.size_hint_weight_set(1.0, 0.0)
-		navbox.size_hint_align_set(-1.0, -1.0)
-		begin_box.pack_end(navbox)
-		navbox.show()
-		navbox.scale_set(1)
-
-		backbt = elementary.Button(navbox)
-		backbt._callback_add('clicked', partial(self.pager_promote, title_box))
-		backbt.label_set(_("Back"))
-		backbt.size_hint_weight_set(1.0, 1.0)
-		backbt.size_hint_align_set(-1.0, -1.0)
-		backbt.show()
-		navbox.pack(backbt,0,0,1,1)
-		backbt.scale_set(1)
-
-		newbt = elementary.Button(navbox)
-		newbt._callback_add('clicked', partial(self.pager_promote, end_box))
-		newbt.label_set(_("Continue"))
-		newbt.size_hint_weight_set(1.0, 1.0)
-		newbt.size_hint_align_set(-1.0, -1.0)
-		newbt.show()
-		navbox.pack(newbt,1,0,1,1)
-		newbt.scale_set(1)
-
-
-		# Content of end_box
-		end_label = elementary.Label(end_box)
-		end_box.pack_end(end_label)
-		end_label.size_hint_weight_set(0.0, 0.0)
+		# End
+		end_label = elementary.Label(box)
+		box.pack(end_label,0,3,1,1)
 		end_label.label_set( _("End:") )
 		end_label.show()
+		end_label.size_hint_align_set(0.0, 0.0)
 
-		end_frame = elementary.Frame(end_box)
+		end_frame = elementary.Frame(box)
 		end_frame.style_set('outdent_top')
 		end_frame.show()
-		self.end_day = elementary.Entry(end_frame)
-		end_frame.content_set(self.end_day)
-		end_box.pack_end(end_frame)
+		end_frame.size_hint_weight_set(1.0, 0.0)
+		end_frame.size_hint_align_set(-1.0, 0.0)
+		self.end_day = elementary.Entry(box)
 		if data:
 			if data.get('End'):
 				self.end_day.entry_set(str(datetime.date.fromtimestamp(data['End'])))
 		else:
 			self.end_day.entry_set(str(date))
-		self.end_day.size_hint_weight_set(1.0, 0.0)
 		self.end_day.single_line_set(True)
+		self.end_day.editable_set(True)
 		self.end_day.show()
+		self.end_day.size_hint_align_set(-1.0, 0.5)
+		end_frame.content_set(self.end_day)
+		box.pack(end_frame,1,3,1,1)
 
-		self.end_time = elementary.Clock(end_box)
-		end_box.pack_end(self.end_time)
+		self.end_time = elementary.Clock(box)
+		box.pack(self.end_time,1,4,1,1)
 		self.end_time.edit_set(True)
 		if data:
 			if data.get('End'):
 				time = datetime.datetime.fromtimestamp(data['End'])
 				self.end_time.time_set(time.hour, time.minute, time.second)
-		self.end_time.size_hint_weight_set(0.0, 0.0)
 		self.end_time.show()
 
-		navbox = elementary.Table(end_box)
-		navbox.homogenous_set(True)
-		navbox.size_hint_weight_set(1.0, 0.0)
+		# Back, Next
+		navbox = elementary.Box(box)
 		navbox.size_hint_align_set(-1.0, -1.0)
-		end_box.pack_end(navbox)
+		navbox.size_hint_weight_set(1.0, 1.0)
 		navbox.show()
-		navbox.scale_set(1)
+		navbox.homogenous_set(True)
+		navbox.horizontal_set(True)
+		box.pack(navbox,0,5,2,1)
 
 		backbt = elementary.Button(navbox)
-		backbt._callback_add('clicked', partial(self.pager_promote, begin_box))
+		backbt._callback_add("clicked", self.show_day, date.year, date.month, date.day)
 		backbt.label_set(_("Back"))
 		backbt.size_hint_weight_set(1.0, 1.0)
-		backbt.size_hint_align_set(-1.0, -1.0)
+		backbt.size_hint_align_set(-1.0, 0.0)
 		backbt.show()
-		navbox.pack(backbt,0,0,1,1)
-		backbt.scale_set(1)
+		navbox.pack_start(backbt)
 
-		newbt = elementary.Button(navbox)
+		newbt = elementary.Button(box)
 		if data:
-			newbt._callback_add("clicked", partial(self.update_entry, [date.year, date.month, date.day, data['Path']]))
+			newbt._callback_add("clicked", self.update_entry, date.year, date.month, date.day, data['Path'])
 		else:
-			newbt._callback_add("clicked", partial(self.add_entry, [date.year, date.month, date.day]))
+			newbt._callback_add("clicked", self.add_entry, date.year, date.month, date.day)
 		newbt.label_set(_("Save"))
 		newbt.size_hint_weight_set(1.0, 1.0)
-		newbt.size_hint_align_set(-1.0, -1.0)
+		newbt.size_hint_align_set(-1.0, 0.0)
 		newbt.show()
-		navbox.pack(newbt,1,0,1,1)
-		newbt.scale_set(1)
+		navbox.pack_end(newbt)
 
 
 	# called when entry button is clicked
-	def show_day(self, arguments, obj, event, *args, **kargs):
+	def show_day(self, obj, year, month, day, *args, **kargs):
 		self.mainwin.cal.delete()
 		self.mainwin.cal = CalendarDay(self.mainwin)
 		self.mainwin.mainbox.pack_start(self.mainwin.cal)
-		self.mainwin.cal.show(arguments[0],arguments[1],arguments[2])
-		self.mainwin.cal.scale_set(1)
+		self.mainwin.cal.show(year, month, day)
 
 	# called when entry button is clicked
-	def update_entry(self, arguments, obj, *args, **kargs):
-		title = elementary.Entry.markup_to_utf8(self.title.entry_get()).strip()
+	def update_entry(self, obj, year, month, day, path, *args, **kargs):
+		if self.title.entry_get()=='':
+			title = ''
+		else:
+			title = elementary.Entry.markup_to_utf8(self.title.entry_get()).strip()
 
 		begin_day = datetime.datetime.strptime(elementary.Entry.markup_to_utf8(self.begin_day.entry_get()).strip(),"%Y-%m-%d")
 		begin_time = datetime.time(self.begin_time.time_get()[0],self.begin_time.time_get()[1],self.begin_time.time_get()[2])
@@ -709,18 +599,20 @@ class AddCalendarEntry(elementary.Box):
 		end = time.mktime(datetime.datetime.combine(end_day,end_time).timetuple())
 
 		opimd = Opimd("Dates")
-		opimd.delete(arguments[3])
+		opimd.delete(path)
 		opimd.add({'Title':title, 'Begin':begin, 'End':end })
 
 		self.mainwin.cal.delete()
 		self.mainwin.cal = CalendarDay(self.mainwin)
 		self.mainwin.mainbox.pack_start(self.mainwin.cal)
-		self.mainwin.cal.show(arguments[0],arguments[1],arguments[2])
-		self.mainwin.cal.scale_set(1)
+		self.mainwin.cal.show(year, month, day)
 
 	# called when entry button is clicked
-	def add_entry(self, arguments, obj, *args, **kargs):
-		title = elementary.Entry.markup_to_utf8(self.title.entry_get()).strip()
+	def add_entry(self, obj, year, month, day, *args, **kargs):
+		if self.title.entry_get()=='':
+			title = ''
+		else:
+			title = elementary.Entry.markup_to_utf8(self.title.entry_get()).strip()
 
 		begin_day = datetime.datetime.strptime(elementary.Entry.markup_to_utf8(self.begin_day.entry_get()).strip(),"%Y-%m-%d")
 		begin_time = datetime.time(self.begin_time.time_get()[0],self.begin_time.time_get()[1],self.begin_time.time_get()[2])
@@ -737,8 +629,7 @@ class AddCalendarEntry(elementary.Box):
 		self.mainwin.cal.delete()
 		self.mainwin.cal = CalendarDay(self.mainwin)
 		self.mainwin.mainbox.pack_start(self.mainwin.cal)
-		self.mainwin.cal.show(arguments[0],arguments[1],arguments[2])
-		self.mainwin.cal.scale_set(1)
+		self.mainwin.cal.show(year, month, day)
 
 
 
@@ -779,7 +670,7 @@ class CalendarEntry(elementary.Box):
 
 		# back to month button
 		backbt = elementary.Button(navbox)
-		backbt._callback_add("clicked", partial(self.show_day, [begin.year, begin.month, begin.day]))
+		backbt._callback_add("clicked", self.show_day, begin.year, begin.month, begin.day)
 		backbt.label_set(_("Back"))
 		backbt.size_hint_weight_set(1.0, 1.0)
 		backbt.size_hint_align_set(-1.0, -1.0)
@@ -789,7 +680,7 @@ class CalendarEntry(elementary.Box):
 
 		# delete button
 		newbt = elementary.Button(navbox)
-		newbt._callback_add("clicked", partial(self.del_entry, [path, begin.year, begin.month, begin.day]))
+		newbt._callback_add("clicked", self.del_entry, path, begin.year, begin.month, begin.day)
 		newbt.label_set(_("Delete"))
 		newbt.size_hint_weight_set(1.0, 1.0)
 		newbt.size_hint_align_set(-1.0, -1.0)
@@ -824,23 +715,162 @@ class CalendarEntry(elementary.Box):
 		end_label.show()
 
 	# called when entry button is clicked
-	def show_day(self, arguments, obj, *args, **kargs):
+	def show_day(self, obj, year, month, day, *args, **kargs):
 		self.mainwin.cal.delete()
 		self.mainwin.cal = CalendarDay(self.mainwin)
 		self.mainwin.mainbox.pack_start(self.mainwin.cal)
-		self.mainwin.cal.show(arguments[0],arguments[1],arguments[2])
-		self.mainwin.cal.scale_set(1)
-
+		self.mainwin.cal.show(year, month, day)
 
 	# called when delete button is clicked
-	def del_entry(self, arguments, obj, *args, **kargs):
-		self.opimd.delete(arguments[0])
-
+	def del_entry(self, obj, path, year, month, day, *args, **kargs):
+		self.opimd.delete(path)
 		self.mainwin.cal.delete()
 		self.mainwin.cal = CalendarDay(self.mainwin)
 		self.mainwin.mainbox.pack_start(self.mainwin.cal)
-		self.mainwin.cal.show(arguments[1],arguments[2],arguments[3])
-		self.mainwin.cal.scale_set(1)
+		self.mainwin.cal.show(year, month, day)
+
+
+class CalendarWidget(elementary.Box):
+
+	def firstweekday_set(self, firstweekday):
+		self.firstweekday = weekday
+		self.calobj = calendar.Calendar(self.firstweekday)
+		self._update_view()
+
+	def date_icon_set(self, day, icon):
+		daystr = str(self.current_year)+"."+str(self.current_month)+"."+str(day)
+		self.buttons[daystr].icon_set(icon)
+		#self._update_view()
+
+	def date_state_set(self, day, state):
+		""" 
+		* - Free
+		* - Busy
+		* - Partly busy
+		* - Holiday
+		"""
+		daystr = str(self.current_year)+"."+str(self.current_month)+"."+str(day)
+		if state == 'Free':
+			pass
+		elif state == 'Busy':
+			self.buttons[daystr].color_set(0, 200, 200, 255)
+		elif state == 'Partly busy':
+			self.buttons[daystr].color_set(0, 200, 200, 255)
+		elif state == 'Holiday':
+			self.buttons[daystr].color_set(0, 200, 200, 255)
+		#self._update_view()
+
+	def current_month_get(self):
+		return self.current_month
+
+	def current_day_get(self):
+		return self.current_day
+
+	def current_year_get(self):
+		return self.current_year
+
+	def show(self):
+		elementary.Box.show(self)
+		self.t.show()
+
+	def __init__(self, parent):
+		elementary.Box.__init__(self, parent)
+		today = datetime.date.today()
+		self.firstweekday = calendar.MONDAY
+		self.current_month = today.month
+		self.current_year = today.year
+		self.current_day = today.day
+		self.calobj = calendar.Calendar(self.firstweekday)
+		self._update_view()
+		self.buttons = {}
+
+	def _update_view(self):
+		if self.t:
+			del self.t
+		self.t = elementary.Table(self)
+		self.pack_start(self.t)
+		self.t.size_hint_align_set(-1.0, 0.0)
+		self.t.size_hint_weight_set(1.0, 1.0)
+		self.t.homogenous_set(True)
+		row = 0
+
+		# calculate previus month
+		if self.current_month <= 1:
+			prevyear = self.current_year - 1
+			prevmonth = 12
+		else:
+			prevyear = self.current_year
+			prevmonth = self.current_month - 1
+
+		# previus month button
+		prevbt = elementary.Button(self.t)
+		prevbt._callback_add("clicked", self._set_view, prevyear, prevmonth)
+		prevbt.label_set("< ")        
+		prevbt.show()                                    
+		self.t.pack(prevbt,row,0,1,1)
+
+		# put month and year in first row
+		title_label = elementary.Label(self.t)
+		self.t.pack(title_label,1,row,5,1)
+		title_label.show()
+		title_label.label_set( month_strings[ self.current_month-1 ] + " " + str(self.current_year) )
+
+		# calculate next month
+		if self.current_month >= 12:
+			nextyear = self.current_year + 1
+			nextmonth = 1
+		else:
+			nextyear = self.current_year
+			nextmonth = self.current_month + 1
+
+		# next month button
+		nextbt = elementary.Button(self.t)
+		nextbt._callback_add("clicked", self._set_view, nextyear, nextmonth)    
+		nextbt.label_set(" >")                                
+		nextbt.show()                                    
+		self.t.pack(nextbt,6,row,1,1)
+
+		# put day names in second row
+		row += 1
+		for e in range(0,7):
+			l = elementary.Label(self.t)
+			l.label_set(day_names[e])
+			l.size_hint_align_set(0.5,0.5)
+			l.show()
+			l.scale_set(1)
+			self.t.pack(l,e,row,1,1)
+
+		for week in self.calobj.monthdays2calendar(self.current_year, self.current_month):
+			row += 1
+			for (day,weekday) in week:
+				if day > 0:
+					daystr = str(self.current_year)+"."+str(self.current_month)+"."+str(day)
+					self.buttons[daystr] = elementary.Button(self.t)
+					self.buttons[daystr]._callback_add("clicked", self._button_pressed, day)
+					self.buttons[daystr].size_hint_weight_set(1.0, 1.0)
+					self.buttons[daystr].label_set( str( day ) )
+					self.buttons[daystr].show()
+					self.t.pack(self.buttons[daystr],weekday,row,1,1)
+
+	def _set_view(self, year, month, obj, *args, **kargs):
+		self.current_year = year
+		self.current_month = month
+		self.current_day = -1
+		self._update_view()
+
+	def _button_pressed(self, obj, day, *args, **kargs):
+		self.current_day = day
+		for c in self.callbacks:
+			if c['args']:
+				c['callback'](c['args'])
+			else:
+				c['callback']()
+
+	def _callback_add(self, event, callback, *args, **kargs):
+		if event == 'date,clicked':
+			self.callback.append({'callback':callback, 'args':args})
+		else:
+			self._callback_add(event, callback)
 
 
 

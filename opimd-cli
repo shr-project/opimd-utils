@@ -49,7 +49,7 @@ def query(data):
   print "Query: " + x
   query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM."+domain+"Query")
   results = query.GetResultCount()
-  print "Numer of results: " + str(results)
+  print "Number of results: " + str(results)
   for i in range(0,results):
     print "Result nr "+str(i+1)+":"
     result = query.GetResult()

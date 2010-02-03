@@ -1,0 +1,76 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: opimd-contacts\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-08-27 15:49+0200\n"
+"PO-Revision-Date: 2009-10-13 16:09:00+0100\n"
+"Last-Translator: Moroni Michael <haikara90@gmail.com>\n"
+"Language-Team: Esperanto\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Esperanto\n"
+
+msgid "Contacts"
+msgstr "Kontaktoj"
+
+msgid "Searching..."
+msgstr "Serĉanta..."
+
+msgid "Call"
+msgstr "Voki"
+
+msgid "nothing called"
+msgstr "nenio vokita"
+
+msgid "Type name to search..."
+msgstr "Tajpi la serĉendan nomon..."
+
+msgid "Error while sending USSD request!"
+msgstr "Eraro dum la sendado de peto USSD !"
+
+msgid "Sending USSD request..."
+msgstr "Sendanta USSD peton..."
+
+msgid "Not yet implemented"
+msgstr "Ne ankoraŭ implementita"
+
+msgid "Message sent!"
+msgstr "Mesaĝo sendita!"
+
+msgid "Sending..."
+msgstr "Sendanta..."
+
+msgid "Enter field name:"
+msgstr "Tajpi la nomon:"
+
+msgid "Add"
+msgstr "Aldoni"
+
+msgid "Quit"
+msgstr "Malfermi"
+
+msgid "New field"
+msgstr "Nova kampo"
+
+msgid "Save"
+msgstr "Konservi"
+
+msgid "Delete"
+msgstr "Forigi"
+
+msgid "Back"
+msgstr "Antaŭ"
+
+msgid "Edit"
+msgstr "Redakti"
+
+msgid "Search"
+msgstr "Serĉi"
+
+msgid "New"
+msgstr "Nova"
+
+msgid "Close"
+msgstr "Fermi"
+

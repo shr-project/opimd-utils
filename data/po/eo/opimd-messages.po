@@ -1,0 +1,70 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: opimd-messages\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-08-27 15:49+0200\n"
+"PO-Revision-Date: 2009-10-14 15:14:37+0100\n"
+"Last-Translator: Moroni Michael <haikara90@gmail.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Esperanto\n"
+
+msgid "Init entries..."
+msgstr "Komencado..."
+
+msgid "Out: "
+msgstr "Senditejo:"
+
+msgid "Processing: "
+msgstr "Prilaboranta:"
+
+msgid "Sent: "
+msgstr "Sendita: "
+
+msgid "Read: "
+msgstr "Legita: "
+
+msgid "Delivered: "
+msgstr "Portita: "
+
+msgid "Delete"
+msgstr "Forigi"
+
+msgid "Reply"
+msgstr "Respondi"
+
+msgid "Querying..."
+msgstr "Informpetanta..."
+
+msgid "Number of results: "
+msgstr "Rezultnumeroj:"
+
+msgid "Messages"
+msgstr "Mesaĝoj"
+
+msgid "Finished"
+msgstr "Finita"
+
+msgid "Error while sending message!"
+msgstr "Eraro dum sendo de mesaĝo!"
+
+msgid "Retry"
+msgstr "Reklopodi"
+
+msgid "Close"
+msgstr "Fermi"
+
+msgid "Options"
+msgstr "Agordoj"
+
+msgid "Back"
+msgstr "Antaŭ"
+
+msgid "To: "
+msgstr "Al: "
+
+msgid "Send"
+msgstr "Sendi"
+

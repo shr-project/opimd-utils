@@ -1,0 +1,58 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: opimd-notifier\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-08-27 15:49+0200\n"
+"PO-Revision-Date: 2009-10-14 14:10:35+0100\n"
+"Last-Translator: Moroni Michael <haikara90@gmail.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Esperanto\n"
+
+msgid "Init failed"
+msgstr "Komencado fiaskis"
+
+msgid "Out: "
+msgstr "Senditejo: "
+
+msgid "Processing: "
+msgstr "Prilaboranta: "
+
+msgid "Sent: "
+msgstr "Sendita: "
+
+msgid "Read: "
+msgstr "Legita: "
+
+msgid "Delivered: "
+msgstr "Portita: "
+
+msgid "Notifier"
+msgstr "Advertilo"
+
+msgid "Go to..."
+msgstr "Iri al..."
+
+msgid "Close"
+msgstr "Fermi"
+
+msgid "Missed call at "
+msgstr "Nerespondita voko je "
+
+msgid "Finished"
+msgstr "Finita"
+
+msgid "Reply"
+msgstr "Respondi"
+
+msgid "Unread message!"
+msgstr "Nelegita mesaĝo!"
+
+msgid "New message arrived!"
+msgstr "Nova mesaĝo!"
+
+msgid "Ready"
+msgstr "Preta"
+
