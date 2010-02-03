@@ -27,7 +27,7 @@ def resolve_phone(number):
   if number in cache:
     return cache[number]
   else:
-    tryme = 'Cell Phone', 'Work phone', 'Phone', 'Home phone'
+    tryme = fieldsif.ListFieldsWithType('phonenumber')
     for field in tryme:
       x = contacts.Query({field:number})
       query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.ContactQuery")
@@ -43,7 +43,7 @@ def resolve_phone(number):
         cache[number] = name
         return name
       else:
-        name = number.strip('tel:')
+        name = number
     return name
 
 def destroy(win, *args, **kargs):
@@ -83,6 +83,7 @@ while (not initialized):
     messages = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Messages", "org.freesmartphone.PIM.Messages")
     contacts = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Contacts", "org.freesmartphone.PIM.Contacts")
     calls = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Calls", "org.freesmartphone.PIM.Calls")
+    fieldsif = getDbusObject(bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Contacts", "org.freesmartphone.PIM.Fields")
     initialized = True
   except:
     print _("Init failed")
