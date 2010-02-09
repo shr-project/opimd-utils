@@ -4,19 +4,21 @@ from sys import argv
 
 def resolve_phone(number):
   tryme = fieldsif.ListFieldsWithType('phonenumber')
+  que={'_at_least_one':True}
   for field in tryme:
-    x = contacts.Query({field:number})
-    query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.ContactQuery")
-    if query.GetResultCount():
-      result = query.GetResult()
-      name = result['Name']
-      try:
-        sn = result['Surname']
-        if sn:
-          name = name + " " + sn
-      except:
-        pass
-      return name
+    que[field]=number
+  x = contacts.Query(que)
+  query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.ContactQuery")
+  if query.GetResultCount():
+    result = query.GetResult()
+    name = result['Name']
+    try:
+      sn = result['Surname']
+      if sn:
+        name = name + " " + sn
+    except:
+      pass
+    return name
   return "nothing"
 
 def getDbusObject (bus, busname , objectpath , interface):
