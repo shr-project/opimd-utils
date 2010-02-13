@@ -1,0 +1,79 @@
+# translation of opimd-contacts.po to
+# John Proios <john@snigel.gr>, 2010.
+msgid ""
+msgstr ""
+"Project-Id-Version: opimd-contacts\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-08-27 15:49+0200\n"
+"PO-Revision-Date: 2010-02-13 10:46+0200\n"
+"Last-Translator: John Proios <john@snigel.gr>\n"
+"Language-Team:  <el@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Esperanto\n"
+"X-Generator: KBabel 1.11.4\n"
+
+msgid "Contacts"
+msgstr "Επαφές"
+
+msgid "Searching..."
+msgstr "Αναζήτηση..."
+
+msgid "Call"
+msgstr "Κλήση"
+
+msgid "nothing called"
+msgstr "Δεν υπάρχει τίποτα για αποστολή"
+
+msgid "Type name to search..."
+msgstr "Τύπος για αναζήτηση."
+
+msgid "Error while sending USSD request!"
+msgstr "Σφάλμα αποστολής USSD!"
+
+msgid "Sending USSD request..."
+msgstr "Αποστολή αίτησης USSD"
+
+msgid "Not yet implemented"
+msgstr "Δεν έχουν ακόμη εφαρμοστεί"
+
+msgid "Message sent!"
+msgstr "Μήνυμα εστάλη!"
+
+msgid "Sending..."
+msgstr "Αποστολή..."
+
+msgid "Enter field name:"
+msgstr "Εισαγωγή ονόματος πεδίου"
+
+msgid "Add"
+msgstr "Προσθήκη"
+
+msgid "Quit"
+msgstr "Έξοδος"
+
+msgid "New field"
+msgstr "Προσθήκη νέου πεδίου"
+
+msgid "Save"
+msgstr "Αποθήκευση"
+
+msgid "Delete"
+msgstr " Διαγραφή"
+
+msgid "Back"
+msgstr "Πίσω"
+
+msgid "Edit"
+msgstr "Επεξεργασία"
+
+msgid "Search"
+msgstr "Αναζήτηση"
+
+msgid "New"
+msgstr "Νέο"
+
+msgid "Close"
+msgstr "Κλείσιμο"
+

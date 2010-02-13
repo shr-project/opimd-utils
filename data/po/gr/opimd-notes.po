@@ -1,0 +1,89 @@
+# translation of opimd-notes.po to
+# John Proios <john@snigel.gr>, 2010.
+msgid ""
+msgstr ""
+"Project-Id-Version: opimd-notes\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-08-27 15:49+0200\n"
+"PO-Revision-Date: 2010-02-13 19:13+0200\n"
+"Last-Translator: John Proios <john@snigel.gr>\n"
+"Language-Team:  <el@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Esperanto\n"
+"X-Generator: KBabel 1.11.4\n"
+
+msgid "nothing called"
+msgstr "τίποτα για κλήση"
+
+msgid "Not yet implemented"
+msgstr "Δεν έχουν ακόμη εφαρμοστεί"
+
+msgid "Are you sure?"
+msgstr "Είστε σίγουροι;"
+
+msgid "Yes"
+msgstr "Ναι"
+
+msgid "No"
+msgstr "Όχι"
+
+msgid "Adding..."
+msgstr "Προσθήκη..."
+
+msgid "Editing..."
+msgstr "Επεξεργασία..."
+
+msgid "Next"
+msgstr "Επόμενο"
+
+msgid "Back"
+msgstr "Πίσω"
+
+msgid "Enter name of tag..."
+msgstr "Εισάγετε ένα όνομα για tag"
+
+msgid "...or select it from list below:"
+msgstr "...ή επιλέξτε από τη λίστα παρακάτω:"
+
+msgid "Add"
+msgstr "Προσθήκη"
+
+msgid "Select tags for note:"
+msgstr "Επιλογή tag για σημείωση:"
+
+msgid "Add new tag..."
+msgstr "Προσθήκη νέας ετικέτας..."
+
+msgid "Save"
+msgstr "Αποθήκευση"
+
+msgid "Edit"
+msgstr "Επεξεργασία"
+
+msgid "Enter text:"
+msgstr "Εισάγετε κείμενο:"
+
+#TODO!
+msgid "regular expression"
+msgstr "Κανονική έκφραση"
+
+msgid "search also in titles"
+msgstr "αναζήτηση επίσης σε τίτλους"
+
+msgid "Search"
+msgstr "Αναζήτηση"
+
+msgid "Notes"
+msgstr "Σημειώσεις"
+
+msgid "Searching..."
+msgstr "Αναζήτηση..."
+
+msgid "New"
+msgstr "Νέο"
+
+msgid "Tags"
+msgstr "Ετικέτες"
+

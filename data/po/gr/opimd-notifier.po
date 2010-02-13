@@ -1,0 +1,61 @@
+# translation of opimd-notifier.po to
+# John Proios <john@snigel.gr>, 2010.
+msgid ""
+msgstr ""
+"Project-Id-Version: opimd-notifier\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-08-27 15:49+0200\n"
+"PO-Revision-Date: 2010-02-13 19:18+0200\n"
+"Last-Translator: John Proios <john@snigel.gr>\n"
+"Language-Team:  <el@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Esperanto\n"
+"X-Generator: KBabel 1.11.4\n"
+
+msgid "Init failed"
+msgstr "αρχικοποίηση απέτυχε"
+
+msgid "Out: "
+msgstr "Εκτός:"
+
+msgid "Processing: "
+msgstr "Επεξεργάζεται:"
+
+msgid "Sent: "
+msgstr "Αποσταλμένο:"
+
+msgid "Read: "
+msgstr "Αναγνωσμένο:"
+
+msgid "Delivered: "
+msgstr "Παράδομένο:"
+
+msgid "Notifier"
+msgstr "Ειδοποίηση"
+
+msgid "Go to..."
+msgstr "Μετάβαση στο..."
+
+msgid "Close"
+msgstr "Κλείσιμο"
+
+msgid "Missed call at "
+msgstr "Αναπάντητες κλήσεις την"
+
+msgid "Finished"
+msgstr "Ολοκληρώθηκε"
+
+msgid "Reply"
+msgstr "Απάντηση"
+
+msgid "Unread message!"
+msgstr "Μη αναγνωσμένο μήνυμα!"
+
+msgid "New message arrived!"
+msgstr "Νέο μήνυμα!"
+
+msgid "Ready"
+msgstr "Έτοιμο"
+

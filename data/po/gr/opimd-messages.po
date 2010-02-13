@@ -1,0 +1,73 @@
+# translation of opimd-messages.po to
+# John Proios <john@snigel.gr>, 2010.
+msgid ""
+msgstr ""
+"Project-Id-Version: opimd-messages\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-08-27 15:49+0200\n"
+"PO-Revision-Date: 2010-02-13 19:02+0200\n"
+"Last-Translator: John Proios <john@snigel.gr>\n"
+"Language-Team:  <el@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Esperanto\n"
+"X-Generator: KBabel 1.11.4\n"
+
+msgid "Init entries..."
+msgstr "Αρχικοποίηση καταχωρήσεων"
+
+msgid "Out: "
+msgstr "Έξω:"
+
+msgid "Processing: "
+msgstr "Επεξεργασία"
+
+msgid "Sent: "
+msgstr "Αποσταλμένα:"
+
+msgid "Read: "
+msgstr "Αναγνωσμένα:"
+
+msgid "Delivered: "
+msgstr "Παραδόθικαν:"
+
+msgid "Delete"
+msgstr "διαγραφή"
+
+msgid "Reply"
+msgstr "Απάντηση"
+
+msgid "Querying..."
+msgstr "Ερώτημα..."
+
+msgid "Number of results: "
+msgstr "Αριθμός επιστροφών:"
+
+msgid "Messages"
+msgstr "Μηνύματα"
+
+msgid "Finished"
+msgstr "Ολοκληρώθηκε"
+
+msgid "Error while sending message!"
+msgstr "Συνέβη ένα σφάλμα κατά την αποστολή του μηνύματος"
+
+msgid "Retry"
+msgstr "Προσπάθεια ξανά"
+
+msgid "Close"
+msgstr "Κλείσιμο"
+
+msgid "Options"
+msgstr "Επιλογές"
+
+msgid "Back"
+msgstr "Πίσω"
+
+msgid "To: "
+msgstr "Προς:"
+
+msgid "Send"
+msgstr "Αποστολή"
+

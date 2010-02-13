@@ -1,0 +1,102 @@
+# translation of opimd-dates.po to
+# John Proios <john@snigel.gr>, 2010.
+msgid ""
+msgstr ""
+"Project-Id-Version: opimd-dates\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-08-27 15:49+0200\n"
+"PO-Revision-Date: 2010-02-13 18:48+0200\n"
+"Last-Translator: John Proios <john@snigel.gr>\n"
+"Language-Team:  <el@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Esperanto\n"
+"X-Generator: KBabel 1.11.4\n"
+
+#: shr-settings:36
+#: shr_settings_modules/shr_phoneutils.py:68
+msgid "January"
+msgstr "Ιανουάριος"
+
+msgid "February"
+msgstr "Φεβρουαρίου"
+
+msgid "March"
+msgstr "Μαρτίου"
+
+msgid "April"
+msgstr "Απρίλιος"
+
+msgid "May"
+msgstr "Μάιος"
+
+msgid "June"
+msgstr "Ιούνιος"
+
+msgid "July"
+msgstr "Ιούλιος"
+
+msgid "August"
+msgstr "Αύγουστος"
+
+msgid "September"
+msgstr "Σεπτεμβριος"
+
+msgid "October"
+msgstr "Οκτόμβριος"
+
+msgid "November"
+msgstr "Νοέμβριος"
+
+msgid "December"
+msgstr "Δεκέμβριος"
+
+msgid "Mon"
+msgstr "Δευ"
+
+msgid "Tue"
+msgstr "Τρ"
+
+msgid "Wed"
+msgstr "Τε"
+
+msgid "Thu"
+msgstr "Πε"
+
+msgid "Fri"
+msgstr "Πα"
+
+msgid "Sat"
+msgstr "Σα"
+
+msgid "Sun"
+msgstr "Κυ"
+
+msgid "Dates"
+msgstr "Ημερομηνίες"
+
+msgid "Quit"
+msgstr "Έξοδος"
+
+msgid "Back"
+msgstr "Πίσω"
+
+msgid "New"
+msgstr "Νέο"
+
+msgid "No Title"
+msgstr "Χωρίς τίτλο"
+
+msgid "Add"
+msgstr "Προσθήκη"
+
+msgid "Delete"
+msgstr "Διαγραφή"
+
+msgid "Begin:"
+msgstr "Αρχή:"
+
+msgid "End:"
+msgstr "Τέλος:"
+
