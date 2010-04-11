@@ -79,7 +79,7 @@ def sanity_name(name, startline = True):
 
 def sanity_mail(mail):
   if mail!='':
-    return '^mail:'+sanity_name(mail, False)
+    return '^'+sanity_name(mail, False)
   else:
     return '^'
 
@@ -172,7 +172,7 @@ def list_contact(path, *args, **kwargs):
     callbtn = elementary.Button(list)
     callbtn.label_set(_("Call"))
     callbtn.show()
-    callbtn._callback_add('clicked', partial(select_field, contact, 'Phone', 'tel:', call))
+    callbtn._callback_add('clicked', partial(select_field, contact, 'Phone', '', call))
   list.item_append(name, photo, callbtn, partial(display_contact, contact['Path'], data=contact))
   if kwargs.get('go'):
     list.go()  
@@ -265,23 +265,21 @@ def ussd_error(dia, label, x, *args, **kwargs):
 
 def call(to, *args, **kwargs):
   #print "calling to "+to
-  if to[:4]=='tel:':
-    to = to[4:]
-    if to[len(to)-1]=='#' or len(to)<=2:
-      dia = elementary.InnerWindow(win)
-      win.resize_object_add(dia)
-      dia.activate()
-      dia.show()
-      dia.style_set('minimal')
-      label = elementary.Label(win)
-      label.label_set(_("Sending USSD request..."))
-      label.show()
-      dia.content_set(label)
-      network = getDbusObject (bus, "org.freesmartphone.ogsmd", "/org/freesmartphone/GSM/Device", "org.freesmartphone.GSM.Network")
-      network.SendUssdRequest(to, reply_handler=partial(ussd_ok, dia), error_handler=partial(ussd_error, dia, label))
-    else:
-      call = getDbusObject (bus, "org.freesmartphone.ogsmd", "/org/freesmartphone/GSM/Device", "org.freesmartphone.GSM.Call")
-      call.Initiate(to, 'voice', reply_handler=dbus_ok, error_handler=dbus_error)
+  if to[len(to)-1]=='#' or len(to)<=2:
+    dia = elementary.InnerWindow(win)
+    win.resize_object_add(dia)
+    dia.activate()
+    dia.show()
+    dia.style_set('minimal')
+    label = elementary.Label(win)
+    label.label_set(_("Sending USSD request..."))
+    label.show()
+    dia.content_set(label)
+    network = getDbusObject (bus, "org.freesmartphone.ogsmd", "/org/freesmartphone/GSM/Device", "org.freesmartphone.GSM.Network")
+    network.SendUssdRequest(to, reply_handler=partial(ussd_ok, dia), error_handler=partial(ussd_error, dia, label))
+  else:
+    call = getDbusObject (bus, "org.freesmartphone.ogsmd", "/org/freesmartphone/GSM/Device", "org.freesmartphone.GSM.Call")
+    call.Initiate(to, 'voice', reply_handler=dbus_ok, error_handler=dbus_error)
 
 def mail(to, *args, **kwargs):
   #print "mailing to "+to
@@ -425,10 +423,6 @@ class Field():
 #    entry.scale_set(1.5)
 #    entry.password_set(True)
     if value:
-      if field.lower().endswith('phone') and value.startswith('tel:'):
-        value = value[4:]
-      elif field.lower().endswith('e-mail') and value.startswith('mail:'):
-        value = value[5:]
       value = entry.utf8_to_markup(value)
       if value:
         entry.entry_set(value)
@@ -455,10 +449,6 @@ class Field():
   def get_value(self):
     if not self.deleted:
       value = self.entry.markup_to_utf8(self.entry.entry_get())
-      if self.field_name.lower().endswith('phone'):
-        value = 'tel:' + value
-      elif self.field_name.lower().endswith('e-mail'):
-        value = 'mail:' + value
     else:
       value = ''
     return value
@@ -480,7 +470,7 @@ class EditContact():
     self.fields.append(field)
     self.i = 2
     if not path:
-      field = Field(win, table, self.i, 'Phone','tel:')
+      field = Field(win, table, self.i, 'Phone','')
       self.fields.append(field)
       self.i += 2
     for fie in data:
@@ -677,13 +667,13 @@ def display_contact(path, *args, **kwargs):
 
   if isphone:
     hover.item_add('Call',"arrow_down",
-                elementary.ELM_ICON_STANDARD,partial(select_field,data, 'Phone', 'tel:', call))
+                elementary.ELM_ICON_STANDARD,partial(select_field,data, 'Phone', '', call))
     hover.item_add('SMS',"arrow_down",
-                elementary.ELM_ICON_STANDARD,partial(select_field,data, 'Phone', 'tel:', sms))
+                elementary.ELM_ICON_STANDARD,partial(select_field,data, 'Phone', '', sms))
 
   if ismail:
     hover.item_add('E-mail',"arrow_down",
-                elementary.ELM_ICON_STANDARD,partial(select_field,data, 'E-mail', 'mail:', mail))
+                elementary.ELM_ICON_STANDARD,partial(select_field,data, 'E-mail', '', mail))
 
   editbtn = elementary.Button(bottombox)
   editbtn.label_set(_("Edit"))
@@ -764,7 +754,7 @@ def display_contact(path, *args, **kwargs):
       label.size_hint_align_set(-1.0, 0.0)
       info.pack_end(label)
 
-  header_fields = {'Phone':'tel:','E-mail':'mail:'}
+  header_fields = {'Phone':'','E-mail':''}
   icons = {'tel:':'phonecall','mail:':'sent'}
 
   for field in header_fields:
