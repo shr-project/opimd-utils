@@ -64,14 +64,14 @@ def query(data):
 def add(data):
   check_args(data)
   dict = prepare_dict(data)
-  print "Adding item " + str(dict) + " using " + default_backend(domain+'s') + " backend..."
+  print "Adding item " + str(dict) + "..."
   interface.Add(dict)
   query(data)
 
 def addincoming(data):
   check_args(data)
   dict = prepare_dict(data)
-  print "Adding incoming item " + str(dict) + " using " + default_backend(domain+'s') + " backend..."
+  print "Adding incoming item " + str(dict) + "..."
   interface.AddIncoming(dict)
   query(data)
 
