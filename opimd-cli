@@ -58,7 +58,12 @@ def query(data):
           for value in result[field]:
               print "  "+field+": "+str(value)
       else:
-          print "  "+field+": "+str(result[field])
+          value = result[field]
+          if isinstance(value, basestring):
+              value = value.encode('utf-8')
+          else:
+              value = str(value)
+          print ("  "+field+": ").encode('utf-8') + value
   query.Dispose() # delete query result from memory
 
 def add(data):
