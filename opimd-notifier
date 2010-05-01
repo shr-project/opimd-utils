@@ -361,7 +361,10 @@ def incoming_message(x, just_unread = False):
 
   if result['Direction']=='in':
     out = 0
-    number = result['Sender']
+    if message.has_key('Peer'):
+      number = message['Peer']
+    else:
+      number = result['Sender']
     name = resolve_phone(number)
     bubble.label_set(name)
     bubble.info_set(timestamp)
@@ -404,7 +407,10 @@ def incoming_message(x, just_unread = False):
   else:
     out = 1
     bubble.corner_set("top_right")
-    number = result['Recipient']
+    if message.has_key('Peer'):
+      number = message['Peer']
+    else:
+      number = result['Recipient']
     name = resolve_phone(number)
     bubble.info_set(name)
 #    bubble.label_set(timestamp)
