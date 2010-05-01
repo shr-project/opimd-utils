@@ -29,9 +29,14 @@ bus = dbus.SystemBus(mainloop = e_dbus.DBusEcoreMainLoop())
 
 contacts = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Contacts", "org.freesmartphone.PIM.Contacts")
 
+types = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Contacts", "org.freesmartphone.PIM.Fields")
+
 query = None
 
 elementary.init()
+
+def field_type(name):
+  return types.GetType(name)
 
 def dbus_ok(*args, **kwargs):
   pass
@@ -172,7 +177,7 @@ def list_contact(path, *args, **kwargs):
     callbtn = elementary.Button(list)
     callbtn.label_set(_("Call"))
     callbtn.show()
-    callbtn._callback_add('clicked', partial(select_field, contact, 'Phone', '', call))
+    callbtn._callback_add('clicked', partial(select_field, contact, 'Phone', call))
   list.item_append(name, photo, callbtn, partial(display_contact, contact['Path'], data=contact))
   if kwargs.get('go'):
     list.go()  
@@ -317,10 +322,10 @@ def sms(to, *args, **kwargs):
   dia.content_set(label)
   opimd_reply.reply([to, kwargs['contact']['Name']], '', bus, win, None, None, partial(sms_status, dia, None, label))
 
-def select_field(contact, fieldname, prefix, callback, *args, **kwargs):
+def select_field(contact, fieldname, callback, *args, **kwargs):
   result=[]
   for field in contact:
-    if field.lower().endswith(fieldname.lower()):
+    if field_type(fieldname)==field_type(field):
       if not isinstance(contact[field], dbus.Array):
         values = [contact[field]]
       else:
@@ -348,10 +353,7 @@ def select_field(contact, fieldname, prefix, callback, *args, **kwargs):
     list.size_hint_align_set(-1.0, -1.0)
 
     for res in result:
-      if res[1][:len(prefix)]==prefix:
-        display = res[1][len(prefix):]
-      else:
-        display = res[1]
+      display = res[1]
 
       list.item_append(res[0]+': '+display, None, None, partial(inwin_close, dia, callback=partial(callback, res[1], contact=contact)))
 
@@ -667,13 +669,13 @@ def display_contact(path, *args, **kwargs):
 
   if isphone:
     hover.item_add('Call',"arrow_down",
-                elementary.ELM_ICON_STANDARD,partial(select_field,data, 'Phone', '', call))
+                elementary.ELM_ICON_STANDARD,partial(select_field,data, 'Phone', call))
     hover.item_add('SMS',"arrow_down",
-                elementary.ELM_ICON_STANDARD,partial(select_field,data, 'Phone', '', sms))
+                elementary.ELM_ICON_STANDARD,partial(select_field,data, 'Phone', sms))
 
   if ismail:
     hover.item_add('E-mail',"arrow_down",
-                elementary.ELM_ICON_STANDARD,partial(select_field,data, 'E-mail', '', mail))
+                elementary.ELM_ICON_STANDARD,partial(select_field,data, 'E-mail', mail))
 
   editbtn = elementary.Button(bottombox)
   editbtn.label_set(_("Edit"))
@@ -754,8 +756,8 @@ def display_contact(path, *args, **kwargs):
       label.size_hint_align_set(-1.0, 0.0)
       info.pack_end(label)
 
-  header_fields = {'Phone':'','E-mail':''}
-  icons = {'tel:':'phonecall','mail:':'sent'}
+  header_fields = ['Phone','E-mail']
+  icons = {'phonenumber':'phonecall','email':'sent'}
 
   for field in header_fields:
     if data.get(field):
@@ -768,15 +770,13 @@ def display_contact(path, *args, **kwargs):
         ibox.size_hint_align_set(-1.0, 0.0)
         ibox.size_hint_weight_set(-1.0, 0.0)
         ibox.show()
-        if value[:len(header_fields[field])]==header_fields[field]:
-          value = value[len(header_fields[field]):]
-          if header_fields[field] in icons:
-            icon = elementary.Icon(ibox)
-            icon.file_set("/usr/share/pixmaps/opimd-utils/"+icons[header_fields[field]]+".png")
-            icon.size_hint_min_set(32,32)
-            icon.size_hint_align_set(-1.0, 0.0)
-            icon.show()
-            ibox.pack_start(icon)
+        if field_type(field) in icons:
+          icon = elementary.Icon(ibox)
+          icon.file_set("/usr/share/pixmaps/opimd-utils/"+icons[field_type(field)]+".png")
+          icon.size_hint_min_set(32,32)
+          icon.size_hint_align_set(-1.0, 0.0)
+          icon.show()
+          ibox.pack_start(icon)
         label = elementary.Label(info)
         label.label_set(' '+elementary.Entry.utf8_to_markup(str(value)))
         label.show()
@@ -823,8 +823,7 @@ def display_contact(path, *args, **kwargs):
 
 
         for prefix in icons:
-          if isinstance(value, str) and value[:len(prefix)]==prefix:
-            value = value[len(prefix):]
+          if field_type(field)==prefix:
             icon = elementary.Icon(win)
             icon.file_set("/usr/share/pixmaps/opimd-utils/"+icons[prefix]+".png")
             icon.size_hint_min_set(32, 32)
