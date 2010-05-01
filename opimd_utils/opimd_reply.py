@@ -60,7 +60,10 @@ def dbus_opimd_ok(to, msg, props, bus, win, func_ok, func_err, func_status, x):
     func_status('sending')
   try:
     ogsmd = getDbusObject (bus, "org.freesmartphone.ogsmd", "/org/freesmartphone/GSM/Device", "org.freesmartphone.GSM.SMS")
-    ogsmd.SendMessage(to[0] ,msg, props, reply_handler=partial(dbus_sms_ok, x, bus, func_status), error_handler=partial(dbus_gsm_err, to, msg, props, x, bus, win, func_ok, func_err, func_status) )
+    try:
+      ogsmd.SendTextMessage(to[0], msg, props['status-report-request'], reply_handler=partial(dbus_sms_ok, x, bus,func_status), error_handler=partial(dbus_gsm_err, to,msg, props, x, bus, win, func_ok, func_err, func_status) )
+    except:
+      ogsmd.SendMessage(to[0] ,msg, props, reply_handler=partial(dbus_sms_ok, x, bus, func_status), error_handler=partial(dbus_gsm_err, to, msg, props, x, bus, win, func_ok, func_err, func_status) )
   except dbus.exceptions.DBusException, e:
     dbus_gsm_err(to, msg, props, x, bus, win, func_ok, func_err, func_status, e)
 
