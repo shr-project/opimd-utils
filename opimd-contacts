@@ -474,7 +474,7 @@ class EditContact():
       self.fields.append(field)
       self.i += 2
     for fie in data:
-      if not fie in ['Name','Photo', 'Path']:
+      if not fie in ['Name','Photo', 'Path', 'EntryId']:
         values = data[fie]
         if not isinstance(data[fie], dbus.Array):
           values = [values]
@@ -800,7 +800,7 @@ def display_contact(path, *args, **kwargs):
 
   i=0
   for field in data:
-    if not field in header_fields and not field in ('Name','Surname','Nickname','Path'):
+    if not field in header_fields and not field in ('Name','Surname','Nickname','Path','EntryId'):
       values = data[field]
       if type(values)!=dbus.Array:
         values = [values]
