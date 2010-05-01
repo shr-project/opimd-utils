@@ -823,7 +823,7 @@ def display_contact(path, *args, **kwargs):
 
 
         for prefix in icons:
-          if value[:len(prefix)]==prefix:
+          if isinstance(value, str) and value[:len(prefix)]==prefix:
             value = value[len(prefix):]
             icon = elementary.Icon(win)
             icon.file_set("/usr/share/pixmaps/opimd-utils/"+icons[prefix]+".png")
