@@ -1,4 +1,5 @@
 opimd-notes:
+ * fix to work with new opimd
  * filtering tags with anchors (py-elm!)
  * inteligent queries and signals support
  * expanding content of notes (showing by default only 1-2 lines)
@@ -7,16 +8,16 @@ opimd-contacts:
  * update list on add/update/delete
  * contact history
  * selecting new fields to add
+ * fields management
 opimd-notifier:
  * change Reply to Actions button
  * add Actions button into missed calls
 opimd_reply:
  * add contact selector
- * support sending CSM
- * support unicode charset
 opimd-messages:
  * make it Om2007.2 style
 opimd-dates:
+ * fix to work with new opimd
  * nicer entry details
  * better way to choose begin and end day (calendar widget)
  * write and use elementary calendar widget
