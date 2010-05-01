@@ -74,12 +74,6 @@ bus = dbus.SystemBus(mainloop = e_dbus.DBusEcoreMainLoop())
 
 sources = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Sources", "org.freesmartphone.PIM.Sources")
 init=False
-try:
-  if argv[1]=='init':
-    print _("Init entries...")
-    sources.InitAllEntries()
-except IndexError:
-  pass
 
 def display_message_status(icon, out, data):
   something = 0
@@ -259,7 +253,10 @@ contacts = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/
 fieldsif = getDbusObject(bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Contacts", "org.freesmartphone.PIM.Fields")
 
 print _("Querying...")
-x = messages.Query({'_sortby':'Timestamp', '_sortdesc':True})
+if len(argv)>1:
+  x = messages.Query({'_sortby':'Timestamp', '_sortdesc':True, '_at_least_one':True, 'Peer':argv[1], 'Recipient':argv[1], 'Sender':argv[1]})
+else:
+  x = messages.Query({'_sortby':'Timestamp', '_sortdesc':True})
 
 print _("Query: ") + x
 query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.MessageQuery")
