@@ -17,7 +17,6 @@ opimd_reply:
 opimd-messages:
  * make it Om2007.2 style
 opimd-dates:
- * fix to work with new opimd
  * nicer entry details
  * better way to choose begin and end day (calendar widget)
  * write and use elementary calendar widget
