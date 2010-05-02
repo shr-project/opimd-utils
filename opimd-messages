@@ -415,8 +415,8 @@ results = quer.GetMultipleResults(-1)
 
 x = messages.Query({'Direction':'in','MessageRead':0,'_resolve_phonenumber':True})
 query2 = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.MessageQuery")
-unread = query2.GetResultCount()
 unread_msgs = query2.GetMultipleResults(-1)
+unread = len(unread_msgs)
 unread_contacts = []
 for msg in unread_msgs:
   if msg.get('@Contacts'):
@@ -427,6 +427,7 @@ quer.Dispose()
 def read_handler(item, name, unread, x, *args, **kargs):
   query2 = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.MessageQuery")
   count = query2.GetResultCount()
+  count = count - unread
   if unread:
     item.label_set(_("%s (%d unread, %d read)") % (name, unread, count))
   else:
@@ -446,7 +447,7 @@ for result in results:
   else:
     unr = 0
     item = list.item_append(result.get('Name'), None, None, partial(display_query, result.get('Phone')))
-  messages.Query({'$phonenumber': result['Phone'], 'MessageRead':1, 'Direction':'in'}, reply_handler=partial(read_handler, item, result.get('Name'), unr), error_handler=read_error)
+  messages.Query({'$phonenumber': result['Phone']}, reply_handler=partial(read_handler, item, result.get('Name'), unr), error_handler=read_error)
 
 if unread:
   txt = _('%s (%d unread)') % (_('All messages'), unread)
