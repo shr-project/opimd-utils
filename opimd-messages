@@ -18,25 +18,25 @@ except IOError:
 message_list = []
 cache = {}
 
+def format_displayname(result):
+  name = result['Name']
+  try:
+    sn = result['Surname']
+    if sn:
+      name = name + " " + sn
+  except:
+    pass
+  return name
+
 def resolve_phone(number):
   if number in cache:
     return cache[number]
   else:
-    tryme = fieldsif.ListFieldsWithType('phonenumber')
-    que={'_at_least_one':True}
-    for field in tryme:
-      que[field]=number
-    x = contacts.Query(que)
+    x = contacts.Query({'$phonenumber':number})
     query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.ContactQuery")
     if query.GetResultCount():
       result = query.GetResult()
-      name = result['Name']
-      try:
-        sn = result['Surname']
-        if sn:
-          name = name + " " + sn
-      except:
-        pass
+      name = format_displayname(result)
       cache[number] = name
       return name
     else:
@@ -46,13 +46,7 @@ def resolve_phone(number):
 def get_resolved_name(id):
   query = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Contacts/"+str(id), "org.freesmartphone.PIM.Contact")
   result = query.GetContent()
-  name = result['Name']
-  try:
-    sn = result['Surname']
-    if sn:
-      name = name + " " + sn
-  except:
-    pass 
+  name = format_displayname(result)
   cache[id] = name
   return name                                                                
 
