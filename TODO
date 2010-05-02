@@ -15,7 +15,8 @@ opimd-notifier:
 opimd_reply:
  * add contact selector
 opimd-messages:
- * make it Om2007.2 style
+ * ability to write new message
+ * support of numbers not in contacts list
 opimd-dates:
  * nicer entry details
  * better way to choose begin and end day (calendar widget)
