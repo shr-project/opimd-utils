@@ -19,6 +19,7 @@ message_list = []
 cache = {}
 counter = 0
 query = None
+ended = 0
 
 def format_displayname(result):
   name = result['Name']
@@ -281,9 +282,16 @@ def go_next(obj, *args, **kwargs):
 #    obj.delete()
 #  except:
 #    print "FIXME: why it sometimes fails?"
-  proceed(kwargs.get('num'))
+  if not ended:
+    proceed(kwargs.get('num'))
 
 def end(x):
+  global ended
+  ended = 1
+  label = elementary.Label(win)
+  label.label_set(_("No more messages."))
+  label.show()
+  box.pack_end(label)
   print str(x)
 
 def proceed(num = 5):
@@ -341,6 +349,8 @@ contacts = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/
 messages.connect_to_signal("NewMessage", add_new_message)
 
 def display_query(peer = None):
+  global ended
+  ended = 0
   print _("Querying...")
   dict = {'_resolve_phonenumber':True, '_sortby':'Timestamp', '_sortdesc':True}
   if peer:
