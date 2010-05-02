@@ -207,7 +207,7 @@ class CalendarMonth(elementary.Table):
 			end_month = datetime.date(year,month+1,1)
 
 		opimd = Opimd("Dates")
-		results = opimd.query({'_gt_Begin':(time.mktime(begin_month.timetuple())-604800), '_lt_End':(time.mktime(end_month.timetuple())+604800)})
+		results = opimd.query({'>Begin':(time.mktime(begin_month.timetuple())-604800), '<End':(time.mktime(end_month.timetuple())+604800)})
 
 		# fill rows 3 to 8 with days
 		for week in self.calobj.monthdays2calendar(year, month):
@@ -340,10 +340,10 @@ class CalendarDay(elementary.Box):
 		# (begin <= begin_day and end >= end_day):
 
 		opimd = Opimd("Dates")
-		results = opimd.query({'_gt_Begin':time.mktime(begin_day.timetuple()), '_lt_End':time.mktime(end_day.timetuple())})
-		results.extend( opimd.query({'_lt_Begin':time.mktime(end_day.timetuple()), '_gt_Begin':time.mktime(begin_day.timetuple()), '_gt_End':time.mktime(end_day.timetuple())}) )
-		results.extend( opimd.query({'_gt_End':time.mktime(begin_day.timetuple()), '_lt_End':time.mktime(end_day.timetuple()), '_lt_Begin':time.mktime(begin_day.timetuple())}) )
-		results.extend( opimd.query({'_lt_Begin':time.mktime(begin_day.timetuple()), '_gt_End':time.mktime(end_day.timetuple())}) )
+		results = opimd.query({'>Begin':time.mktime(begin_day.timetuple()), '<End':time.mktime(end_day.timetuple())})
+		results.extend( opimd.query({'<Begin':time.mktime(end_day.timetuple()), '>Begin':time.mktime(begin_day.timetuple()), '>End':time.mktime(end_day.timetuple())}) )
+		results.extend( opimd.query({'>End':time.mktime(begin_day.timetuple()), '<End':time.mktime(end_day.timetuple()), '<Begin':time.mktime(begin_day.timetuple())}) )
+		results.extend( opimd.query({'<Begin':time.mktime(begin_day.timetuple()), '>End':time.mktime(end_day.timetuple())}) )
 
 		levels = [[]]
 
