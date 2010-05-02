@@ -354,10 +354,7 @@ def display_query(peer = None):
   print _("Querying...")
   dict = {'_resolve_phonenumber':True, '_sortby':'Timestamp', '_sortdesc':True}
   if peer:
-    dict['Peer'] = peer
-    dict['Recipient'] = peer
-    dict['Sender'] = peer
-    dict['_at_least_one'] = True
+    dict['$phonenumber'] = peer
 
   x = messages.Query(dict)
 
