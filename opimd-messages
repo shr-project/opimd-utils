@@ -17,6 +17,8 @@ except IOError:
 
 message_list = []
 cache = {}
+counter = 0
+query = None
 
 def format_displayname(result):
   name = result['Name']
@@ -262,51 +264,10 @@ def add_new_message(q):
   result = message.GetContent()
   render_message(result, True)
 
-messages = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Messages", "org.freesmartphone.PIM.Messages")
-contacts = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Contacts", "org.freesmartphone.PIM.Contacts")
-
-print _("Querying...")
-if len(argv)>1:
-  x = messages.Query({'_resolve_phonenumber' : True, '_sortby':'Timestamp', '_sortdesc':True, '_at_least_one':True, 'Peer':argv[1], 'Recipient':argv[1], 'Sender':argv[1]})
-else:
-  x = messages.Query({'_resolve_phonenumber' : True, '_sortby':'Timestamp', '_sortdesc':True})
-
-print _("Query: ") + x
-query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.MessageQuery")
-total_results = query.GetResultCount()
-print _("Number of results: ") + str(total_results) 
-
-elementary.init()
-win = elementary.Window('opimd-messages', elementary.ELM_WIN_BASIC)
-win.title_set(_("Messages"))
-
-bg = elementary.Background(win)
-win.resize_object_add(bg)
-bg.show()
-
-scroll = elementary.Scroller(win)
-win.resize_object_add(scroll)
-scroll.show()
-scroll.bounce_set(0, 0)
-
-box = elementary.Box(win)
-box.show()
-
-box.size_hint_weight_set(1.0, 0.0)
-box.size_hint_align_set(-1.0, -1.0)
-
-scroll.content_set(box)
-
-#total_results = 10
-#results = query.GetMultipleResults(total_results)
-
-def end(x):
-  print str(x)
-
 def go_next(obj, *args, **kwargs):
 #  global message_list
-#  for message in message_list:
-#    try:
+#  for message in message_list:  
+#    try: 
 #      bubble = message[0]
 #      signal = message[1]
 #      bubble.delete()
@@ -321,6 +282,9 @@ def go_next(obj, *args, **kwargs):
 #  except:
 #    print "FIXME: why it sometimes fails?"
   proceed(kwargs.get('num'))
+
+def end(x):
+  print str(x)
 
 def proceed(num = 5):
   if not num:
@@ -345,24 +309,73 @@ def next_result(res, *args, **kwargs):
   render_message(res)
   proceed(kwargs.get('num'))
 
-#for i in results:
-  #print "Result nr "+str(i+1)+":"
-  #result = query.GetResult()
+elementary.init()
+win = elementary.Window('opimd-messages', elementary.ELM_WIN_BASIC)
+win.title_set(_("Messages"))
 
-#  render_message(results[i])
+bg = elementary.Background(win)
+win.resize_object_add(bg)
+bg.show()
 
-counter = 0
-#query.Skip(total_results-1)
-proceed()
+scroll = elementary.Scroller(win)
+win.resize_object_add(scroll)
+scroll.show()
+scroll.bounce_set(0, 0)
 
-print _("Finished") # finito, fertig, koniec etc.
+box = elementary.Box(win)
+box.show()
+
+box.size_hint_weight_set(1.0, 0.0)
+box.size_hint_align_set(-1.0, -1.0)
+
+scroll.content_set(box)
 
 scroll._callback_add('edge,bottom', partial(go_next, num = 1))
 
-win.callback_destroy_add(destroy) 
+win.callback_destroy_add(destroy)
 win.show()
 
+messages = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Messages", "org.freesmartphone.PIM.Messages")
+contacts = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Contacts", "org.freesmartphone.PIM.Contacts")
+
 messages.connect_to_signal("NewMessage", add_new_message)
+
+def display_query(peer = None):
+  print _("Querying...")
+  dict = {'_resolve_phonenumber':True, '_sortby':'Timestamp', '_sortdesc':True}
+  if peer:
+    dict['Peer'] = peer
+    dict['Recipient'] = peer
+    dict['Sender'] = peer
+    dict['_at_least_one'] = True
+
+  x = messages.Query(dict)
+
+  print _("Query: ") + x
+  global query
+  query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.MessageQuery")
+  total_results = query.GetResultCount()
+  print _("Number of results: ") + str(total_results) 
+
+  #total_results = 10
+  #results = query.GetMultipleResults(total_results)
+
+  #for i in results:
+    #print "Result nr "+str(i+1)+":"
+    #result = query.GetResult()
+
+  #  render_message(results[i])
+
+  counter = 0
+  #query.Skip(total_results-1)
+  proceed()
+
+  print _("Finished") # finito, fertig, koniec etc.
+
+if len(argv)>1:
+  display_query(argv[1])
+else:
+  display_query()
 
 elementary.run()
 query.Dispose()
