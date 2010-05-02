@@ -66,6 +66,42 @@ def resolve_time(t):
     return time.strftime('%d %b',time.localtime(t))
 
 def delete_msg(path, bubble, button, *args, **kwargs):
+  inwin = elementary.InnerWindow(win)
+  box = elementary.Box(inwin)
+  box.show()
+  inwin.style_set('minimal')
+  inwin.content_set(box)
+  label=elementary.Label(box)
+  label.label_set(_('Do you really want to delete this message?'))
+  label.show()
+  box.pack_start(label)
+  box2 = elementary.Box(box)
+  box2.horizontal_set(True)
+  box2.show()
+
+  btyes = elementary.Button(box2)
+  btyes.label_set(_('Yes'))
+  btyes._callback_add('clicked', partial(delete_yes, inwin, path, bubble, button))
+  btyes.show()
+  box2.pack_end(btyes)
+
+  btno = elementary.Button(box2)
+  btno.label_set(_('No'))
+  btno._callback_add('clicked', partial(delete_no, inwin))
+  btno.show()
+  box2.pack_end(btno)
+
+  box.pack_end(box2)
+
+  win.resize_object_add(inwin)
+  inwin.show()
+  inwin.activate()
+
+def delete_no(inwin, *args, **kwargs):
+  inwin.delete()
+
+def delete_yes(inwin, path, bubble, button, *args, **kwargs):
+  delete_no(inwin)
   message = getDbusObject (bus, "org.freesmartphone.opimd", path, "org.freesmartphone.PIM.Message")
   message.Delete()
   bubble.delete()
