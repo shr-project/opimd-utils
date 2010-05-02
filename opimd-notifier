@@ -356,8 +356,8 @@ def incoming_message(x, just_unread = False):
 
   if result['Direction']=='in':
     out = 0
-    if message.has_key('Peer'):
-      number = message['Peer']
+    if result.has_key('Peer'):
+      number = result['Peer']
     else:
       number = result['Sender']
     name = resolve_phone(number)
@@ -402,8 +402,8 @@ def incoming_message(x, just_unread = False):
   else:
     out = 1
     bubble.corner_set("top_right")
-    if message.has_key('Peer'):
-      number = message['Peer']
+    if result.has_key('Peer'):
+      number = result['Peer']
     else:
       number = result['Recipient']
     name = resolve_phone(number)
