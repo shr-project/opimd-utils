@@ -17,31 +17,41 @@ except IOError:
 
 message_list = []
 cache = {}
+counter = 0
+query = None
+ended = 0
+
+def format_displayname(result):
+  name = result['Name']
+  try:
+    sn = result['Surname']
+    if sn:
+      name = name + " " + sn
+  except:
+    pass
+  return name
 
 def resolve_phone(number):
   if number in cache:
     return cache[number]
   else:
-    tryme = fieldsif.ListFieldsWithType('phonenumber')
-    que={'_at_least_one':True}
-    for field in tryme:
-      que[field]=number
-    x = contacts.Query(que)
+    x = contacts.Query({'$phonenumber':number})
     query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.ContactQuery")
     if query.GetResultCount():
       result = query.GetResult()
-      name = result['Name']
-      try:
-        sn = result['Surname']
-        if sn:
-          name = name + " " + sn
-      except:
-        pass
+      name = format_displayname(result)
       cache[number] = name
       return name
     else:
       name = number
     return name
+
+def get_resolved_name(id):
+  query = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Contacts/"+str(id), "org.freesmartphone.PIM.Contact")
+  result = query.GetContent()
+  name = format_displayname(result)
+  cache[id] = name
+  return name                                                                
 
 def resolve_time(t):
   try:
@@ -74,12 +84,6 @@ bus = dbus.SystemBus(mainloop = e_dbus.DBusEcoreMainLoop())
 
 sources = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Sources", "org.freesmartphone.PIM.Sources")
 init=False
-try:
-  if argv[1]=='init':
-    print _("Init entries...")
-    sources.InitAllEntries()
-except IndexError:
-  pass
 
 def display_message_status(icon, out, data):
   something = 0
@@ -168,15 +172,28 @@ def render_message(message, incoming = False):
 
   if message['Direction']=='in':
     out = 0
-    number = message['Sender']
-    name = resolve_phone(number)
+    if message.has_key('Peer'):
+      number = message['Peer']
+    else:
+      number = message['Sender']
+    if message.has_key('@Contacts'):
+      name = get_resolved_name(message['@Contacts'])
+    else:
+      name = resolve_phone(number)
     bubble.label_set(name)
     bubble.info_set(timestamp)
   else:
     out = 1
     bubble.corner_set("top_right")
-    number = message['Recipient']
-    name = resolve_phone(number)
+    if message.has_key('Peer'):
+      number = message['Peer']
+    else:
+      number = message['Recipient']
+
+    if message.has_key('@Contacts'):
+      name = get_resolved_name(message['@Contacts'])
+    else:
+      name = resolve_phone(number)
     bubble.info_set(name)
 #    bubble.label_set(timestamp)
 
@@ -248,49 +265,10 @@ def add_new_message(q):
   result = message.GetContent()
   render_message(result, True)
 
-messages = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Messages", "org.freesmartphone.PIM.Messages")
-contacts = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Contacts", "org.freesmartphone.PIM.Contacts")
-fieldsif = getDbusObject(bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Contacts", "org.freesmartphone.PIM.Fields")
-
-print _("Querying...")
-x = messages.Query({'_sortby':'Timestamp', '_sortdesc':True})
-
-print _("Query: ") + x
-query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.MessageQuery")
-total_results = query.GetResultCount()
-print _("Number of results: ") + str(total_results) 
-
-elementary.init()
-win = elementary.Window('opimd-messages', elementary.ELM_WIN_BASIC)
-win.title_set(_("Messages"))
-
-bg = elementary.Background(win)
-win.resize_object_add(bg)
-bg.show()
-
-scroll = elementary.Scroller(win)
-win.resize_object_add(scroll)
-scroll.show()
-scroll.bounce_set(0, 0)
-
-box = elementary.Box(win)
-box.show()
-
-box.size_hint_weight_set(1.0, 0.0)
-box.size_hint_align_set(-1.0, -1.0)
-
-scroll.content_set(box)
-
-#total_results = 10
-#results = query.GetMultipleResults(total_results)
-
-def end(x):
-  print str(x)
-
 def go_next(obj, *args, **kwargs):
 #  global message_list
-#  for message in message_list:
-#    try:
+#  for message in message_list:  
+#    try: 
 #      bubble = message[0]
 #      signal = message[1]
 #      bubble.delete()
@@ -304,7 +282,17 @@ def go_next(obj, *args, **kwargs):
 #    obj.delete()
 #  except:
 #    print "FIXME: why it sometimes fails?"
-  proceed(kwargs.get('num'))
+  if not ended:
+    proceed(kwargs.get('num'))
+
+def end(x):
+  global ended
+  ended = 1
+  label = elementary.Label(win)
+  label.label_set(_("No more messages."))
+  label.show()
+  box.pack_end(label)
+  print str(x)
 
 def proceed(num = 5):
   if not num:
@@ -329,24 +317,72 @@ def next_result(res, *args, **kwargs):
   render_message(res)
   proceed(kwargs.get('num'))
 
-#for i in results:
-  #print "Result nr "+str(i+1)+":"
-  #result = query.GetResult()
+elementary.init()
+win = elementary.Window('opimd-messages', elementary.ELM_WIN_BASIC)
+win.title_set(_("Messages"))
 
-#  render_message(results[i])
+bg = elementary.Background(win)
+win.resize_object_add(bg)
+bg.show()
 
-counter = 0
-#query.Skip(total_results-1)
-proceed()
+scroll = elementary.Scroller(win)
+win.resize_object_add(scroll)
+scroll.show()
+scroll.bounce_set(0, 0)
 
-print _("Finished") # finito, fertig, koniec etc.
+box = elementary.Box(win)
+box.show()
+
+box.size_hint_weight_set(1.0, 0.0)
+box.size_hint_align_set(-1.0, -1.0)
+
+scroll.content_set(box)
 
 scroll._callback_add('edge,bottom', partial(go_next, num = 1))
 
-win.callback_destroy_add(destroy) 
+win.callback_destroy_add(destroy)
 win.show()
 
+messages = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Messages", "org.freesmartphone.PIM.Messages")
+contacts = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Contacts", "org.freesmartphone.PIM.Contacts")
+
 messages.connect_to_signal("NewMessage", add_new_message)
+
+def display_query(peer = None):
+  global ended
+  ended = 0
+  print _("Querying...")
+  dict = {'_resolve_phonenumber':True, '_sortby':'Timestamp', '_sortdesc':True}
+  if peer:
+    dict['$phonenumber'] = peer
+
+  x = messages.Query(dict)
+
+  print _("Query: ") + x
+  global query
+  query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.MessageQuery")
+  total_results = query.GetResultCount()
+  print _("Number of results: ") + str(total_results) 
+
+  #total_results = 10
+  #results = query.GetMultipleResults(total_results)
+
+  #for i in results:
+    #print "Result nr "+str(i+1)+":"
+    #result = query.GetResult()
+
+  #  render_message(results[i])
+
+  counter = 0
+  #query.Skip(total_results-1)
+  proceed()
+
+  print _("Finished") # finito, fertig, koniec etc.
+
+if len(argv)>1:
+  display_query(argv[1])
+else:
+  display_query()
 
 elementary.run()
 query.Dispose()

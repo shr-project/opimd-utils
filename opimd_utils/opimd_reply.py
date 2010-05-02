@@ -60,7 +60,10 @@ def dbus_opimd_ok(to, msg, props, bus, win, func_ok, func_err, func_status, x):
     func_status('sending')
   try:
     ogsmd = getDbusObject (bus, "org.freesmartphone.ogsmd", "/org/freesmartphone/GSM/Device", "org.freesmartphone.GSM.SMS")
-    ogsmd.SendMessage(to[0].replace('tel:','') ,msg, props, reply_handler=partial(dbus_sms_ok, x, bus, func_status), error_handler=partial(dbus_gsm_err, to, msg, props, x, bus, win, func_ok, func_err, func_status) )
+    try:
+      ogsmd.SendTextMessage(to[0], msg, props['status-report-request'], reply_handler=partial(dbus_sms_ok, x, bus,func_status), error_handler=partial(dbus_gsm_err, to,msg, props, x, bus, win, func_ok, func_err, func_status) )
+    except:
+      ogsmd.SendMessage(to[0] ,msg, props, reply_handler=partial(dbus_sms_ok, x, bus, func_status), error_handler=partial(dbus_gsm_err, to, msg, props, x, bus, win, func_ok, func_err, func_status) )
   except dbus.exceptions.DBusException, e:
     dbus_gsm_err(to, msg, props, x, bus, win, func_ok, func_err, func_status, e)
 
@@ -137,7 +140,7 @@ def send_msg(to, entry, bus, inwin, win, func_ok, func_err, func_status, *args, 
   if ops['class']:
     props['message-class']=0
 
-#  ogsmd.SendMessage(to[0].replace('tel:','') ,msg, props, reply_handler=dbus_sms_ok, error_handler=partial(dbus_gsm_err, to, msg, bus, win, func_ok, func_err) )
+#  ogsmd.SendMessage(to[0] ,msg, props, reply_handler=dbus_sms_ok, error_handler=partial(dbus_gsm_err, to, msg, bus, win, func_ok, func_err) )
 
   message = {'Recipient':to[0],'Direction':'out','Folder':'SMS','Content':msg, 'MessageSent':0, 'Processing':1, 'Source':'SMS', 'Timestamp':int(time.time()), 'Timezone':time.tzname[time.daylight]}
 

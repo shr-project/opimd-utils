@@ -3,11 +3,7 @@ import dbus
 from sys import argv
 
 def resolve_phone(number):
-  tryme = fieldsif.ListFieldsWithType('phonenumber')
-  que={'_at_least_one':True}
-  for field in tryme:
-    que[field]=number
-  x = contacts.Query(que)
+  x = contacts.Query({'$phonenumber':number})
   query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.ContactQuery")
   if query.GetResultCount():
     result = query.GetResult()
@@ -29,7 +25,6 @@ bus = dbus.SystemBus()
 
 messages = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Messages", "org.freesmartphone.PIM.Messages")
 contacts = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Contacts", "org.freesmartphone.PIM.Contacts")
-fieldsif = getDbusObject(bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Contacts", "org.freesmartphone.PIM.Fields")
 
 for number in argv[1:]:
   print number+': '+resolve_phone(number)
