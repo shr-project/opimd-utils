@@ -142,7 +142,7 @@ def send_msg(to, entry, bus, inwin, win, func_ok, func_err, func_status, *args, 
 
 #  ogsmd.SendMessage(to[0] ,msg, props, reply_handler=dbus_sms_ok, error_handler=partial(dbus_gsm_err, to, msg, bus, win, func_ok, func_err) )
 
-  message = {'Recipient':to[0],'Direction':'out','Folder':'SMS','Content':msg, 'MessageSent':0, 'Processing':1, 'Source':'SMS', 'Timestamp':int(time.time()), 'Timezone':time.tzname[time.daylight]}
+  message = {'Peer':to[0],'Direction':'out','Folder':'SMS','Content':msg, 'MessageSent':0, 'Processing':1, 'Source':'SMS', 'Timestamp':int(time.time()), 'Timezone':time.tzname[time.daylight]}
 
   for field in props:
     message['SMS-'+field]=props[field]

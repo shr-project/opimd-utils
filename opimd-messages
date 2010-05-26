@@ -418,6 +418,7 @@ def display_query(peer = None, *args, **kargs):
   if peer:
     dict['$phonenumber'] = peer
 
+  print dict
   x = messages.Query(dict)
 
   print _("Query: ") + x
