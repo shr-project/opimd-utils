@@ -1,0 +1,115 @@
+#!/usr/bin/env python
+import dbus
+from sys import argv
+from datetime import date
+
+def resolve_contact(name):
+  x = contacts.Query({'$name':name})
+  query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.ContactQuery")
+  if query.GetResultCount():
+    result = query.GetResult()
+    numbers = [ result['Phone'] ]
+    return numbers
+  return [name]
+
+def getDbusObject (bus, busname , objectpath , interface):
+  dbusObject = bus.get_object(busname, objectpath)
+  return dbus.Interface(dbusObject, dbus_interface=interface)
+
+weeknames = { 1: 'Monday', 2:'Tuesday', 3:'Wednesday', 4:'Thursday', 5:'Friday', 6:'Saturday', 7:'Sunday'}
+
+def print_stats(number):
+  sum_len = 0
+  min_len = -1
+  max_len = 0
+  avg_len = -1
+  count_from = 0
+  count_to = 0
+  count_all = 0
+  sum_reply = 0
+  count_reply = 0
+  avg_reply = -1
+  avg_next = -1
+
+  sum_reply2 = 0
+  count_reply2 = 0
+  avg_reply2 = -1
+
+  weekdays = {weeknames[1]:0, weeknames[2]:0, weeknames[3]:0, weeknames[4]:0, weeknames[5]:0, weeknames[6]:0, weeknames[7]:0}
+
+  prev_type = ''
+  prev_timestamp = -1
+
+  x = messages.Query({'$phonenumber':number})
+  query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.MessageQuery")
+  results = query.GetMultipleResults(-1)
+  for result in results:
+    #print "  WIADOMOSC: " + result['Content']
+    #print "  Direction: " + result['Direction']
+    #print "  Weekday: " + str(date.fromtimestamp(int(result['Timestamp'])).weekday())
+    weekday = date.fromtimestamp(int(result['Timestamp'])).isoweekday()
+    weekdays[weeknames[weekday]] = weekdays[weeknames[weekday]] + 1
+    if result['Direction']=='in':
+      count_from = count_from + 1
+      result_len = len(result['Content'])
+      sum_len = sum_len + result_len
+      if result_len>max_len:
+        max_len = result_len
+      if result_len<min_len or min_len==-1:
+        min_len = result_len
+
+      if prev_type=='out':
+        reply_time = result['Timestamp'] - prev_timestamp
+        if reply_time < 24*60*60:
+          sum_reply = sum_reply + reply_time
+          count_reply = count_reply + 1
+          #print "  * Uzyskano odpowiedz po " + str(reply_time/60)+ " minutach"
+
+    else:
+      count_to = count_to + 1
+      if prev_type=='in':
+        reply_time = result['Timestamp'] - prev_timestamp
+        if reply_time < 24*60*60:
+          sum_reply2 = sum_reply2 + reply_time
+          count_reply2 = count_reply2 + 1
+          #print "  * Wyslano odpowiedz po " + str(reply_time/60)+ " minutach"
+  
+
+    count_all = count_all + 1
+
+    prev_type = result['Direction']
+    prev_timestamp = result['Timestamp']
+
+#    print '-------'
+ 
+  avg_len = sum_len / (count_from + count_to)
+  avg_reply = sum_reply / count_reply
+  avg_reply2 = sum_reply2 / count_reply2
+
+  print "  All messages: " + str(count_all)
+  print "  Messages from: " + str(count_from)
+  print "  Messages to: " + str(count_to)
+  print ""
+  print "  Length sum: " + str(sum_len)
+  print "  Minimal length: " + str(min_len)
+  print "  Maximal length: " + str(max_len)
+  print "  Average length: " + str(avg_len)
+  print ""
+  print "  Average reply time from "+ name + " (min): " + str(avg_reply/60) + " for " + str(count_reply) + " messages"
+  print "  Average reply time to "+ name + " (min): " + str(avg_reply2/60) + " for " + str(count_reply2) + " messages"
+  print ""
+  print "  Weekdays: " + str(weekdays)
+
+bus = dbus.SystemBus()
+
+messages = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Messages", "org.freesmartphone.PIM.Messages")
+contacts = getDbusObject (bus, "org.freesmartphone.opimd", "/org/freesmartphone/PIM/Contacts", "org.freesmartphone.PIM.Contacts")
+for name in argv[1:]:
+  numbers = resolve_contact(name)
+  for number in numbers:
+    print name+': '+number
+    print_stats(number)
+
+if len(argv)==1:
+  print "usage: "+argv[0]+ ' name'
+  print 'e.g. '+argv[0]+' dos'
