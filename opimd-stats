@@ -82,9 +82,12 @@ def print_stats(number):
 
 #    print '-------'
  
-  avg_len = sum_len / (count_from + count_to)
-  avg_reply = sum_reply / count_reply
-  avg_reply2 = sum_reply2 / count_reply2
+  if (count_from + count_to):
+    avg_len = sum_len / (count_from + count_to)
+  if count_reply:
+    avg_reply = sum_reply / count_reply
+  if count_reply2:
+    avg_reply2 = sum_reply2 / count_reply2
 
   print "  All messages: " + str(count_all)
   print "  Messages from: " + str(count_from)
