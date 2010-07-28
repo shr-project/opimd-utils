@@ -154,6 +154,8 @@ def list_contact(path, *args, **kwargs):
 #  print contact['Path']
   photo = elementary.Photo(list)
   photo.scale_set(0.9)
+  if 'Photo' in contact:
+    photo.file_set(contact['Photo'])
   name = contact.get('Name')
   if not name:
     name = contact.get('Surname')
@@ -734,6 +736,9 @@ def display_contact(path, *args, **kwargs):
   info = elementary.Box(infofr)
   info.show()
   infofr.content_set(info)
+
+  if 'Photo' in data:
+    photo.file_set(data['Photo'])
 
   if data.get('Name'):
     label = elementary.Label(info)
