@@ -1,2 +1,0 @@
-#!/bin/sh
-shr-settings "PIM config" shr_pim.Pim
