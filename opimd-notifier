@@ -98,8 +98,8 @@ def handle_csm(msg, text, data):
   try:
     content = data['Content']
 #    text.text_set(elementary.Entry.utf8_to_markup(content))
-    if not data['MessageRead']:
-      msg.Update({'MessageRead':1})
+    if data['New']:
+      msg.Update({'New':0})
   except KeyError:
     pass
 
@@ -120,17 +120,32 @@ def display_message_status(icon, out, text, data):
   except:
     processing = 0
 
+  # legacy
+  try:
+    sent = data['MessageRead']
+    something = 1
+  except:   
+    read = 0
+
   try:
     sent = data['MessageSent']
     something = 1
   except:
     sent = 0
+  # legacy end
 
-  try:
-    read = data['MessageRead']
-    something = 1
-  except:
-    read = 0
+  if data['Direction']=='in':
+    try:
+      read = data['New']
+      something = 1
+    except:
+      read = 0
+  else:
+    try:
+      sent = data['New']
+      something = 1
+    except:
+      sent = 0
 
   try:
     delivered = data['SMS-delivered']
@@ -175,7 +190,7 @@ def show_msg(msg, box, bubble, text, obj, *args, **kwargs):
   obj.delete()
   bubble.content_set(box)
   box.show()
-  msg.Update({'MessageRead':1}, reply_handler=dbus_ok, error_handler=dbus_err)
+  msg.Update({'New':0}, reply_handler=dbus_ok, error_handler=dbus_err)
   signal = msg.connect_to_signal("MessageUpdated", partial(handle_csm, msg, text))
   signal_list.append(signal)
 
@@ -397,7 +412,7 @@ def incoming_message(x, just_unread = False):
       bubble.content_set(read)
     else:
       text.show()
-      query.Update({'MessageRead':1}, reply_handler=dbus_ok, error_handler=dbus_err)
+      query.Update({'New':0}, reply_handler=dbus_ok, error_handler=dbus_err)
       bubble.content_set(text)
   else:
     out = 1
@@ -437,7 +452,7 @@ def incoming_message(x, just_unread = False):
 messages.connect_to_signal("IncomingMessage", incoming_message)
 calls.connect_to_signal("MissedCall", missed_call)
 
-x = messages.Query({'Direction':'in','MessageRead':0})
+x = messages.Query({'Direction':'in','New':1})
 query = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.MessageQuery")
 results_num = query.GetResultCount()
 for i in range(0, results_num):
