@@ -130,17 +130,32 @@ def display_message_status(icon, out, data):
   except:
     processing = 0
 
+  # legacy
   try:
-    sent = data['MessageSent']
-    something = 1
-  except:
-    sent = 0
-
-  try:
-    read = data['MessageRead']
+    sent = data['MessageRead']
     something = 1
   except:
     read = 0
+
+  try:
+    sent = data['MessageSent']
+    something = 1
+  except:   
+    sent = 0  
+  # legacy end
+
+  if data['Direction']=='in':
+    try:
+      read = data['New']
+      something = 1
+    except:   
+      read = 0
+  else: 
+    try:
+      sent = data['New']
+      something = 1
+    except:
+      sent = 0
 
   try:
     delivered = data['SMS-delivered']
@@ -450,7 +465,7 @@ x = contacts.Query({'_sortby':'Name'})
 quer = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.ContactQuery")
 results = quer.GetMultipleResults(-1)
 
-x = messages.Query({'Direction':'in','MessageRead':0,'_resolve_phonenumber':True})
+x = messages.Query({'Direction':'in','New':1,'_resolve_phonenumber':True})
 query2 = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.MessageQuery")
 unread_msgs = query2.GetMultipleResults(-1)
 unread = len(unread_msgs)
@@ -476,7 +491,7 @@ def read_error(x, *args, **kargs):
 
 for result in results:
   if result['EntryId'] in unread_contacts:
-    x = messages.Query({'$phonenumber': result['Phone'], 'MessageRead':0, 'Direction':'in'})
+    x = messages.Query({'$phonenumber': result['Phone'], 'New':1, 'Direction':'in'})
     query2 = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.MessageQuery")
     unr = query2.GetResultCount()
     item = list.item_prepend(_("%s (%d unread)") % (result.get('Name'), unr), None, None, partial(display_query, result.get('Phone')))
@@ -493,7 +508,7 @@ else:
 
 item = list.item_prepend(txt, None, None, partial(display_query, None))
 
-messages.Query({'MessageRead':1}, reply_handler=partial(read_handler, item, _("All messages"), unread), error_handler=read_error)
+messages.Query({'New':0}, reply_handler=partial(read_handler, item, _("All messages"), unread), error_handler=read_error)
 
 list.go()
 
