@@ -122,7 +122,7 @@ def display_message_status(icon, out, text, data):
 
   # legacy
   try:
-    sent = data['MessageRead']
+    read = data['MessageRead']
     something = 1
   except:   
     read = 0
@@ -134,15 +134,15 @@ def display_message_status(icon, out, text, data):
     sent = 0
   # legacy end
 
-  if data['Direction']=='in':
+  if not out:
     try:
-      read = data['New']
+      read = not(data['New'])
       something = 1
     except:
       read = 0
   else:
     try:
-      sent = data['New']
+      sent = not(data['New'])
       something = 1
     except:
       sent = 0
