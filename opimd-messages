@@ -475,8 +475,11 @@ def read_error(x, *args, **kargs):
   print str(x)
 
 for result in results:
+  if not result.get('Phone'):
+    print result
+    continue
   if result['EntryId'] in unread_contacts:
-    x = messages.Query({'$phonenumber': result['Phone'], 'MessageRead':0, 'Direction':'in'})
+    x = messages.Query({'$phonenumber': result.get('Phone'), 'MessageRead':0, 'Direction':'in'})
     query2 = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.MessageQuery")
     unr = query2.GetResultCount()
     item = list.item_prepend(_("%s (%d unread)") % (result.get('Name'), unr), None, None, partial(display_query, result.get('Phone')))
@@ -484,7 +487,7 @@ for result in results:
   else:
     unr = 0
     item = list.item_append(result.get('Name'), None, None, partial(display_query, result.get('Phone')))
-  messages.Query({'$phonenumber': result['Phone']}, reply_handler=partial(read_handler, item, result.get('Name'), unr), error_handler=read_error)
+  messages.Query({'$phonenumber': result.get('Phone')}, reply_handler=partial(read_handler, item, result.get('Name'), unr), error_handler=read_error)
 
 if unread:
   txt = _('%s (%d unread)') % (_('All messages'), unread)
