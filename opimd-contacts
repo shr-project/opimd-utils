@@ -391,9 +391,6 @@ def save_contact(path, data, *args, **kwargs):
     path = contacts.Add(data)
   display_contact(path)
 
-class Photo():
-  pass
-
 class Field():
   field_name = None
   entry = None
@@ -464,6 +461,9 @@ class Field():
     self.label.delete()
     self.delbtn.delete()
 
+class Photo(Field):
+  pass # TODO
+
 class EditContact():
   fields = None
   i = None
@@ -478,12 +478,16 @@ class EditContact():
       self.fields.append(field)
       self.i += 2
     for fie in data:
-      if not fie in ['Name','Photo', 'Path', 'EntryId']:
+      if not fie in ['Name','Path', 'EntryId']:
         values = data[fie]
         if not isinstance(data[fie], dbus.Array):
           values = [values]
         for value in values:
-          field = Field(win, table, self.i, fie, value)
+          if fie=="Photo":
+            Fclass = Photo
+          else:
+            Fclass = Field
+          field = Fclass(win, table, self.i, fie, value)
           self.fields.append(field)
           self.i += 2
     self.win = win
@@ -805,7 +809,7 @@ def display_contact(path, *args, **kwargs):
 
   i=0
   for field in data:
-    if not field in header_fields and not field in ('Name','Surname','Nickname','Path','EntryId'):
+    if not field in header_fields and not field in ('Name','Surname','Nickname','Path','EntryId','Photo'):
       values = data[field]
       if type(values)!=dbus.Array:
         values = [values]
