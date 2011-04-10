@@ -1,0 +1,127 @@
+# Swedish translation of opimd-notes.
+# This file is put in the public domain.
+# John Gustafsson <jamminjohn@users.sourceforge.net>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: opimd-notes\n"
+"Report-Msgid-Bugs-To: shr-devel@lists.shr-project.org\n"
+"POT-Creation-Date: 2011-04-03 17:42+0200\n"
+"PO-Revision-Date: 2011-04-10 21:43+0100\n"
+"Last-Translator: John Gustafsson <jamminjohn@users.sourceforge.net>\n"
+"Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
+"Language: sv\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: opimd-notes:41
+msgid "bubble.delete() failed"
+msgstr "bubble.delete() misslyckades"
+
+#: opimd-notes:45
+msgid "bubble.hide() failed"
+msgstr "bubble.hide() misslyckades"
+
+#: opimd-notes:53
+msgid "nothing called"
+msgstr "inget uppringt"
+
+#: opimd-notes:67
+msgid "Not yet implemented"
+msgstr "Inte implementerat än"
+
+#: opimd-notes:207
+msgid "Are you sure?"
+msgstr "Är du säker?"
+
+#: opimd-notes:216
+msgid "Yes"
+msgstr "Ja"
+
+#: opimd-notes:221
+msgid "No"
+msgstr "Nej"
+
+#: opimd-notes:269
+msgid "Adding..."
+msgstr "Lägger till..."
+
+#: opimd-notes:272
+msgid "Editing..."
+msgstr "Redigerar..."
+
+#: opimd-notes:374
+msgid "Next"
+msgstr "Nästa"
+
+#: opimd-notes:385
+#: opimd-notes:502
+#: opimd-notes:592
+#: opimd-notes:629
+#: opimd-notes:727
+msgid "Back"
+msgstr "Tillbaka"
+
+#: opimd-notes:439
+msgid "Enter name of tag..."
+msgstr "Ange namn för tagg..."
+
+#: opimd-notes:461
+msgid "...or select it from list below:"
+msgstr "...eller välj den från listan nedan:"
+
+#: opimd-notes:493
+msgid "Add"
+msgstr "Lägg till"
+
+#: opimd-notes:527
+msgid "Select tags for note:"
+msgstr "Välj tagg för anteckning:"
+
+#: opimd-notes:562
+msgid "Add new tag..."
+msgstr "Lägg till ny tagg..."
+
+#: opimd-notes:580
+msgid "Save"
+msgstr "Spara"
+
+#: opimd-notes:583
+msgid "Edit"
+msgstr "Redigera"
+
+#: opimd-notes:670
+msgid "Enter text:"
+msgstr "Ange text:"
+
+#: opimd-notes:693
+msgid "regular expression"
+msgstr "reguljärt uttryck"
+
+#: opimd-notes:700
+msgid "search also in titles"
+msgstr "sök också i titlar"
+
+#: opimd-notes:720
+#: opimd-notes:910
+msgid "Search"
+msgstr "Sök"
+
+#: opimd-notes:747
+msgid "Notes"
+msgstr "Anteckningar"
+
+#: opimd-notes:846
+msgid "Searching..."
+msgstr "Söker..."
+
+#: opimd-notes:882
+msgid "New"
+msgstr "Ny"
+
+#: opimd-notes:896
+msgid "Tags"
+msgstr "Taggar"
+

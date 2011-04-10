@@ -31,6 +31,7 @@ dist = setup( name='opimd-utils',
 		('locale/es/LC_MESSAGES', ['data/po/es/opimd-dates.mo','data/po/es/opimd-contacts.mo','data/po/es/opimd-notifier.mo','data/po/es/opimd-notes.mo','data/po/es/opimd-messages.mo']),
 		('locale/eo/LC_MESSAGES', ['data/po/eo/opimd-dates.mo','data/po/eo/opimd-contacts.mo','data/po/eo/opimd-notifier.mo','data/po/eo/opimd-notes.mo','data/po/eo/opimd-messages.mo']),
 		('locale/gr/LC_MESSAGES', ['data/po/gr/opimd-dates.mo','data/po/gr/opimd-contacts.mo','data/po/gr/opimd-notifier.mo','data/po/gr/opimd-notes.mo','data/po/gr/opimd-messages.mo']),
+		('locale/sv/LC_MESSAGES', ['data/po/sv/opimd-dates.mo','data/po/sv/opimd-contacts.mo','data/po/sv/opimd-notifier.mo','data/po/sv/opimd-notes.mo','data/po/sv/opimd-messages.mo']),
 		('../../etc/X11/Xsession.d', ['data/89opimd-notifier'])
   ]
 )

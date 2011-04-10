@@ -7,6 +7,7 @@ Name[es]=Mensajes opimd
 Name[gl]=Mensaxes opimd
 Name[eo]=Opimd-Mesaĝoj
 Name[it]=Messaggi Opimd
+Name[sv]=Opimd-Meddelanden
 TryExec=opimd-messages
 StartupNotify=true
 Exec=opimd-messages

@@ -1,0 +1,106 @@
+# Swedish translation of opimd-notifier.
+# This file is put in the public domain.
+# John Gustafsson <jamminjohn@users.sourceforge.net>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: opimd-notifier\n"
+"Report-Msgid-Bugs-To: shr-devel@lists.shr-project.org\n"
+"POT-Creation-Date: 2011-04-03 17:42+0200\n"
+"PO-Revision-Date: 2011-04-10 21:44+0100\n"
+"Last-Translator: John Gustafsson <jamminjohn@users.sourceforge.net>\n"
+"Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
+"Language: sv\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: opimd-notifier:86
+msgid "Init failed"
+msgstr "Initiering misslyckades"
+
+#: opimd-notifier:160
+msgid "Out: "
+msgstr "Ut: "
+
+#: opimd-notifier:161
+msgid "Processing: "
+msgstr "Bearbetar: "
+
+#: opimd-notifier:162
+msgid "Sent: "
+msgstr "Skickade: "
+
+#: opimd-notifier:163
+msgid "Read: "
+msgstr "Lästa: "
+
+#: opimd-notifier:164
+msgid "Delivered: "
+msgstr "Levererade: "
+
+#: opimd-notifier:225
+msgid "Notifier"
+msgstr "Notifierare"
+
+#: opimd-notifier:260
+msgid "Go to..."
+msgstr "Gå till..."
+
+#: opimd-notifier:295
+#: opimd_utils/opimd_reply.py:114
+#: opimd_utils/opimd_reply.py:356
+msgid "Close"
+msgstr "Stäng"
+
+#: opimd-notifier:324
+msgid "Missed call at "
+msgstr "Missat samtal vid "
+
+#: opimd-notifier:341
+#: opimd-notifier:449
+msgid "Finished"
+msgstr "Avslutad"
+
+#: opimd-notifier:390
+msgid "Reply"
+msgstr "Svara"
+
+#: opimd-notifier:404
+msgid "Unread message!"
+msgstr "Oläst meddelande!"
+
+#: opimd-notifier:406
+msgid "New message arrived!"
+msgstr "Nytt meddelande har inkommit!"
+
+#: opimd-notifier:476
+msgid "Ready"
+msgstr "Redo"
+
+#: opimd_utils/opimd_reply.py:89
+msgid "Error while sending message!"
+msgstr "Fel vid skickande av meddelande!"
+
+#: opimd_utils/opimd_reply.py:108
+msgid "Retry"
+msgstr "Försök igen"
+
+#: opimd_utils/opimd_reply.py:212
+#: opimd_utils/opimd_reply.py:348
+msgid "Options"
+msgstr "Alternativ"
+
+#: opimd_utils/opimd_reply.py:277
+msgid "Back"
+msgstr "Tillbaka"
+
+#: opimd_utils/opimd_reply.py:310
+msgid "To: "
+msgstr "Till: "
+
+#: opimd_utils/opimd_reply.py:364
+msgid "Send"
+msgstr "Skicka"
+

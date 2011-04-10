@@ -1,0 +1,139 @@
+# Swedish translation of opimd-messages.
+# This file is put in the public domain.
+# John Gustafsson <jamminjohn@users.sourceforge.net>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: opimd-messages\n"
+"Report-Msgid-Bugs-To: shr-devel@lists.shr-project.org\n"
+"POT-Creation-Date: 2011-04-03 17:42+0200\n"
+"PO-Revision-Date: 2011-04-10 21:36+0100\n"
+"Last-Translator: John Gustafsson <jamminjohn@users.sourceforge.net>\n"
+"Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
+"Language: sv\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: opimd-messages:75
+msgid "Do you really want to delete this message?"
+msgstr "Vill du verkligen ta bort detta meddelande?"
+
+#: opimd-messages:83
+msgid "Yes"
+msgstr "Ja"
+
+#: opimd-messages:89
+msgid "No"
+msgstr "Nej"
+
+#: opimd-messages:170
+msgid "Out: "
+msgstr "Ut: "
+
+#: opimd-messages:171
+msgid "Processing: "
+msgstr "Bearbetar: "
+
+#: opimd-messages:172
+msgid "Sent: "
+msgstr "Skickade: "
+
+#: opimd-messages:173
+msgid "Read: "
+msgstr "Lästa: "
+
+#: opimd-messages:174
+msgid "Delivered: "
+msgstr "Levererade: "
+
+#: opimd-messages:275
+msgid "Delete"
+msgstr "Ta bort"
+
+#: opimd-messages:287
+msgid "Reply"
+msgstr "Svara"
+
+#: opimd-messages:342
+msgid "No more messages."
+msgstr "Inga fler meddelanden."
+
+#: opimd-messages:355
+msgid "Counter reached"
+msgstr "Räknare nådd"
+
+#: opimd-messages:376
+msgid "Messages"
+msgstr "Meddelanden"
+
+#: opimd-messages:401
+#: opimd_utils/opimd_reply.py:277
+msgid "Back"
+msgstr "Tillbaka"
+
+#: opimd-messages:431
+msgid "Querying..."
+msgstr "Frågar..."
+
+#: opimd-messages:439
+msgid "Query: "
+msgstr "Fråga: "
+
+#: opimd-messages:442
+msgid "Number of results: "
+msgstr "Antal resultat: "
+
+#: opimd-messages:457
+msgid "Finished"
+msgstr "Avslutad"
+
+#: opimd-messages:484
+#, python-format
+msgid "%s (%d unread, %d read)"
+msgstr "%s (%d olästa, %d lästa)"
+
+#: opimd-messages:486
+#, python-format
+msgid "%s (%d read)"
+msgstr "%s (%d lästa)"
+
+#: opimd-messages:500
+#: opimd-messages:508
+#, python-format
+msgid "%s (%d unread)"
+msgstr "%s (%d olästa)"
+
+#: opimd-messages:508
+#: opimd-messages:510
+#: opimd-messages:514
+msgid "All messages"
+msgstr "Alla meddelanden"
+
+#: opimd_utils/opimd_reply.py:89
+msgid "Error while sending message!"
+msgstr "Fel vid skickande av meddelande!"
+
+#: opimd_utils/opimd_reply.py:108
+msgid "Retry"
+msgstr "Försök igen"
+
+#: opimd_utils/opimd_reply.py:114
+#: opimd_utils/opimd_reply.py:356
+msgid "Close"
+msgstr "Stäng"
+
+#: opimd_utils/opimd_reply.py:212
+#: opimd_utils/opimd_reply.py:348
+msgid "Options"
+msgstr "Alternativ"
+
+#: opimd_utils/opimd_reply.py:310
+msgid "To: "
+msgstr "Till: "
+
+#: opimd_utils/opimd_reply.py:364
+msgid "Send"
+msgstr "Skicka"
+
