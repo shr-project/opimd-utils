@@ -327,7 +327,7 @@ def missed_call(x, just_unread = False):
   else:
     caller = ''
   bubble.text_set(caller)
-  bubble.info_set(resolve_time(result['Timestamp']))
+  bubble.text_part_set('info',resolve_time(result['Timestamp']))
 
   bubble.content_set(text)
   bubble.show()
@@ -377,7 +377,7 @@ def incoming_message(x, just_unread = False):
       number = result['Sender']
     name = resolve_phone(number)
     bubble.text_set(name)
-    bubble.info_set(timestamp)
+    bubble.text_part_set('info',timestamp)
 
     try:
       smsclass=result['SMS-message-class']
@@ -422,7 +422,7 @@ def incoming_message(x, just_unread = False):
     else:
       number = result['Recipient']
     name = resolve_phone(number)
-    bubble.info_set(name)
+    bubble.text_part_set('info',name)
 #    bubble.text_set(timestamp)
     text.show()
     bubble.content_set(text)
