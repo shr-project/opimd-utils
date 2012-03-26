@@ -241,7 +241,7 @@ def search(downbox, obj, *args, **kwargs):
   entryscr.content_set(entry)
   entryscr.show()
 
-  entry.focus()
+  entry.focus_set(True)
 
   entry._callback_add('changed', partial(search_changed, frame))
 

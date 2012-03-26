@@ -187,7 +187,7 @@ def inwin_close(dia, *args, **kwargs):
 
 def focusToContent(content, *args, **kargs):
   print "enter"
-  content.focus()
+  content.focus_set(True)
 
 def sure(dia, callback, *args, **kwargs):
   dia.delete()
@@ -322,7 +322,7 @@ def composeNote(*args, **kargs):
     if data.get('Title'):
       title.entry_set(title.utf8_to_markup(data['Title']))
   else:
-    title.focus()
+    title.focus_set(True)
   title.scale_set(1.2)
   titlescr.content_set(title)
   titlescr.show()
@@ -343,7 +343,7 @@ def composeNote(*args, **kargs):
   if data:
     if data.get('Content'):
       content.entry_set(content.utf8_to_markup(data['Content']))
-    content.focus()
+    content.focus_set(True)
   content.size_hint_weight_set(1.0, 1.0)
   content.size_hint_align_set(-1.0, -1.0)
   contentscr.content_set(content)
@@ -684,7 +684,7 @@ def search(*args, **kargs):
   title.size_hint_align_set(-1.0, -1.0)
   title.single_line_set(True)
   title.scale_set(1.2)
-  title.focus()
+  title.focus_set(True)
   titlescr.content_set(title)
   titlescr.show()
   box.pack_end(titlescr)
