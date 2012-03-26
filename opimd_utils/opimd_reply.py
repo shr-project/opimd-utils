@@ -195,7 +195,7 @@ def loadOpts():
 
 def hide_opts(pager, optsval, *args, **kwargs):
   saveOpts(optsval)
-  pager.content_pop()
+  pager.item_pop()
 
 def show_opts(pager, *args, **kwargs):
   box = elementary.Box(pager)
@@ -284,7 +284,7 @@ def show_opts(pager, *args, **kwargs):
   oframe.content_set(obox)
   scroller.content_set(oframe)
 
-  pager.content_push(box)
+  pager.item_simple_push(box)
 
 def update_chars(label, obj, *args, **kwargs):
   label.label_set("(%d)" % len(obj.markup_to_utf8(obj.entry_get())))
@@ -295,7 +295,7 @@ def reply(to, text, bus, win, func_ok, func_err, func_status, *args, **kwargs):
   inwin.show()
 #  inwin.style_set("minimal")
 
-  pager = elementary.Pager(inwin)
+  pager = elementary.Naviframe(inwin)
   inwin.content_set(pager)
   pager.show()
 
@@ -375,7 +375,7 @@ def reply(to, text, bus, win, func_ok, func_err, func_status, *args, **kwargs):
   box.size_hint_align_set(-1.0, -1.0)
 
 #  inwin.content_set(box)
-  pager.content_push(box)
+  pager.item_simple_push(box)
   box.show()
   inwin.activate()
 

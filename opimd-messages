@@ -369,7 +369,7 @@ def next_result(res, *args, **kwargs):
   proceed(kwargs.get('num'))
 
 def promote_page(page, *args, **kwargs):
-  pager.content_promote(page)
+  pager.item_simple_promote(page)
 
 elementary.init()
 win = elementary.Window('opimd-messages', elementary.ELM_WIN_BASIC)
@@ -379,7 +379,7 @@ bg = elementary.Background(win)
 win.resize_object_add(bg)
 bg.show()
 
-pager = elementary.Pager(win)
+pager = elementary.Naviframe(win)
 win.resize_object_add(pager)
 pager.show()
 
@@ -390,7 +390,7 @@ list.size_hint_weight_set(1.0,  1.0)
 message_page = elementary.Box(win)
 
 scroll = elementary.Scroller(win)
-pager.content_push(message_page)
+pager.item_simple_push(message_page)
 message_page.pack_start(scroll)
 scroll.size_hint_align_set(-1.0, -1.0)
 scroll.size_hint_weight_set(1.0,  1.0)
@@ -517,7 +517,7 @@ list.go()
 
 list.show()
 
-pager.content_push(list)
+pager.item_simple_push(list)
   
 win.callback_destroy_add(destroy)
 win.show()

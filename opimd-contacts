@@ -55,13 +55,13 @@ bg = elementary.Background(win)
 win.resize_object_add(bg)
 bg.show()
 
-pager = elementary.Pager(win)
+pager = elementary.Naviframe(win)
 win.resize_object_add(pager)
 pager.show()
 
 mainbox = elementary.Box(win)
 mainbox.show()
-pager.content_push(mainbox)
+pager.item_simple_push(mainbox)
 
 win.callback_destroy_add(destroy)
 
@@ -253,7 +253,7 @@ def search(downbox, obj, *args, **kwargs):
   obj._callback_add('clicked', nothing)
 
 def pager_pop(pager, *args, **kwargs):
-  pager.content_pop()
+  pager.item_pop()
 
 def inwin_close(dia, *args, **kwargs):
   if kwargs.get('callback'):
@@ -377,13 +377,13 @@ def check_contact(contact, fieldname):
   return False
 
 def del_contact(path, *args, **kargs):
-  pager.content_pop()
+  pager.item_pop()
   contact = getDbusObject (bus, "org.freesmartphone.opimd", path, "org.freesmartphone.PIM.Contact")
   contact.Delete()
 
 def save_contact(path, data, *args, **kwargs):
   data = data.return_data()
-  pager.content_pop()
+  pager.item_pop()
   if path:
     contact = getDbusObject (bus, "org.freesmartphone.opimd", path, "org.freesmartphone.PIM.Contact")
     contact.Update(data)
@@ -582,13 +582,13 @@ def edit_contact(path, *args, **kwargs):
       data = contact.GetContent()
     else:
       data = kwargs['data']
-    pager.content_pop()
+    pager.item_pop()
   else:
     data = {}
 
   box = elementary.Box(win)
   box.show()
-  pager.content_push(box)
+  pager.item_simple_push(box)
 
   scr = elementary.Scroller(win)
   scr.bounce_set(0, 0)
@@ -651,7 +651,7 @@ def display_contact(path, *args, **kwargs):
 
   box = elementary.Box(win)
   box.show()
-  pager.content_push(box)
+  pager.item_simple_push(box)
 
   bottombox = elementary.Box(win)
   bottombox.size_hint_weight_set(1.0, 0.0)

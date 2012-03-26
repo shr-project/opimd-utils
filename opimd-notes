@@ -176,7 +176,7 @@ data['Path'], bubble))
   displayedNotes.append(bubble)
 
 def pager_pop(pager, *args, **kwargs):
-  pager.content_pop()
+  pager.item_pop()
 
 def inwin_close(dia, *args, **kwargs):
   if kwargs.get('callback'):
@@ -298,13 +298,13 @@ def composeNote(*args, **kargs):
     path = data['Path']
 
   dia = elementary.InnerWindow(win)
-  pager = elementary.Pager(win)
+  pager = elementary.Naviframe(win)
   pager.show()
   box = elementary.Box(win)
   box.size_hint_weight_set(1.0, 1.0)
   box.size_hint_align_set(-1.0, -1.0)
   box.show()
-  pager.content_push(box)
+  pager.item_simple_push(box)
   dia.content_set(pager)
 
   titlescr = elementary.Scroller(win)
@@ -603,10 +603,10 @@ def editTags(pager, dia, titlee, contente, *args, **kargs):
   downbox.pack_end(back)
   downbox.size_hint_weight_set(1.0, 0.0)
   downbox.size_hint_align_set(-1.0, 0.0)
-  pager.content_push(box)
+  pager.item_simple_push(box)
 
 def viewTag(tag, pager, *args, **kargs):
-  pager.content_pop()
+  pager.item_pop()
   clearNotes()
   if tag:
     displayNotes(query = {'Tag':tag})
@@ -639,7 +639,7 @@ def selectTag(pager, *args, **kargs):
   back._callback_add('clicked', partial(pager_pop, pager))
   box.pack_end(back)
   box.show()
-  pager.content_push(box)
+  pager.item_simple_push(box)
 
 def doSearch(title, titles, regexps, dia, *args, **kargs):
   text = title.entry_get()
@@ -750,13 +750,13 @@ bg = elementary.Background(win)
 win.resize_object_add(bg)
 bg.show()
 
-pager = elementary.Pager(win)
+pager = elementary.Naviframe(win)
 win.resize_object_add(pager)
 pager.show()
 
 mainbox = elementary.Box(win)
 mainbox.show()
-pager.content_push(mainbox)
+pager.item_simple_push(mainbox)
 
 win.callback_destroy_add(destroy)
 
