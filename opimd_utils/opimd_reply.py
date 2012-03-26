@@ -92,7 +92,7 @@ def dbus_gsm_err(to, text, props, x, bus, win, func_ok, func_err, func_status, d
   sc = elementary.Scroller(inwin)
   sc.bounce_set(0, 0)
   sc.show()
-  anchor = elementary.AnchorBlock(inwin)
+  anchor = elementary.Entry(inwin)
   anchor.text_set(elementary.Entry.utf8_to_markup(str(dx)))
   anchor.show()
   sc.content_set(anchor)

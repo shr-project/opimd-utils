@@ -111,7 +111,7 @@ def renderNote(*args, **kargs):
   content = elementary.Entry.utf8_to_markup(content)
   if not content:
     content = ''
-  text = elementary.AnchorBlock(win)
+  text = elementary.Entry(win)
   text.size_hint_weight_set(1.0, 0.0)
   text.size_hint_align_set(-1.0, -1.0)
   text.text_set(content)
@@ -129,7 +129,7 @@ def renderNote(*args, **kargs):
   frame.content_set(framebox)
   frame.show()
 
-  atags = elementary.AnchorBlock(win)
+  atags = elementary.Entry(win)
   atags._callback_add('anchor,clicked', partial(anchorClicked, data.get('Tag')))
   tags=makeAnchorsFromTags(data.get('Tag'))
   atags.text_set('<b>Tags:</b> '+tags)
@@ -793,7 +793,7 @@ def displayStatus(stat, *args, **kargs):
   upbox.size_hint_align_set(-1.0, -1.0)
   upbox.show()
 
-  text = elementary.AnchorBlock(win)
+  text = elementary.Entry(win)
   text.text_set(stat)
   text.size_hint_weight_set(1.0, 0.0)
   text.size_hint_align_set(-1.0, 0.5)

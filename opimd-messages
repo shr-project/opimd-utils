@@ -200,7 +200,7 @@ def render_message(message, incoming = False):
   bubble = elementary.Bubble(win)
 
   textbox = elementary.Box(win)
-  text = elementary.AnchorBlock(win)
+  text = elementary.Entry(win)
   textbox.pack_start(text)
 
   content = message.get('Content')
