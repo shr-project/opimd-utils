@@ -140,7 +140,7 @@ def display_contacts(list, name = None):
   label = elementary.Label(loading)
   label.scale_set(2.0)
   loading.content_set(label)
-  label.label_set(_("Searching..."))
+  label.text_set(_("Searching..."))
   label.show()
   loading.show()
   query_contacts(partial(display_contacts_callback, loading), name)
@@ -177,7 +177,7 @@ def list_contact(path, *args, **kwargs):
   callbtn = None
   if check_contact(contact, 'Phone'):
     callbtn = elementary.Button(list)
-    callbtn.label_set(_("Call"))
+    callbtn.text_set(_("Call"))
     callbtn.show()
     callbtn._callback_add('clicked', partial(select_field, contact, 'Phone', call))
   list.item_append(name, photo, callbtn, partial(display_contact, contact['Path'], data=contact))
@@ -222,7 +222,7 @@ def nothing(*args, **kwargs):
 
 def search(downbox, obj, *args, **kwargs):
   frame = elementary.Frame(win)
-  frame.label_set(_("Type name to search..."))
+  frame.text_set(_("Type name to search..."))
   frame.show()
   frame.size_hint_weight_set(1.0, 0.0)
   frame.size_hint_align_set(-1.0, -1.0)
@@ -266,7 +266,7 @@ def ussd_ok(dia, *args, **kwargs):
   dia.delete()
 
 def ussd_error(dia, label, x, *args, **kwargs):
-  label.label_set(_("Error while sending USSD request!"))
+  label.text_set(_("Error while sending USSD request!"))
   timer_add(3, partial(inwin_close, dia))
   print str(x)
 
@@ -279,7 +279,7 @@ def call(to, *args, **kwargs):
     dia.show()
     dia.style_set('minimal')
     label = elementary.Label(win)
-    label.label_set(_("Sending USSD request..."))
+    label.text_set(_("Sending USSD request..."))
     label.show()
     dia.content_set(label)
     network = getDbusObject (bus, "org.freesmartphone.ogsmd", "/org/freesmartphone/GSM/Device", "org.freesmartphone.GSM.Network")
@@ -295,7 +295,7 @@ def mail(to, *args, **kwargs):
   dia.show()
   dia.style_set('minimal')
   label = elementary.Label(win)
-  label.label_set(_("Not yet implemented"))
+  label.text_set(_("Not yet implemented"))
   label.show()
   dia.content_set(label)
   dia.activate()
@@ -308,7 +308,7 @@ def sms_status(dia, icon, label, status):
   elif status=='error':
     dia.hide()
   elif status=='sent':
-    label.label_set(_("Message sent!"))
+    label.text_set(_("Message sent!"))
     timer_add(3, partial(inwin_close, dia))
   elif status=='cancelled':
     dia.delete()
@@ -319,7 +319,7 @@ def sms(to, *args, **kwargs):
   win.resize_object_add(dia)
   dia.style_set('minimal')
   label = elementary.Label(dia)
-  label.label_set(_("Sending..."))
+  label.text_set(_("Sending..."))
   label.show()
   dia.content_set(label)
   opimd_reply.reply([to, kwargs['contact']['Name']], '', bus, win, None, None, partial(sms_status, dia, None, label))
@@ -362,7 +362,7 @@ def select_field(contact, fieldname, callback, *args, **kwargs):
     list.go()
 
     btn = elementary.Button(win)
-    btn.label_set('Close')
+    btn.text_set('Close')
     btn.size_hint_weight_set(-1.0, 0.0)
     btn.size_hint_align_set(-1.0, 0.0)
     btn.show()
@@ -403,7 +403,7 @@ class Field():
     frame.size_hint_align_set(-1.0, 1.0)
 #    frame.show()
     label = elementary.Label(win)
-    label.label_set(field+':')
+    label.text_set(field+':')
     label.scale_set(1.25)
     label.show()
     label.size_hint_weight_set(-1.0, 0.0)
@@ -432,7 +432,7 @@ class Field():
     table.pack(entryscr, 1, num, 1, 1)
 
     delb = elementary.Button(win)
-    delb.label_set('X')
+    delb.text_set('X')
     delb._callback_add('clicked', self.delete)
     if allowdel:
        delb.show()
@@ -529,7 +529,7 @@ def add_field(edit, *args, **kargs):
 
   label = elementary.Label(win)
   label.size_hint_align_set(-1.0, 0.0)
-  label.label_set(_("Enter field name:"))
+  label.text_set(_("Enter field name:"))
   label.show()
   box.pack_start(label)
 
@@ -557,7 +557,7 @@ def add_field(edit, *args, **kargs):
   bbox.show()
 
   add = elementary.Button(win)
-  add.label_set(_("Add"))
+  add.text_set(_("Add"))
   add.size_hint_weight_set(1.0, 0.0)
   add.size_hint_align_set(-1.0, 0.0)
   add._callback_add('clicked', partial(add_field2, dia, entry, edit))
@@ -565,7 +565,7 @@ def add_field(edit, *args, **kargs):
   bbox.pack_end(add)
 
   quit = elementary.Button(win)
-  quit.label_set(_("Quit"))
+  quit.text_set(_("Quit"))
   quit.size_hint_weight_set(1.0, 0.0)
   quit.size_hint_align_set(-1.0, 0.0)
   quit._callback_add('clicked', partial(inwin_close, dia))
@@ -605,7 +605,7 @@ def edit_contact(path, *args, **kwargs):
   edit = EditContact(path, data, scbox)
 
   newfie = elementary.Button(win)
-  newfie.label_set(_("New field"))
+  newfie.text_set(_("New field"))
   newfie._callback_add('clicked', partial(add_field, edit))
   newfie.size_hint_weight_set(1.0, 0.0)
   newfie.size_hint_align_set(-1.0, -1.0)
@@ -621,7 +621,7 @@ def edit_contact(path, *args, **kwargs):
   box.pack_end(bbox)
 
   save = elementary.Button(win)
-  save.label_set(_("Save"))
+  save.text_set(_("Save"))
   save._callback_add('clicked', partial(save_contact, path, edit))
   save.size_hint_weight_set(1.0, 0.0)
   save.size_hint_align_set(-1.0, -1.0)
@@ -630,13 +630,13 @@ def edit_contact(path, *args, **kwargs):
 
   if path:
     delbtn = elementary.Button(win)
-    delbtn.label_set(_("Delete"))
+    delbtn.text_set(_("Delete"))
     delbtn._callback_add('clicked', partial(del_contact, path))
     delbtn.show()
     bbox.pack_end(delbtn)
 
   back = elementary.Button(win)
-  back.label_set(_("Back"))
+  back.text_set(_("Back"))
   back._callback_add('clicked', partial(pager_pop, pager))
   back.show()
   bbox.pack_end(back)
@@ -666,7 +666,7 @@ def display_contact(path, *args, **kwargs):
   if isphone or ismail:
     hover = elementary.Hoversel(win)
     hover.hover_parent_set(pager)
-    hover.label_set('Actions')
+    hover.text_set('Actions')
     bottombox.pack_end(hover)
     hover.size_hint_weight_set(1.0, 0.0)
     hover.size_hint_align_set(-1.0, 0.0)
@@ -684,7 +684,7 @@ def display_contact(path, *args, **kwargs):
                 elementary.ELM_ICON_STANDARD,partial(select_field,data, 'E-mail', mail))
 
   editbtn = elementary.Button(bottombox)
-  editbtn.label_set(_("Edit"))
+  editbtn.text_set(_("Edit"))
   editbtn.show()
   editbtn._callback_add('clicked', partial(edit_contact, path, data=data))
   if not (isphone or ismail):
@@ -694,7 +694,7 @@ def display_contact(path, *args, **kwargs):
 
 
   backbtn = elementary.Button(bottombox)
-  backbtn.label_set(_("Back"))
+  backbtn.text_set(_("Back"))
   backbtn.show()
   backbtn._callback_add('clicked', partial(pager_pop, pager))
   bottombox.pack_end(backbtn)
@@ -749,7 +749,7 @@ def display_contact(path, *args, **kwargs):
     name = data['Name']
     if data.get('Surname'):
       name += ' ' + data['Surname']
-    label.label_set('<b>'+elementary.Entry.utf8_to_markup(name)+'</b>')
+    label.text_set('<b>'+elementary.Entry.utf8_to_markup(name)+'</b>')
     label.show()
     label.size_hint_align_set(-1.0, 0.0)
     info.pack_start(label)
@@ -760,7 +760,7 @@ def display_contact(path, *args, **kwargs):
       nicks = [nicks]
     for nick in nicks:
       label = elementary.Label(info)
-      label.label_set('<i>'+elementary.Entry.utf8_to_markup(nick)+'</i>')
+      label.text_set('<i>'+elementary.Entry.utf8_to_markup(nick)+'</i>')
       label.show()
       label.size_hint_align_set(-1.0, 0.0)
       info.pack_end(label)
@@ -787,7 +787,7 @@ def display_contact(path, *args, **kwargs):
           icon.show()
           ibox.pack_start(icon)
         label = elementary.Label(info)
-        label.label_set(' '+elementary.Entry.utf8_to_markup(str(value)))
+        label.text_set(' '+elementary.Entry.utf8_to_markup(str(value)))
         label.show()
         label.size_hint_align_set(-1.0, 0.0)
         label.size_hint_weight_set(1.0, 0.0)
@@ -815,7 +815,7 @@ def display_contact(path, *args, **kwargs):
         values = [values]
       lafield = elementary.Label(win)
       lafield.show()
-      lafield.label_set(elementary.Entry.utf8_to_markup(field) + ':')
+      lafield.text_set(elementary.Entry.utf8_to_markup(field) + ':')
       lafield.size_hint_align_set(-1.0, 0.0)
 
       table.pack(lafield, 0, i, 1, 1)
@@ -840,7 +840,7 @@ def display_contact(path, *args, **kwargs):
             valuebox.pack_end(icon)
             break
 
-        lavalue.label_set(elementary.Entry.utf8_to_markup(str(value))+' ')
+        lavalue.text_set(elementary.Entry.utf8_to_markup(str(value))+' ')
         lavalue.size_hint_align_set(1.0, 0.0)
 
         valuebox.pack_start(lavalue)
@@ -889,7 +889,7 @@ def make_downbox():
   mainbox.pack_end(downbox)
 
   searchbtn = elementary.Button(win)
-  searchbtn.label_set(_("Search"))
+  searchbtn.text_set(_("Search"))
   downbox.pack_start(searchbtn)
   searchbtn.size_hint_weight_set(1.0, 0.0)
   searchbtn.size_hint_align_set(-1.0, 0.0)
@@ -897,14 +897,14 @@ def make_downbox():
   searchbtn.show()
 
   newbtn = elementary.Button(win)
-  newbtn.label_set(_("New"))
+  newbtn.text_set(_("New"))
   newbtn._callback_add('clicked', partial(edit_contact, None))
   downbox.pack_end(newbtn)
   newbtn.size_hint_align_set(-1.0, 0.0)
   newbtn.show()
 
   exitbtn = elementary.Button(win)
-  exitbtn.label_set(_("Close"))
+  exitbtn.text_set(_("Close"))
   downbox.pack_end(exitbtn)
   exitbtn.show()
   exitbtn.size_hint_align_set(-1.0, 0.0)

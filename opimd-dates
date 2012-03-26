@@ -164,7 +164,7 @@ class CalendarMonth(elementary.Table):
 		# previus month button
 		prevbt = elementary.Button(self)
 		prevbt._callback_add("clicked", self.show_month, prevyear, prevmonth)
-		prevbt.label_set("< ")        
+		prevbt.text_set("< ")        
 		prevbt.show()                                    
 		self.pack(prevbt,row,0,1,1)
 
@@ -172,7 +172,7 @@ class CalendarMonth(elementary.Table):
 		title_label = elementary.Label(self)
 		self.pack(title_label,1,row,5,1)
 		title_label.show()
-		title_label.label_set( month_strings[ month-1 ] + " " + str(year) )
+		title_label.text_set( month_strings[ month-1 ] + " " + str(year) )
 
 		# calculate next month
 		if month >= 12:
@@ -185,7 +185,7 @@ class CalendarMonth(elementary.Table):
 		# next month button
 		nextbt = elementary.Button(self)
 		nextbt._callback_add("clicked", self.show_month, nextyear, nextmonth)    
-		nextbt.label_set(" >")                                
+		nextbt.text_set(" >")                                
 		nextbt.show()                                    
 		self.pack(nextbt,6,row,1,1)
 
@@ -193,7 +193,7 @@ class CalendarMonth(elementary.Table):
 		row += 1
 		for e in range(0,7):
 			l = elementary.Label(self)
-			l.label_set(day_names[e])
+			l.text_set(day_names[e])
 			l.size_hint_align_set(0.5,0.5)
 			l.show()
 			l.scale_set(1)
@@ -218,7 +218,7 @@ class CalendarMonth(elementary.Table):
 					bt.size_hint_weight_set(1.0, 1.0)
 					#bt.size_hint_align_set(0.5, 0.5)
 					bt._callback_add("clicked", self.show_day, year, month, day)
-					bt.label_set( str( day ) )
+					bt.text_set( str( day ) )
 					bt.show()
 					self.pack(bt,weekday,row,1,1)
 
@@ -272,7 +272,7 @@ class CalendarDay(elementary.Box):
 		title_label = elementary.Label(self)
 		self.pack_end(title_label)
 		title_label.size_hint_weight_set(0.0, 0.0)
-		title_label.label_set( str(date.date()) )
+		title_label.text_set( str(date.date()) )
 		title_label.show()
 
 		sc = elementary.Scroller(self)
@@ -304,7 +304,7 @@ class CalendarDay(elementary.Box):
 		# back to month button
 		backbt = elementary.Button(navbox)
 		backbt._callback_add("clicked", self.show_month, year, month)
-		backbt.label_set(_("Back"))
+		backbt.text_set(_("Back"))
 		backbt.size_hint_weight_set(1.0, 1.0)
 		backbt.size_hint_align_set(-1.0, -1.0)
 		backbt.show()
@@ -314,7 +314,7 @@ class CalendarDay(elementary.Box):
 		# new button
 		newbt = elementary.Button(navbox)
 		newbt._callback_add("clicked", self.add_entry, year, month, day)
-		newbt.label_set(_("New"))
+		newbt.text_set(_("New"))
 		newbt.size_hint_weight_set(1.0, 1.0)
 		newbt.size_hint_align_set(-1.0, -1.0)
 		newbt.show()
@@ -324,7 +324,7 @@ class CalendarDay(elementary.Box):
 		# add hours to the table
 		for h in range(0,24):
 			l = elementary.Label(self.table)
-			l.label_set( str(h) +"h")
+			l.text_set( str(h) +"h")
 			l.show()
 			self.table.pack(l,0,row,1,6)
 			row += 6
@@ -386,7 +386,7 @@ class CalendarDay(elementary.Box):
 					title = i['Title']
 				else:
 					title = _("No Title")
-				entry.label_set(title)
+				entry.text_set(title)
 				entry.size_hint_weight_set(1.0, 1.0)
 				entry.size_hint_align_set(-1.0, -1.0)
 				entry._callback_add("clicked", self.show_entry, i["Path"])
@@ -458,7 +458,7 @@ class AddCalendarEntry(elementary.Box):
 		# Title
 		title_label = elementary.Label(box)
 		box.pack(title_label,0,0,1,1)
-		title_label.label_set( _("Title:") )
+		title_label.text_set( _("Title:") )
 		title_label.show()
 		title_label.size_hint_align_set(0.0, 0.0)
 
@@ -481,7 +481,7 @@ class AddCalendarEntry(elementary.Box):
 		# Begin
 		begin_label = elementary.Label(box)
 		box.pack(begin_label,0,1,1,1)
-		begin_label.label_set( _("Begin:") )
+		begin_label.text_set( _("Begin:") )
 		begin_label.show()
 		begin_label.size_hint_align_set(0.0, 0.0)
 
@@ -515,7 +515,7 @@ class AddCalendarEntry(elementary.Box):
 		# End
 		end_label = elementary.Label(box)
 		box.pack(end_label,0,3,1,1)
-		end_label.label_set( _("End:") )
+		end_label.text_set( _("End:") )
 		end_label.show()
 		end_label.size_hint_align_set(0.0, 0.0)
 
@@ -557,7 +557,7 @@ class AddCalendarEntry(elementary.Box):
 
 		backbt = elementary.Button(navbox)
 		backbt._callback_add("clicked", self.show_day, date.year, date.month, date.day)
-		backbt.label_set(_("Back"))
+		backbt.text_set(_("Back"))
 		backbt.size_hint_weight_set(1.0, 1.0)
 		backbt.size_hint_align_set(-1.0, 0.0)
 		backbt.show()
@@ -568,7 +568,7 @@ class AddCalendarEntry(elementary.Box):
 			newbt._callback_add("clicked", self.update_entry, date.year, date.month, date.day, data['Path'])
 		else:
 			newbt._callback_add("clicked", self.add_entry, date.year, date.month, date.day)
-		newbt.label_set(_("Save"))
+		newbt.text_set(_("Save"))
 		newbt.size_hint_weight_set(1.0, 1.0)
 		newbt.size_hint_align_set(-1.0, 0.0)
 		newbt.show()
@@ -671,7 +671,7 @@ class CalendarEntry(elementary.Box):
 		# back to month button
 		backbt = elementary.Button(navbox)
 		backbt._callback_add("clicked", self.show_day, begin.year, begin.month, begin.day)
-		backbt.label_set(_("Back"))
+		backbt.text_set(_("Back"))
 		backbt.size_hint_weight_set(1.0, 1.0)
 		backbt.size_hint_align_set(-1.0, -1.0)
 		backbt.show()
@@ -681,7 +681,7 @@ class CalendarEntry(elementary.Box):
 		# delete button
 		newbt = elementary.Button(navbox)
 		newbt._callback_add("clicked", self.del_entry, path, begin.year, begin.month, begin.day)
-		newbt.label_set(_("Delete"))
+		newbt.text_set(_("Delete"))
 		newbt.size_hint_weight_set(1.0, 1.0)
 		newbt.size_hint_align_set(-1.0, -1.0)
 		newbt.show()
@@ -699,19 +699,19 @@ class CalendarEntry(elementary.Box):
 		box.pack_end(title_label)
 		title_label.size_hint_weight_set(0.0, 0.0)
 		if entry.get('Title'):
-			title_label.label_set( _("Title:")+" "+entry['Title'] )
+			title_label.text_set( _("Title:")+" "+entry['Title'] )
 		title_label.show()
 
 		begin_label = elementary.Label(self)
 		box.pack_end(begin_label)
 		begin_label.size_hint_weight_set(0.0, 0.0)
-		begin_label.label_set( _("Begin:")+" "+str(begin) )
+		begin_label.text_set( _("Begin:")+" "+str(begin) )
 		begin_label.show()
 
 		end_label = elementary.Label(self)
 		box.pack_end(end_label)
 		end_label.size_hint_weight_set(0.0, 0.0)
-		end_label.label_set( _("End:")+" "+str(end) )
+		end_label.text_set( _("End:")+" "+str(end) )
 		end_label.show()
 
 	# called when entry button is clicked
@@ -805,7 +805,7 @@ class CalendarWidget(elementary.Box):
 		# previus month button
 		prevbt = elementary.Button(self.t)
 		prevbt._callback_add("clicked", self._set_view, prevyear, prevmonth)
-		prevbt.label_set("< ")        
+		prevbt.text_set("< ")        
 		prevbt.show()                                    
 		self.t.pack(prevbt,row,0,1,1)
 
@@ -813,7 +813,7 @@ class CalendarWidget(elementary.Box):
 		title_label = elementary.Label(self.t)
 		self.t.pack(title_label,1,row,5,1)
 		title_label.show()
-		title_label.label_set( month_strings[ self.current_month-1 ] + " " + str(self.current_year) )
+		title_label.text_set( month_strings[ self.current_month-1 ] + " " + str(self.current_year) )
 
 		# calculate next month
 		if self.current_month >= 12:
@@ -826,7 +826,7 @@ class CalendarWidget(elementary.Box):
 		# next month button
 		nextbt = elementary.Button(self.t)
 		nextbt._callback_add("clicked", self._set_view, nextyear, nextmonth)    
-		nextbt.label_set(" >")                                
+		nextbt.text_set(" >")                                
 		nextbt.show()                                    
 		self.t.pack(nextbt,6,row,1,1)
 
@@ -834,7 +834,7 @@ class CalendarWidget(elementary.Box):
 		row += 1
 		for e in range(0,7):
 			l = elementary.Label(self.t)
-			l.label_set(day_names[e])
+			l.text_set(day_names[e])
 			l.size_hint_align_set(0.5,0.5)
 			l.show()
 			l.scale_set(1)
@@ -848,7 +848,7 @@ class CalendarWidget(elementary.Box):
 					self.buttons[daystr] = elementary.Button(self.t)
 					self.buttons[daystr]._callback_add("clicked", self._button_pressed, day)
 					self.buttons[daystr].size_hint_weight_set(1.0, 1.0)
-					self.buttons[daystr].label_set( str( day ) )
+					self.buttons[daystr].text_set( str( day ) )
 					self.buttons[daystr].show()
 					self.t.pack(self.buttons[daystr],weekday,row,1,1)
 

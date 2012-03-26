@@ -86,7 +86,7 @@ def dbus_gsm_err(to, text, props, x, bus, win, func_ok, func_err, func_status, d
   box.show()
   inwin.content_set(box)
   label = elementary.Label(inwin)
-  label.label_set(_("Error while sending message!"))
+  label.text_set(_("Error while sending message!"))
   label.show()
   box.pack_start(label)
   sc = elementary.Scroller(inwin)
@@ -105,13 +105,13 @@ def dbus_gsm_err(to, text, props, x, bus, win, func_ok, func_err, func_status, d
   hbox.show()
 
   retry = elementary.Button(inwin)
-  retry.label_set(_("Retry"))
+  retry.text_set(_("Retry"))
   retry.show()
   retry._callback_add('clicked', partial(retry_msg, to, text, bus, win, inwin, func_ok, func_err, func_status))
   hbox.pack_end(retry)
 
   hide = elementary.Button(inwin)
-  hide.label_set(_("Close"))
+  hide.text_set(_("Close"))
   hide.show()
   hide._callback_add('clicked', partial(inwindelete, inwin, func_status))
   hbox.pack_end(hide)  
@@ -209,7 +209,7 @@ def show_opts(pager, *args, **kwargs):
   box.pack_start(scroller)
 
   oframe = elementary.Frame(pager)
-  oframe.label_set(_("Options"))
+  oframe.text_set(_("Options"))
   oframe.show()
   oframe.style_set('pad_small')
   oframe.size_hint_weight_set(1.0, 1.0)
@@ -225,35 +225,35 @@ def show_opts(pager, *args, **kwargs):
 
   """
   report = elementary.Check(obox)
-  report.label_set('request delivery report')
+  report.text_set('request delivery report')
   report.show()
   report.size_hint_weight_set(1.0, 0.0)
   report.size_hint_align_set(0.0, 0.0)
   obox.pack_end(report)
 
   charset = elementary.Check(obox)
-  charset.label_set('force GSM ASCII charset')
+  charset.text_set('force GSM ASCII charset')
   charset.show()
   charset.size_hint_weight_set(-1.0, 0.0)
   charset.size_hint_align_set(-1.0, 0.0)
   obox.pack_end(charset)
 
   store = elementary.Check(obox)
-  store.label_set('store SMS in outbox')
+  store.text_set('store SMS in outbox')
   store.show()
   store.size_hint_weight_set(-1.0, 0.0)
   store.size_hint_align_set(-1.0, 0.0)
   obox.pack_end(store)
 
   flash = elementary.Check(obox)
-  flash.label_set('send as Class 0')
+  flash.text_set('send as Class 0')
   flash.show()
   flash.size_hint_weight_set(-1.0, 0.0)
   flash.size_hint_align_set(-1.0, 0.0)
   obox.pack_end(flash)
 
   csm = elementary.Check(obox)
-  csm.label_set('ask before sending CSM')
+  csm.text_set('ask before sending CSM')
   csm.show()
   csm.size_hint_weight_set(-1.0, 0.0)
   csm.size_hint_align_set(-1.0, 0.0)
@@ -262,7 +262,7 @@ def show_opts(pager, *args, **kwargs):
 
   for opt in opts:
     chk = elementary.Check(obox)
-    chk.label_set(opts[opt])
+    chk.text_set(opts[opt])
     chk.show()
     chk.size_hint_weight_set(-1.0, 0.0)
     chk.size_hint_align_set(-1.0, 0.0)
@@ -274,7 +274,7 @@ def show_opts(pager, *args, **kwargs):
     optsval[opt] = chk
 
   button = elementary.Button(pager)
-  button.label_set(_("Back"))
+  button.text_set(_("Back"))
   button.show()
   button._callback_add('clicked', partial(hide_opts, pager, optsval))
   button.size_hint_weight_set(-1.0, 0.0)
@@ -287,7 +287,7 @@ def show_opts(pager, *args, **kwargs):
   pager.item_simple_push(box)
 
 def update_chars(label, obj, *args, **kwargs):
-  label.label_set("(%d)" % len(obj.markup_to_utf8(obj.entry_get())))
+  label.text_set("(%d)" % len(obj.markup_to_utf8(obj.entry_get())))
 
 def reply(to, text, bus, win, func_ok, func_err, func_status, *args, **kwargs):
   inwin = elementary.InnerWindow(win)
@@ -307,12 +307,12 @@ def reply(to, text, bus, win, func_ok, func_err, func_status, *args, **kwargs):
   tbox.horizontal_set(1)  
 
   label = elementary.Label(inwin)
-  label.label_set(_("To: ")+elementary.Entry.utf8_to_markup(to[1]))
+  label.text_set(_("To: ")+elementary.Entry.utf8_to_markup(to[1]))
   label.show()
   tbox.pack_start(label)
 
   chars = elementary.Label(inwin)
-  chars.label_set("(%d)" % len(text))
+  chars.text_set("(%d)" % len(text))
   chars.show()
   tbox.pack_end(chars)
 
@@ -345,7 +345,7 @@ def reply(to, text, bus, win, func_ok, func_err, func_status, *args, **kwargs):
   hbox.show()
 
   opts = elementary.Button(inwin)
-  opts.label_set(_("Options"))
+  opts.text_set(_("Options"))
   opts.size_hint_weight_set(1.0, 0.0)
   opts.size_hint_align_set(-1.0, 0.0)
   opts.show()
@@ -353,7 +353,7 @@ def reply(to, text, bus, win, func_ok, func_err, func_status, *args, **kwargs):
   hbox.pack_end(opts)
 
   hide = elementary.Button(inwin)
-  hide.label_set(_("Close"))
+  hide.text_set(_("Close"))
   hide.size_hint_weight_set(1.0, 0.0)
   hide.size_hint_align_set(-1.0, 0.0)
   hide.show()
@@ -361,7 +361,7 @@ def reply(to, text, bus, win, func_ok, func_err, func_status, *args, **kwargs):
   hbox.pack_end(hide)
 
   send = elementary.Button(inwin)
-  send.label_set(_("Send"))
+  send.text_set(_("Send"))
   send.size_hint_weight_set(1.0, 0.0)
   send.size_hint_align_set(-1.0, 0.0)
   send.show()

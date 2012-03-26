@@ -72,7 +72,7 @@ def delete_msg(path, bubble, button, *args, **kwargs):
   inwin.style_set('minimal')
   inwin.content_set(box)
   label=elementary.Label(box)
-  label.label_set(_('Do you really want to delete this message?'))
+  label.text_set(_('Do you really want to delete this message?'))
   label.show()
   box.pack_start(label)
   box2 = elementary.Box(box)
@@ -80,13 +80,13 @@ def delete_msg(path, bubble, button, *args, **kwargs):
   box2.show()
 
   btyes = elementary.Button(box2)
-  btyes.label_set(_('Yes'))
+  btyes.text_set(_('Yes'))
   btyes._callback_add('clicked', partial(delete_yes, inwin, path, bubble, button))
   btyes.show()
   box2.pack_end(btyes)
 
   btno = elementary.Button(box2)
-  btno.label_set(_('No'))
+  btno.text_set(_('No'))
   btno._callback_add('clicked', partial(delete_no, inwin))
   btno.show()
   box2.pack_end(btno)
@@ -194,7 +194,7 @@ def display_message_status(icon, out, data):
     else:
       text='unread'
   icon.file_set("/usr/share/pixmaps/opimd-utils/"+text+".png")
-#  label.label_set(text)  
+#  label.text_set(text)  
 
 def render_message(message, incoming = False):
   bubble = elementary.Bubble(win)
@@ -231,7 +231,7 @@ def render_message(message, incoming = False):
       name = get_resolved_name(message['@Contacts'])
     else:
       name = resolve_phone(number)
-    bubble.label_set(name)
+    bubble.text_set(name)
     bubble.info_set(timestamp)
   else:
     out = 1
@@ -246,7 +246,7 @@ def render_message(message, incoming = False):
     else:
       name = resolve_phone(number)
     bubble.info_set(name)
-#    bubble.label_set(timestamp)
+#    bubble.text_set(timestamp)
 
   display_message_status(icon, out, message)
 
@@ -272,7 +272,7 @@ def render_message(message, incoming = False):
   btnframe.show()
 
   deletebutton = elementary.Button(win)
-  deletebutton.label_set(_("Delete"))
+  deletebutton.text_set(_("Delete"))
   deletebutton._callback_add('clicked', partial(delete_msg, message['Path'], bubble))
   deletebutton.show()
   deletebutton.size_hint_weight_set(1.0, 0.0)
@@ -284,7 +284,7 @@ def render_message(message, incoming = False):
 
   if message['Direction']=='in':
     replybutton = elementary.Button(win)
-    replybutton.label_set(_("Reply"))
+    replybutton.text_set(_("Reply"))
     replybutton._callback_add('clicked', partial(opimd_reply.reply, [number, name], '', bus, win, None, None, None))
     replybutton.show()
     replybutton.size_hint_weight_set(0.0, 0.0)
@@ -339,7 +339,7 @@ def end(x):
   global ended
   ended = 1
   label = elementary.Label(win)
-  label.label_set(_("No more messages."))
+  label.text_set(_("No more messages."))
   label.show()
   message_list.append([label, None])
   box.pack_end(label)
@@ -354,7 +354,7 @@ def proceed(num = 5):
   else:
     print _("Counter reached")
 #    next = elementary.Button(win)
-#    next.label_set("Next page")
+#    next.text_set("Next page")
 #    next.scale_set(2.0)
 #    next.show()
 #    next.clicked = go_next
@@ -398,7 +398,7 @@ scroll.show()
 scroll.bounce_set(0, 0)
 
 backbtn = elementary.Button(win)
-backbtn.label_set(_('Back'))
+backbtn.text_set(_('Back'))
 backbtn.size_hint_align_set(-1.0, 0.0)
 backbtn.show()
 backbtn._callback_add('clicked', partial(promote_page, list))
