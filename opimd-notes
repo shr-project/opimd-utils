@@ -102,7 +102,7 @@ def renderNote(*args, **kargs):
   bubble.text_set(title)
   if data.get('Timestamp'):
     timestamp = time.strftime('%d %b %Y',time.localtime(float(data['Timestamp'])))
-    bubble.text_set(timestamp)
+    #bubble.info_set(timestamp)
   content = data.get('Content')
   if not content:
     content = ''
