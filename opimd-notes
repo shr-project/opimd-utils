@@ -52,13 +52,11 @@ def destroy(win, *args, **kargs):
 def nothing(*args, **kwargs):
   print _("nothing called")
 
-def anchorClicked (tags, obj, sth, *args, **kargs):
+def anchorClicked (tags, obj, *args, **kargs):
   print tags
   print obj
-  print sth
   print args
   print kargs
-  obj.hover_end()
   dia = elementary.InnerWindow(win)
   win.resize_object_add(dia)
   dia.show()
@@ -423,7 +421,8 @@ def saveTag(list, tags, dia, tag, *args, **kargs):
     delbtn._callback_add('clicked', partial(delTag, list, tags, tag, item))
     list.go()
   if dia:
-    dia.delete()
+    #dia.delete() # has some weird problem with itself, disable for now
+    dia.hide()
 
 def addTag(list, tags, item, *args, **kargs):
   #item.selected_set(False)
