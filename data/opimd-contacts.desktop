@@ -8,6 +8,7 @@ Name[gl]=Contactos opimd
 Name[eo]=Opimd-Kontaktoj
 Name[it]=Contatti Opimd
 Name[sv]=Opimd-Kontakter
+Name[cs]=Kontakty Opimd
 TryExec=opimd-contacts
 StartupNotify=true
 Exec=opimd-contacts

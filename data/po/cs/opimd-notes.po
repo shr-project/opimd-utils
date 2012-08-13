@@ -14,77 +14,77 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+
 msgid "nothing called"
-msgstr "nichts aufgerufen"
+msgstr "Nic nezavoláno"
 
 
 msgid "Not yet implemented"
-msgstr "Noch nicht implementiert"
+msgstr "Zatím není implementováno"
 
 msgid "Are you sure?"
-msgstr "Sind Sie sicher?"
+msgstr "Jste si jistý?"
 
 msgid "Yes"
-msgstr "Ja"
+msgstr "Ano"
 
 msgid "No"
-msgstr "Nein"
+msgstr "Ne"
 
 
 msgid "Adding..."
-msgstr "Hinzufügen..."
+msgstr "Přidávání..."
 
 msgid "Editing..."
-msgstr "Bearbeiten..."
+msgstr "Upravování..."
 
 msgid "Next"
-msgstr "Vorwärts"
+msgstr "Další"
 
 msgid "Back"
-msgstr "Rückwärts"
+msgstr "Zpět"
 
 msgid "Enter name of tag..."
-msgstr "Geben Sie den Namen des Tags ein..."
+msgstr "Zadejte název tagu..."
 
 msgid "...or select it from list below:"
-msgstr "...oder wählen Sie einen aus der Liste"
+msgstr "...nebo vyberte ze seznamu"
 
 msgid "Add"
-msgstr "Hinzufügen"
+msgstr "Přidat"
 
 msgid "Select tags for note:"
-msgstr "Wählen Sie die Tags für die Notiz aus:"
+msgstr "Vyberte značky pro poznámku:"
 
 msgid "Add new tag..."
-msgstr "Fügen Sie einen neuen Tag hinzu..."
+msgstr "Přidat nový tag..."
 
 msgid "Save"
-msgstr "Speichern"
+msgstr "Uložit"
 
 msgid "Edit"
-msgstr "Bearbeiten"
+msgstr "Upravit"
 
 msgid "Enter text:"
-msgstr "Text eingeben:"
+msgstr "Zadejte text:"
 
-#TODO!
 msgid "regular expression"
-msgstr ""
+msgstr "regulární výraz"
 
 msgid "search also in titles"
-msgstr "suche auch in Titeln"
+msgstr "hledat také v názvech"
 
 msgid "Search"
-msgstr "Suche"
+msgstr "Hledat"
 
 msgid "Notes"
-msgstr "Notizen"
+msgstr "Poznámka"
 
 msgid "Searching..."
-msgstr "Suchen..."
+msgstr "Hledání..."
 
 msgid "New"
-msgstr "Neu"
+msgstr "Nový"
 
 msgid "Tags"
-msgstr "Tags"
+msgstr "Tagy"

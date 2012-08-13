@@ -16,58 +16,58 @@ msgstr ""
 
 
 msgid "Init entries..."
-msgstr "Initialisiere Einträge..."
+msgstr "Počáteční položky..."
 
 msgid "Out: "
-msgstr "Aus: "
+msgstr "Odchozí: "
 
 msgid "Processing: "
-msgstr "Prozess: "
+msgstr "Zpracovávání: "
 
 msgid "Sent: "
-msgstr "Gesendet: "
+msgstr "Odeslané: "
 
 msgid "Read: "
-msgstr "Gelesen: "
+msgstr "Přečtené: "
 
 msgid "Delivered: "
-msgstr "Ausgeliefert: "
+msgstr "Doručené: "
 
 msgid "Delete"
-msgstr "Löschen"
+msgstr "Smazat"
 
 msgid "Reply"
-msgstr "Beantworten"
+msgstr "Odpovědět"
 
 msgid "Querying..."
-msgstr "Abfragen..."
+msgstr "Dotazování..."
 
 msgid "Number of results: "
-msgstr "Anzahl der Resultate: "
+msgstr "Počet výsledků: "
 
 msgid "Messages"
-msgstr "Nachrichten"
+msgstr "Zprávy"
 
 msgid "Finished"
-msgstr "Fertig"
+msgstr "Hotovo"
 
 msgid "Error while sending message!"
-msgstr "Beim verschicken der Nachricht ist ein Fehler aufgetretten!"
+msgstr "Chyba při odesílání zprávy!"
 
 msgid "Retry"
-msgstr "Neuversuch"
+msgstr "Opakovat"
 
 msgid "Close"
-msgstr "Schliessen"
+msgstr "Zavřít"
 
 msgid "Options"
-msgstr "Optionen"
+msgstr "Možnosti"
 
 msgid "Back"
-msgstr "Zurück"
+msgstr "Zpět"
 
 msgid "To: "
-msgstr "An: "
+msgstr "Komu: "
 
 msgid "Send"
-msgstr "Senden"
+msgstr "Odeslat"

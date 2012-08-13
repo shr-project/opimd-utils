@@ -8,6 +8,7 @@ Name[gl]=Notas
 Name[eo]=Notoj
 Name[it]=Note
 Name[sv]=Anteckningar
+Name[cs]=Poznámky
 TryExec=opimd-notes
 StartupNotify=true
 Exec=opimd-notes

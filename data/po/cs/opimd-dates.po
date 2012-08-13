@@ -17,88 +17,88 @@ msgstr ""
 #: shr-settings:36
 #: shr_settings_modules/shr_phoneutils.py:68
 msgid "January"
-msgstr "Januar"
+msgstr "Leden"
 
 msgid "February"
-msgstr "Februar"
+msgstr "Únor"
 
 msgid "March"
-msgstr "März"
+msgstr "Březen"
 
 msgid "April"
-msgstr "April"
+msgstr "Duben"
 
 msgid "May"
-msgstr "Mai"
+msgstr "Květen"
 
 msgid "June"
-msgstr "Juni"
+msgstr "Červen"
 
 msgid "July"
-msgstr "Juli"
+msgstr "Červenec"
 
 msgid "August"
-msgstr "August"
+msgstr "Srpen"
 
 msgid "September"
-msgstr "September"
+msgstr "Září"
 
 msgid "October"
-msgstr "Oktober"
+msgstr "Říjen"
 
 msgid "November"
-msgstr "November"
+msgstr "Listopad"
 
 msgid "December"
-msgstr "Dezember"
+msgstr "Prosinec"
 
 msgid "Mon"
-msgstr "Mo"
+msgstr "Po"
 
 msgid "Tue"
-msgstr "Di"
+msgstr "Út"
 
 msgid "Wed"
-msgstr "Mi"
+msgstr "St"
 
 msgid "Thu"
-msgstr "Do"
+msgstr "Čt"
 
 msgid "Fri"
-msgstr "Fr"
+msgstr "Pá"
 
 msgid "Sat"
-msgstr "Sa"
-
-msgid "Sun"
 msgstr "So"
 
+msgid "Sun"
+msgstr "Ne"
+
 msgid "Dates"
-msgstr "Kalender"
+msgstr "Termíny"
 
 msgid "Quit"
-msgstr "Verlassen"
+msgstr "Ukončit"
 
 msgid "Back"
-msgstr "Zurück"
+msgstr "Zpět"
 
 msgid "New"
-msgstr "Neu"
+msgstr "Nový"
 
 msgid "No Title"
-msgstr "Kein Titel"
+msgstr "Bez názvu"
 
 msgid "Add"
-msgstr "Hinzufügen"
+msgstr "Přidat"
 
 msgid "Delete"
-msgstr "Löschen"
+msgstr "Smazat"
 
 msgid "Begin:"
-msgstr "Beginn:"
+msgstr "Začátek:"
 
 msgid "End:"
-msgstr "Ende:"
+msgstr "Konec:"
 
 
 
