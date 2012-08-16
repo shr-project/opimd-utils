@@ -7,6 +7,7 @@ from re import escape
 from functools import partial
 from ecore import timer_add
 import time
+from sys import argv
 
 try:
 	cat = gettext.Catalog("opimd-notes")
@@ -920,7 +921,10 @@ def make_downbox():
   searchbtn.size_hint_align_set(-1.0, 0.0)
   searchbtn._callback_add('clicked', search)
 
-displayNotes()
+if len(argv)>1:
+  displayNotes(query={'Tag':argv[1]})
+else:
+  displayNotes()
 make_downbox()
 
 win.show()
