@@ -63,7 +63,7 @@ mainbox = elementary.Box(win)
 mainbox.show()
 pager.item_simple_push(mainbox)
 
-win.callback_destroy_add(destroy)
+win.callback_delete_request_add(destroy)
 
 def sanity_name(name, startline = True):
   if startline:

@@ -60,7 +60,7 @@ def print_stats(number):
 
       if prev_type=='out':
         reply_time = result['Timestamp'] - prev_timestamp
-        if reply_time < 24*60*60:
+        if reply_time < 24*60*60 and reply_time > 0:
           sum_reply = sum_reply + reply_time
           count_reply = count_reply + 1
           #print "  * Uzyskano odpowiedz po " + str(reply_time/60)+ " minutach"
@@ -69,7 +69,7 @@ def print_stats(number):
       count_to = count_to + 1
       if prev_type=='in':
         reply_time = result['Timestamp'] - prev_timestamp
-        if reply_time < 24*60*60:
+        if reply_time < 24*60*60 and reply_time > 0:
           sum_reply2 = sum_reply2 + reply_time
           count_reply2 = count_reply2 + 1
           #print "  * Wyslano odpowiedz po " + str(reply_time/60)+ " minutach"
@@ -97,9 +97,10 @@ def print_stats(number):
   print "  Minimal length: " + str(min_len)
   print "  Maximal length: " + str(max_len)
   print "  Average length: " + str(avg_len)
-  print ""
-  print "  Average reply time from "+ name + " (min): " + str(avg_reply/60) + " for " + str(count_reply) + " messages"
-  print "  Average reply time to "+ name + " (min): " + str(avg_reply2/60) + " for " + str(count_reply2) + " messages"
+  if avg_reply>=0 and avg_reply2>=0:
+    print ""
+    print "  Average reply time from "+ name + " (min): " + str(avg_reply/60) + " for " + str(count_reply) + " messages"
+    print "  Average reply time to "+ name + " (min): " + str(avg_reply2/60) + " for " + str(count_reply2) + " messages"
   print ""
   print "  Weekdays: " + str(weekdays)
 

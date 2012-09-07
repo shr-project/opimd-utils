@@ -341,7 +341,7 @@ def reply(to, text, bus, win, func_ok, func_err, func_status, *args, **kwargs):
   hbox.size_hint_weight_set(1.0, 0.0)
   hbox.size_hint_align_set(-1.0, 0.0)
   hbox.horizontal_set(1)
-  hbox.homogenous_set(1)
+  hbox.homogeneous_set(1)
   hbox.show()
 
   opts = elementary.Button(inwin)
