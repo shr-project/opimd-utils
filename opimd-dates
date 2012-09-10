@@ -103,7 +103,7 @@ class MainWindow:
 #		elementary.c_elementary.finger_size_set(35)
 		self.win = elementary.Window("opimd-dates", elementary.ELM_WIN_BASIC)
 		self.win.title_set(_("Dates"))
-		self.win.callback_destroy_add(self.destroy)
+		self.win.callback_delete_request_add(self.destroy)
 
 		# add background to main window
 		bg = elementary.Background(self.win)
