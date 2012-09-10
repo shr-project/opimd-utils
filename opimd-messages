@@ -232,7 +232,7 @@ def render_message(message, incoming = False):
     else:
       name = resolve_phone(number)
     bubble.text_set(name)
-    #bubble.text_part_set('info',timestamp)
+    #bubble.part_text_set('info',timestamp)
   else:
     out = 1
     bubble.pos_set(1)
@@ -245,7 +245,7 @@ def render_message(message, incoming = False):
       name = get_resolved_name(message['@Contacts'])
     else:
       name = resolve_phone(number)
-    #bubble.text_part_set('info',name)
+    #bubble.part_text_set('info',name)
     bubble.text_set(name)
 #    bubble.text_set(timestamp)
 
