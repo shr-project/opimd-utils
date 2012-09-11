@@ -139,8 +139,8 @@ class CalendarMonth(elementary.Table):
 		self.mainwin = mainwin
 		self.size_hint_align_set(-1.0, 0.0)
 		self.size_hint_weight_set(1.0, 1.0)
-		# set table homogenous
-		self.homogenous_set(True)
+		# set table homogeneous
+		self.homogeneous_set(True)
 		self.calobj = calendar.Calendar(self.firstweekday)
 
 
@@ -287,14 +287,14 @@ class CalendarDay(elementary.Box):
 		self.table.show()
 		self.table.size_hint_align_set(-1.0,-1.0)
 		self.table.size_hint_weight_set(1.0, 1.0)
-		#self.table.homogenous_set(True)
+		#self.table.homogeneous_set(True)
 		sc.content_set(self.table)
 		#box.pack_after(self.table, title_label)
 		self.table.scale_set(1)
 
 		# contains back and new butten
 		navbox = elementary.Table(self)
-		navbox.homogenous_set(True)
+		navbox.homogeneous_set(True)
 		navbox.size_hint_weight_set(1.0, 0.0)
 		navbox.size_hint_align_set(-1.0, -1.0)
 		self.pack_end(navbox)
@@ -449,7 +449,7 @@ class AddCalendarEntry(elementary.Box):
 		self.pack_start(sc)
 
 		box = elementary.Table(sc)
-		#box.homogenous_set(True)
+		#box.homogeneous_set(True)
 		box.size_hint_weight_set(1.0, 0.0)
 		box.size_hint_align_set(-1.0, -1.0)
 		sc.content_set(box)
@@ -551,7 +551,7 @@ class AddCalendarEntry(elementary.Box):
 		navbox.size_hint_align_set(-1.0, -1.0)
 		navbox.size_hint_weight_set(1.0, 1.0)
 		navbox.show()
-		navbox.homogenous_set(True)
+		navbox.homogeneous_set(True)
 		navbox.horizontal_set(True)
 		box.pack(navbox,0,5,2,1)
 
@@ -661,7 +661,7 @@ class CalendarEntry(elementary.Box):
 
 		# contains back and new button
 		navbox = elementary.Table(self)
-		navbox.homogenous_set(True)
+		navbox.homogeneous_set(True)
 		navbox.size_hint_weight_set(1.0, 0.0)
 		navbox.size_hint_align_set(-1.0, -1.0)
 		self.pack_end(navbox)
@@ -791,7 +791,7 @@ class CalendarWidget(elementary.Box):
 		self.pack_start(self.t)
 		self.t.size_hint_align_set(-1.0, 0.0)
 		self.t.size_hint_weight_set(1.0, 1.0)
-		self.t.homogenous_set(True)
+		self.t.homogeneous_set(True)
 		row = 0
 
 		# calculate previus month
