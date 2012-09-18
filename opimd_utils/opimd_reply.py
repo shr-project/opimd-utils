@@ -42,7 +42,7 @@ def dbus_err(x):
 
 def dbus_sms_ok(x, bus, func_status, a, b):
   message = getDbusObject (bus, "org.freesmartphone.opimd", x, "org.freesmartphone.PIM.Message")
-  data = {'MessageSent':1, 'Processing':0}
+  data = {'New':0, 'Processing':0}
   ops = loadOpts()
   if ops['report']:
     data['SMS-message-reference']=a
@@ -142,7 +142,7 @@ def send_msg(to, entry, bus, inwin, win, func_ok, func_err, func_status, *args, 
 
 #  ogsmd.SendMessage(to[0] ,msg, props, reply_handler=dbus_sms_ok, error_handler=partial(dbus_gsm_err, to, msg, bus, win, func_ok, func_err) )
 
-  message = {'Peer':to[0],'Direction':'out','Folder':'SMS','Content':msg, 'MessageSent':0, 'Processing':1, 'Source':'SMS', 'Timestamp':int(time.time()), 'Timezone':time.tzname[time.daylight]}
+  message = {'Peer':to[0],'Direction':'out','Folder':'SMS','Content':msg, 'New':1, 'Processing':1, 'Source':'SMS', 'Timestamp':int(time.time()), 'Timezone':time.tzname[time.daylight]}
 
   for field in props:
     message['SMS-'+field]=props[field]

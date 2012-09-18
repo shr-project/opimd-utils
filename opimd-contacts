@@ -424,7 +424,7 @@ class Field():
 #    entry.scale_set(1.5)
 #    entry.password_set(True)
     if value:
-      value = entry.utf8_to_markup(value)
+      value = entry.utf8_to_markup(str(value))
       if value:
         entry.entry_set(value)
     entryscr.content_set(entry)
@@ -478,7 +478,7 @@ class EditContact():
       self.fields.append(field)
       self.i += 2
     for fie in data:
-      if not fie in ['Name','Path', 'EntryId']:
+      if not fie in ['Name','Path', 'EntryId', 'contacts_id']:
         values = data[fie]
         if not isinstance(data[fie], dbus.Array):
           values = [values]
