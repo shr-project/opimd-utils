@@ -17,7 +17,7 @@ except IOError:
 	_ = lambda x: x
 
 MESSAGES_ICON              = "/usr/share/icons/shr/86x86/apps/shr-messages.png"
-PHONELOG_ICON              = "/usr/share/pixmaps/phonelog.png"
+PHONELOG_ICON              = "/usr/share/pixmaps/ffphonelog.png"
 
 SUPPORTED_SOURCES = ['SMS','MMS']
 
@@ -202,11 +202,11 @@ def delete_msg(msg, win, obj, *args, **kwargs):
   destroy(win, args, kwargs)
 
 def open_inbox(obj, *args, **kwargs):
-  system("opimd-messages &")
+  system("phoneui-messages &")
   destroy(win, args, kwargs)
 
 def open_phonelog(obj, *args, **kwargs):
-  system("phonelog &")
+  system("ffphonelog &")
   destroy(win, args, kwargs) 
 
 def resolve_time(t):
