@@ -137,6 +137,8 @@ def send_msg(to, entry, bus, inwin, win, func_ok, func_err, func_status, *args, 
   props = {}
   if ops['report']:
     props['status-report-request']=1
+  else:
+    props['status-report-request']=0
   if ops['class']:
     props['message-class']=0
 
